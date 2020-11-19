@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.employee.Employee;
-import springcore.orm.EmployeesOrm;
+import springcore.dao.EmployeesImplDb;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ public class EmployeeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private Company company;
-    private EmployeesOrm employeesOrm;
+    private EmployeesImplDb employeesImplDb;
     @InjectRandomInt(max = 5)
     private int employeesToFire;
     @InjectRandomInt(max = 10)
@@ -37,8 +37,8 @@ public class EmployeeService {
     }
 
     @Autowired
-    public void setEmployeesOrm(EmployeesOrm employeesOrm) {
-        this.employeesOrm = employeesOrm;
+    public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
+        this.employeesImplDb = employeesImplDb;
     }
 
     public void hireEmployees(AnnotationConfigApplicationContext context) throws SQLException {
@@ -51,11 +51,11 @@ public class EmployeeService {
             company.closeVacancy();
             LOGGER.info(String.format(HIRED_EMPLOYEE_MESSAGE, employee));
         }
-        employeesOrm.addEmployees(employeesToHireList);
+        employeesImplDb.addEmployees(employeesToHireList);
     }
 
     public void fireEmployees() throws SQLException {
-        List<Employee> employees = employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int amountEmployeesToFire = new Random().nextInt(employeesToFire + 1);
         List<Employee> employeesToFireList = new ArrayList<>();
         for (int i = 0; i < amountEmployeesToFire
@@ -64,11 +64,11 @@ public class EmployeeService {
             employeesToFireList.add(employee);
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));
         }
-        employeesOrm.updateEmployeesStatusById(EmployeeStatus.FIRED, employeesToFireList);
+        employeesImplDb.updateEmployeesStatusById(EmployeeStatus.FIRED, employeesToFireList);
     }
 
     public void increaseExperience() throws SQLException {
-        List<Employee> employees = employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS);
-        employeesOrm.increaseExp(employees);
+        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
+        employeesImplDb.increaseExp(employees);
     }
 }

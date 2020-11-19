@@ -8,7 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
-import springcore.orm.*;
+import springcore.dao.*;
 import springcore.position.Position;
 import springcore.salary.Salary;
 import springcore.statuses.EmployeeStatus;
@@ -26,9 +26,9 @@ import static org.mockito.Mockito.*;
 public class SalaryServiceTest {
 
     @Mock
-    PositionsOrm positionsOrm;
+    PositionsImplDb positionsImplDb;
     @Mock
-    EmployeesOrm employeesOrm;
+    EmployeesImplDb employeesImplDb;
     @Mock
     Logger LOGGER;
     @Mock
@@ -46,7 +46,7 @@ public class SalaryServiceTest {
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         MockitoAnnotations.initMocks(this);
-        salaryService = new SalaryService(positionsOrm, employeesOrm);
+        salaryService = new SalaryService(positionsImplDb, employeesImplDb);
         positions = new ArrayList<>(Arrays.asList(position1, position2));
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
         Field field = SalaryService.class.getDeclaredField("LOGGER");
@@ -69,28 +69,28 @@ public class SalaryServiceTest {
 
     @Test
     public void assignSalaries() throws SQLException {
-        when(positionsOrm.getPositions(anyString(), any())).thenReturn(positions);
+        when(positionsImplDb.getPositions(anyString(), any())).thenReturn(positions);
         salaryService.assignSalaries();
         verify(LOGGER, times(2)).info(anyString());
-        verify(positionsOrm).assignSalaries(anyList());
+        verify(positionsImplDb).assignSalaries(anyList());
     }
 
     @Test
     @SuppressWarnings("all")
     public void paySalary() throws SQLException {
-        when(employeesOrm.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employees);
+        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employees);
         when(employee1.getPosition()).thenReturn(position1);
         when(position1.getPositionName()).thenReturn("Ment");
-        when(positionsOrm.getPositionSalary("Ment")).thenReturn(new Usd(500));
+        when(positionsImplDb.getPositionSalary("Ment")).thenReturn(new Usd(500));
         when(employee2.getPosition()).thenReturn(position2);
         when(position2.getPositionName()).thenReturn("Actor");
-        when(positionsOrm.getPositionSalary("Actor")).thenReturn(new Usd(100));
+        when(positionsImplDb.getPositionSalary("Actor")).thenReturn(new Usd(100));
         when(employee1.getTimeWorked()).thenReturn(2);
         when(employee2.getTimeWorked()).thenReturn(10);
         when(employee1.getPersonalBonuses()).thenReturn(BigDecimal.ONE);
         when(employee2.getPersonalBonuses()).thenReturn(BigDecimal.ZERO);
         salaryService.paySalary();
-        verify(positionsOrm, times(2)).getPositionSalary(anyString());
+        verify(positionsImplDb, times(2)).getPositionSalary(anyString());
         verify(employee1).getTimeWorked();
         verify(employee1).getPersonalBonuses();
         verify(employee2).getTimeWorked();
@@ -101,7 +101,7 @@ public class SalaryServiceTest {
     public void assignBonuses() throws SQLException {
         List<Employee> employeesList = new ArrayList<>(Arrays.asList(employee1,
                 employee1, employee1, employee2, employee2));
-        when(employeesOrm.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employeesList);
+        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employeesList);
         ArgumentCaptor<BigDecimal> argumentCaptor = ArgumentCaptor.forClass(BigDecimal.class);
         salaryService.assignBonuses();
         verify(employee1).setPersonalBonuses(argumentCaptor.capture());
@@ -110,13 +110,13 @@ public class SalaryServiceTest {
         assertTrue(BigDecimal.TEN.compareTo(values.get(0))>0);
         assertTrue(BigDecimal.TEN.negate().compareTo(values.get(1))<0);
         verify(LOGGER,times(2)).info(anyString());
-        verify(employeesOrm).updateEmployees(employeesList);
+        verify(employeesImplDb).updateEmployees(employeesList);
     }
 
     @Test
     @SuppressWarnings("all")
     public void increaseSalariesDueToInflation() throws SQLException {
-        when(positionsOrm.getAllPositions()).thenReturn(positions);
+        when(positionsImplDb.getAllPositions()).thenReturn(positions);
         Usd salary1 = new Usd(100);
         Usd salary2 = new Usd(300);
         when(position1.getSalary()).thenReturn(salary1);
@@ -124,7 +124,7 @@ public class SalaryServiceTest {
         ArgumentCaptor<Usd> argumentCaptor = ArgumentCaptor.forClass(Usd.class);
         salaryService.increaseSalariesDueToInflation();
         verify(LOGGER, times(5)).info(anyString());
-        verify(positionsOrm).updatePositions(positions);
+        verify(positionsImplDb).updatePositions(positions);
         verify(position1).getSalary();
         verify(position1).setSalary(argumentCaptor.capture());
         verify(position2).getSalary();

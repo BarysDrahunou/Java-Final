@@ -1,29 +1,32 @@
-package springcore.orm;
+package springcore.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import springcore.currency.Usd;
 import springcore.position.Position;
-import springcore.utilityconnection.Connect;
+import springcore.utilityconnection.ConnectTemporary;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static springcore.constants.SQLQueries.*;
-import static springcore.constants.VariablesConstants.*;
+import static springcore.constants.VariablesConstants.DECIMAL_BASE;
 
 @Component
-public class PositionsOrm {
+public class PositionsImplDb implements PositionsDao{
 
-    private final Connection connection;
+    private final ConnectTemporary connectTemporary;
 
     @Autowired
-    public PositionsOrm(Connect connect) {
-        this.connection = connect.getConnection();
+    public PositionsImplDb() throws SQLException {
+        this.connectTemporary = ConnectTemporary.getInstance();
     }
 
     public void addPositions(List<Position> positions) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(ADD_POSITIONS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ADD_POSITIONS_QUERY);
         for (Position position : positions) {
             preparedStatement.setString(1, position.getPositionName());
             preparedStatement.setInt(2, position.getVacancies());
@@ -31,17 +34,17 @@ public class PositionsOrm {
             preparedStatement.clearParameters();
         }
         preparedStatement.executeBatch();
-        connection.commit();
+        connectTemporary.commit();
     }
 
     public List<Position> getAllPositions() throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_POSITIONS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_ALL_POSITIONS_QUERY);
         return getPositionsList(preparedStatement);
     }
 
     public List<Position> getPositions(String argument, Object value) throws SQLException {
         String query = String.format(GET_EXACT_POSITIONS_QUERY, argument);
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(query);
         preparedStatement.setObject(1, value);
         return getPositionsList(preparedStatement);
     }
@@ -62,8 +65,7 @@ public class PositionsOrm {
     }
 
     public Usd getPositionSalary(String position) throws SQLException {
-        PreparedStatement preparedStatement = connection
-                .prepareStatement(GET_POSITION_SALARY_QUERY);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_POSITION_SALARY_QUERY);
         preparedStatement.setString(1, position);
         preparedStatement.execute();
         Usd usd = new Usd(DECIMAL_BASE);
@@ -76,8 +78,7 @@ public class PositionsOrm {
 
     public void updatePositions(List<Position> positions)
             throws SQLException {
-        PreparedStatement preparedStatement = connection
-                .prepareStatement(UPDATE_POSITIONS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(UPDATE_POSITIONS_QUERY);
         for (Position position : positions) {
             preparedStatement.setInt(1, position.getVacancies());
             preparedStatement.setInt(2, position.getActiveWorkers());
@@ -87,12 +88,11 @@ public class PositionsOrm {
             preparedStatement.clearParameters();
         }
         preparedStatement.executeBatch();
-        connection.commit();
+        connectTemporary.commit();
     }
 
     public void assignSalaries(List<Position> positions) throws SQLException {
-        PreparedStatement preparedStatement = connection
-                .prepareStatement(ASSIGN_SALARIES_QUERY);
+        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ASSIGN_SALARIES_QUERY);
         for (Position position : positions) {
             preparedStatement.setInt(1, position.getSalary().getValue());
             preparedStatement.setString(2, position.getPositionName());
@@ -100,6 +100,6 @@ public class PositionsOrm {
             preparedStatement.clearParameters();
         }
         preparedStatement.executeBatch();
-        connection.commit();
+        connectTemporary.commit();
     }
 }

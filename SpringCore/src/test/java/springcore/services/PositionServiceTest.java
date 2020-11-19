@@ -9,7 +9,7 @@ import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
-import springcore.orm.*;
+import springcore.dao.*;
 import springcore.position.Position;
 import springcore.salary.Salary;
 import springcore.statuses.EmployeeStatus;
@@ -31,9 +31,9 @@ public class PositionServiceTest {
     @Mock
     Company company;
     @Mock
-    PositionsOrm positionsOrm;
+    PositionsImplDb positionsImplDb;
     @Mock
-    EmployeesOrm employeesOrm;
+    EmployeesImplDb employeesImplDb;
     @Mock
     List<String> jobs;
     @Mock
@@ -56,7 +56,7 @@ public class PositionServiceTest {
         MockitoAnnotations.initMocks(this);
         path = "src/main/resources/testJobs.txt";
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        positionService = new PositionService(company, positionsOrm, employeesOrm, path);
+        positionService = new PositionService(company, positionsImplDb, employeesImplDb, path);
         Field jobsField = PositionService.class.getDeclaredField("jobs");
         jobsField.setAccessible(true);
         ReflectionUtils.setField(jobsField, positionService, jobs);
@@ -82,7 +82,7 @@ public class PositionServiceTest {
 
     @Test
     public void addPositions() throws SQLException {
-        when(positionsOrm.getAllPositions()).thenReturn(positions);
+        when(positionsImplDb.getAllPositions()).thenReturn(positions);
         when(jobs.get(anyInt())).thenReturn("Rocker", "Biker", "Actor");
         when(jobs.size()).thenReturn(3);
         when(positions.contains(any(Position.class)))
@@ -97,14 +97,14 @@ public class PositionServiceTest {
         verify(positions, atMost(10)).remove(any(Position.class));
         verify(LOGGER, atMost(10)).info(anyString());
         verify(positions, atMost(10)).add(any(Position.class));
-        verify(positionsOrm).updatePositions(anyList());
-        verify(positionsOrm).addPositions(anyList());
+        verify(positionsImplDb).updatePositions(anyList());
+        verify(positionsImplDb).addPositions(anyList());
     }
 
     @Test
     public void assignPositions() throws SQLException {
-        when(employeesOrm.getEmployeesByStatus(any())).thenReturn(employees);
-        when(positionsOrm.getPositions(any(), any())).thenReturn(positions);
+        when(employeesImplDb.getEmployeesByStatus(any())).thenReturn(employees);
+        when(positionsImplDb.getPositions(any(), any())).thenReturn(positions);
         when(positions.size()).thenReturn(2);
         when(positions.get(anyInt())).thenReturn(position1, position2);
         when(positions.remove(any(Position.class))).thenReturn(true);
@@ -115,8 +115,8 @@ public class PositionServiceTest {
         verify(employee1).setStatus(any(EmployeeStatus.class));
         verify(employee2).setPosition(any(Position.class));
         verify(employee2).setStatus(any(EmployeeStatus.class));
-        verify(employeesOrm).updateEmployees(anyList());
-        verify(positionsOrm).updatePositions(anyList());
+        verify(employeesImplDb).updateEmployees(anyList());
+        verify(positionsImplDb).updatePositions(anyList());
         verify(positions, times(2)).size();
         verify(positions, times(1)).remove(any(Position.class));
         verify(positions, times(2)).get(anyInt());
@@ -125,28 +125,28 @@ public class PositionServiceTest {
 
     @Test
     public void clearPositions() throws SQLException {
-        when(employeesOrm.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employees);
+        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class))).thenReturn(employees);
         when(employee1.getPosition()).thenReturn(position1);
         when(employee2.getPosition()).thenReturn(position2);
         when(position1.getPositionName()).thenReturn("Actor");
         when(position2.getPositionName()).thenReturn("Ment");
-        when(positionsOrm.getPositions(anyString(), anyString())).thenReturn(positions);
+        when(positionsImplDb.getPositions(anyString(), anyString())).thenReturn(positions);
         when(positions.get(0)).thenReturn(position1, position2);
         when(position1.getVacancies()).thenReturn(1);
         when(position2.getVacancies()).thenReturn(4);
         positionService.clearPositions();
-        verify(employeesOrm).updateEmployeesStatusByStatus(any(EmployeeStatus.class)
+        verify(employeesImplDb).updateEmployeesStatusByStatus(any(EmployeeStatus.class)
                 , any(EmployeeStatus.class));
         verify(company, times(2)).openVacancy();
         verify(LOGGER, times(2)).info(anyString());
-        verify(positionsOrm).updatePositions(anyList());
+        verify(positionsImplDb).updatePositions(anyList());
     }
 
     @Test
     public void closePositions() throws SQLException {
         @SuppressWarnings("unchecked")
         List<Position> positions = mock(List.class);
-        when(positionsOrm.getPositions(anyString(), anyInt())).thenReturn(positions);
+        when(positionsImplDb.getPositions(anyString(), anyInt())).thenReturn(positions);
         when(positions.isEmpty()).thenReturn(false, false, true);
         when(positions.size()).thenReturn(2, 1);
         when(positions.get(anyInt())).thenReturn(position1, position2);
@@ -157,14 +157,14 @@ public class PositionServiceTest {
         verify(positions, times(1)).remove(any(Position.class));
         verify(company, times(2)).closeVacancy();
         verify(LOGGER, times(2)).info(anyString());
-        verify(positionsOrm).updatePositions(anyList());
+        verify(positionsImplDb).updatePositions(anyList());
     }
 
     @Test
     public void changePosition() throws SQLException {
         employees.addAll(new ArrayList<>(employees));
-        when(positionsOrm.getAllPositions()).thenReturn(positions);
-        when(employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS)).thenReturn(employees);
+        when(positionsImplDb.getAllPositions()).thenReturn(positions);
+        when(employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS)).thenReturn(employees);
         when(positions.stream()).thenReturn(Stream.of(position1,position2));
         when(employee1.getPosition()).thenReturn(position1);
         when(employee2.getPosition()).thenReturn(position2);
@@ -185,6 +185,6 @@ public class PositionServiceTest {
         assertEquals(salary1,argumentCaptor.getAllValues().get(1));
         assertEquals(salary2,argumentCaptor.getAllValues().get(0));
         verify(LOGGER,atMost(8)).info(anyString());
-        verify(employeesOrm).updateEmployees(anyList());
+        verify(employeesImplDb).updateEmployees(anyList());
     }
 }

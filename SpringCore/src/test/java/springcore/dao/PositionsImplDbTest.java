@@ -1,4 +1,4 @@
-package springcore.orm;
+package springcore.dao;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @RunWith(JUnit4.class)
-public class PositionsOrmTest {
+public class PositionsImplDbTest {
 
     @Mock
     Connect connect;
@@ -32,7 +32,7 @@ public class PositionsOrmTest {
     @Mock
     PreparedStatement preparedStatement;
     List<Position> positions;
-    PositionsOrm positionsOrm;
+    PositionsImplDb positionsImplDb;
     Position position1;
     Position position2;
 
@@ -49,17 +49,17 @@ public class PositionsOrmTest {
         position2.setActiveWorkers(3);
         position2.setSalary(new Usd(250));
         positions = new ArrayList<>(Arrays.asList(position1, position2));
-        positionsOrm = new PositionsOrm(connect);
-        Field field = PositionsOrm.class.getDeclaredField("connection");
+        positionsImplDb = new PositionsImplDb();
+        Field field = PositionsImplDb.class.getDeclaredField("connection");
         field.setAccessible(true);
-        ReflectionUtils.setField(field, positionsOrm, connection);
+        ReflectionUtils.setField(field, positionsImplDb, connection);
     }
 
     @Test
     public void addPositions() throws SQLException {
 
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        positionsOrm.addPositions(positions);
+        positionsImplDb.addPositions(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 stringArgumentCaptor.capture());
@@ -86,7 +86,7 @@ public class PositionsOrmTest {
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         when(resultSet.getString("POSITION")).thenReturn("Actor");
         when(resultSet.getInt(anyString())).thenReturn(11).thenReturn(12).thenReturn(13);
-        List<Position> positions = positionsOrm.getAllPositions();
+        List<Position> positions = positionsImplDb.getAllPositions();
         verify(preparedStatement).execute();
         assertEquals(1, positions.size());
         Position position = positions.get(0);
@@ -107,7 +107,7 @@ public class PositionsOrmTest {
                 .thenReturn(20).thenReturn(21).thenReturn(22);
         ArgumentCaptor<Object> argumentCaptor = ArgumentCaptor.forClass(Object.class);
         Object value = new Object();
-        List<Position> positions = positionsOrm.getPositions(anyString(), value);
+        List<Position> positions = positionsImplDb.getPositions(anyString(), value);
         verify(preparedStatement).setObject(anyInt(), argumentCaptor.capture());
         assertEquals(value, argumentCaptor.getValue());
         verify(preparedStatement).execute();
@@ -134,7 +134,7 @@ public class PositionsOrmTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(anyString())).thenReturn(100500);
         Position position = new Position("President");
-        Usd salary = positionsOrm.getPositionSalary(position.getPositionName());
+        Usd salary = positionsImplDb.getPositionSalary(position.getPositionName());
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement).setString(anyInt(), argumentCaptor.capture());
         verify(preparedStatement).execute();
@@ -146,7 +146,7 @@ public class PositionsOrmTest {
     public void updatePositions() throws SQLException {
 
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        positionsOrm.updatePositions(positions);
+        positionsImplDb.updatePositions(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 stringArgumentCaptor.capture());
@@ -172,7 +172,7 @@ public class PositionsOrmTest {
     @Test
     public void assignSalaries() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        positionsOrm.assignSalaries(positions);
+        positionsImplDb.assignSalaries(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 stringArgumentCaptor.capture());

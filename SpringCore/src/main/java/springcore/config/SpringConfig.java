@@ -2,7 +2,7 @@ package springcore.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import springcore.orm.*;
+import springcore.dao.*;
 import springcore.services.SalaryService;
 
 
@@ -12,8 +12,8 @@ import springcore.services.SalaryService;
 public class SpringConfig {
     @Bean
     @Autowired
-    public SalaryService getSalaryService(PositionsOrm positionsOrm,
-                                          EmployeesOrm employeesOrm) {
-        return new SalaryService(positionsOrm, employeesOrm);
+    public SalaryService getSalaryService(PositionsImplDb positionsImplDb,
+                                          EmployeesImplDb employeesImplDb) {
+        return new SalaryService(positionsImplDb, employeesImplDb);
     }
 }

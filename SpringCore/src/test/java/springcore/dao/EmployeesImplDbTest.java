@@ -1,4 +1,4 @@
-package springcore.orm;
+package springcore.dao;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,16 +14,23 @@ import springcore.statuses.EmployeeStatus;
 import springcore.utilityconnection.Connect;
 
 import java.lang.reflect.Field;
-import java.math.*;
-import java.sql.*;
-import java.util.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
-public class EmployeesOrmTest {
+public class EmployeesImplDbTest {
     @Mock
     Connect connect;
     @Mock
@@ -33,7 +40,7 @@ public class EmployeesOrmTest {
     @Mock
     PreparedStatement preparedStatement;
     List<Employee> employees;
-    EmployeesOrm employeesOrm;
+    EmployeesImplDb employeesImplDb;
     Employee employee1;
     Employee employee2;
 
@@ -54,17 +61,17 @@ public class EmployeesOrmTest {
         employee2.setTimeWorked(2);
         employee2.setId(2);
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        employeesOrm = new EmployeesOrm(connect);
-        Field field = EmployeesOrm.class.getDeclaredField("connection");
+        employeesImplDb = new EmployeesImplDb();
+        Field field = EmployeesImplDb.class.getDeclaredField("connection");
         field.setAccessible(true);
-        ReflectionUtils.setField(field, employeesOrm, connection);
+        ReflectionUtils.setField(field, employeesImplDb, connection);
     }
 
     @Test
     public void addEmployees() throws SQLException {
 
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        employeesOrm.addEmployees(employees);
+        employeesImplDb.addEmployees(employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(6))
                 .setString(anyInt(), stringArgumentCaptor.capture());
@@ -100,7 +107,7 @@ public class EmployeesOrmTest {
         when(resultSet.getString("POSITION")).thenReturn("Actor");
         when(resultSet.getBigDecimal("PERSONAL_BONUSES")).thenReturn(BigDecimal.ONE);
         when(resultSet.getInt("TIME_WORKED")).thenReturn(11);
-        List<Employee> employees = employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         Employee employee = employees.get(0);
         assertEquals(1, employees.size());
         assertEquals("Vitali", employee.getName());
@@ -121,7 +128,7 @@ public class EmployeesOrmTest {
     public void updateEmployees() throws SQLException {
 
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        employeesOrm.updateEmployees(employees);
+        employeesImplDb.updateEmployees(employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(8))
                 .setString(anyInt(), stringArgumentCaptor.capture());
@@ -158,7 +165,7 @@ public class EmployeesOrmTest {
     @Test
     public void updateEmployeesStatusByStatus() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        employeesOrm.updateEmployeesStatusByStatus(EmployeeStatus.FIRED, EmployeeStatus.WENT_OUT);
+        employeesImplDb.updateEmployeesStatusByStatus(EmployeeStatus.FIRED, EmployeeStatus.WENT_OUT);
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 argumentCaptor.capture());
@@ -172,7 +179,7 @@ public class EmployeesOrmTest {
     @Test
     public void updateEmployeesStatusById() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        employeesOrm.updateEmployeesStatusById(EmployeeStatus.WORKS, employees);
+        employeesImplDb.updateEmployeesStatusById(EmployeeStatus.WORKS, employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 stringArgumentCaptor.capture());
@@ -194,7 +201,7 @@ public class EmployeesOrmTest {
     @Test
     public void increaseExp() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-        employeesOrm.increaseExp(employees);
+        employeesImplDb.increaseExp(employees);
         ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(preparedStatement, times(4)).setInt(anyInt(),
                 integerArgumentCaptor.capture());

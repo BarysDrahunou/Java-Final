@@ -70,12 +70,12 @@ public class SalaryTest {
 
     @Test
     public void paySalary() {
-        salary1.paySalary(employee);
-        salary2.paySalary(employee);
-        salary3.paySalary(employee);
-        salary4.paySalary(employee);
-        salary5.paySalary(employee);
-        salary6.paySalary(employee);
+        salary1.setSalary(employee);
+        salary2.setSalary(employee);
+        salary3.setSalary(employee);
+        salary4.setSalary(employee);
+        salary5.setSalary(employee);
+        salary6.setSalary(employee);
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(LOGGER,times(9)).info(argumentCaptor.capture());
         List<String> logMessages=argumentCaptor.getAllValues();

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
 import springcore.employee.Employee;
-import springcore.orm.EmployeesOrm;
+import springcore.dao.EmployeesImplDb;
 import springcore.statuses.EmployeeStatus;
 
 import java.lang.invoke.*;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class EmployeeServiceTest {
 
     @Mock
-    EmployeesOrm employeesOrm;
+    EmployeesImplDb employeesImplDb;
     @Mock
     Company company;
     @Mock
@@ -43,7 +43,7 @@ public class EmployeeServiceTest {
         MockitoAnnotations.initMocks(this);
         employeeService = new EmployeeService();
         employeeService.setCompany(company);
-        employeeService.setEmployeesOrm(employeesOrm);
+        employeeService.setEmployeesImplDb(employeesImplDb);
         Field employeesToFire = EmployeeService.class.getDeclaredField("employeesToFire");
         employeesToFire.setAccessible(true);
         ReflectionUtils.setField(employeesToFire, employeeService, 100500);
@@ -75,13 +75,13 @@ public class EmployeeServiceTest {
                 .allMatch(employeeStatus -> employeeStatus.equals(EmployeeStatus.NEW)));
         verify(company, times(3)).closeVacancy();
         verify(LOGGER, times(3)).info(anyString());
-        verify(employeesOrm).addEmployees(anyList());
+        verify(employeesImplDb).addEmployees(anyList());
     }
 
 
     @Test
     public void fireEmployees() throws SQLException {
-        when(employeesOrm.getEmployeesByStatus(any(EmployeeStatus.class)))
+        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class)))
                 .thenReturn(employees);
         when(employees.size()).thenReturn(3, 3, 2, 2, 1, 1, 0);
         when(employees.remove(anyInt())).thenReturn(employee1, employee2, employee3);
@@ -89,17 +89,17 @@ public class EmployeeServiceTest {
         verify(employees, times(7)).size();
         verify(employees, times(3)).remove(anyInt());
         verify(LOGGER, times(3)).info(anyString());
-        verify(employeesOrm).updateEmployeesStatusById(eq(EmployeeStatus.FIRED), anyList());
+        verify(employeesImplDb).updateEmployeesStatusById(eq(EmployeeStatus.FIRED), anyList());
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void increaseExperience() throws SQLException {
-        when(employeesOrm.getEmployeesByStatus(eq(EmployeeStatus.WORKS))).thenReturn(employees);
+        when(employeesImplDb.getEmployeesByStatus(eq(EmployeeStatus.WORKS))).thenReturn(employees);
         ArgumentCaptor<List<Employee>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         employeeService.increaseExperience();
-        verify(employeesOrm).getEmployeesByStatus(EmployeeStatus.WORKS);
-        verify(employeesOrm).increaseExp(argumentCaptor.capture());
+        verify(employeesImplDb).getEmployeesByStatus(EmployeeStatus.WORKS);
+        verify(employeesImplDb).increaseExp(argumentCaptor.capture());
         assertEquals(employees,argumentCaptor.getValue());
     }
 }

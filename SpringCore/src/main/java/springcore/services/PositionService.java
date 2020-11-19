@@ -7,7 +7,7 @@ import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
-import springcore.orm.*;
+import springcore.dao.*;
 import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
 
@@ -27,8 +27,8 @@ public class PositionService {
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<String> jobs;
     private final Company company;
-    private final PositionsOrm positionsOrm;
-    private final EmployeesOrm employeesOrm;
+    private final PositionsImplDb positionsImplDb;
+    private final EmployeesImplDb employeesImplDb;
     @InjectRandomInt(max = 10)
     private int positionsToClose;
     @InjectRandomInt(max = 20)
@@ -37,11 +37,11 @@ public class PositionService {
     private int employeesToChangeWork;
 
     @Autowired
-    public PositionService(Company company, PositionsOrm positionsOrm, EmployeesOrm employeesOrm,
+    public PositionService(Company company, PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb,
                            @Value("${jobs.path}") String path) throws IOException {
         this.company = company;
-        this.positionsOrm = positionsOrm;
-        this.employeesOrm = employeesOrm;
+        this.positionsImplDb = positionsImplDb;
+        this.employeesImplDb = employeesImplDb;
         this.jobs = Files.readAllLines(Paths.get(path));
     }
 
@@ -49,7 +49,7 @@ public class PositionService {
         int positionsToAddAmount = new Random().nextInt(positionsToOpen + 1);
         List<Position> positionsToAdd = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
-        List<Position> positions = positionsOrm.getAllPositions();
+        List<Position> positions = positionsImplDb.getAllPositions();
         for (int i = 0; i < positionsToAddAmount; i++) {
             int jobsScopeSize = jobs.size();
             Position position = jobsScopeSize > 0
@@ -69,13 +69,13 @@ public class PositionService {
             LOGGER.info(String.format(ADDED_POSITION_MESSAGE,
                     position));
         }
-        positionsOrm.updatePositions(positionsToUpdate);
-        positionsOrm.addPositions(positionsToAdd);
+        positionsImplDb.updatePositions(positionsToUpdate);
+        positionsImplDb.addPositions(positionsToAdd);
     }
 
     public void assignPositions() throws SQLException {
-        List<Employee> newEmployees = employeesOrm.getEmployeesByStatus(EmployeeStatus.NEW);
-        List<Position> positions = positionsOrm.getPositions(OPENED_VACANCIES_QUERY,
+        List<Employee> newEmployees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.NEW);
+        List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY,
                 DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
         for (Employee employee : newEmployees) {
@@ -93,18 +93,20 @@ public class PositionService {
             LOGGER.info(String.format(ASSIGNED_EMPLOYEE_MESSAGE,
                     employee, position));
         }
-        employeesOrm.updateEmployees(newEmployees);
-        positionsOrm.updatePositions(positionsToUpdate);
+        employeesImplDb.updateEmployees(newEmployees);
+        positionsImplDb.updatePositions(positionsToUpdate);
     }
 
     public void clearPositions() throws SQLException {
-        List<Position> positions = employeesOrm.getEmployeesByStatus(EmployeeStatus.FIRED)
-                .stream().map(Employee::getPosition).collect(Collectors.toList());
-        employeesOrm.updateEmployeesStatusByStatus(EmployeeStatus.WENT_OUT,
+        List<Position> positions = employeesImplDb.getEmployeesByStatus(EmployeeStatus.FIRED)
+                .stream()
+                .map(Employee::getPosition)
+                .collect(Collectors.toList());
+        employeesImplDb.updateEmployeesStatusByStatus(EmployeeStatus.WENT_OUT,
                 EmployeeStatus.FIRED);
         List<Position> positionsToUpdate = new ArrayList<>();
         for (Position position : positions) {
-            Position oldPosition = positionsOrm
+            Position oldPosition = positionsImplDb
                     .getPositions(POSITION_QUERY, position.getPositionName()).get(DECIMAL_BASE);
             if (positionsToUpdate.contains(oldPosition)) {
                 oldPosition = positionsToUpdate.get(positionsToUpdate.indexOf(oldPosition));
@@ -115,11 +117,11 @@ public class PositionService {
             company.openVacancy();
             LOGGER.info(String.format(OPENED_VACANCY_MESSAGE, position));
         }
-        positionsOrm.updatePositions(positionsToUpdate);
+        positionsImplDb.updatePositions(positionsToUpdate);
     }
 
     public void closePositions() throws SQLException {
-        List<Position> positions = positionsOrm.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
+        List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
         int positionsToCloseAmount = new Random().nextInt(positionsToClose + 1);
         for (int i = 0; i < positionsToCloseAmount
@@ -134,11 +136,11 @@ public class PositionService {
             company.closeVacancy();
             LOGGER.info(String.format(CLOSED_POSITION_MESSAGE, position));
         }
-        positionsOrm.updatePositions(positionsToUpdate);
+        positionsImplDb.updatePositions(positionsToUpdate);
     }
 
     public void changePosition() throws SQLException {
-        List<Position> allPositionList = positionsOrm.getAllPositions();
+        List<Position> allPositionList = positionsImplDb.getAllPositions();
         List<Employee> employees = getEmployeesList(allPositionList);
         List<Position> positionsWithVacancies = allPositionList.stream()
                 .filter(position -> position.getVacancies() > DECIMAL_BASE)
@@ -158,15 +160,15 @@ public class PositionService {
                 positionsToUpdate.add(newPosition);
             }
         }
-        employeesOrm.updateEmployees(employees);
-        positionsOrm.updatePositions(new ArrayList<>(positionsToUpdate));
+        employeesImplDb.updateEmployees(employees);
+        positionsImplDb.updatePositions(new ArrayList<>(positionsToUpdate));
     }
 
     private List<Employee> getEmployeesList(List<Position> allPositionList)
             throws SQLException {
         int amountEmployeesToChangeWork = new Random()
                 .nextInt(employeesToChangeWork + 1);
-        List<Employee> employees = employeesOrm
+        List<Employee> employees = employeesImplDb
                 .getEmployeesByStatus(EmployeeStatus.WORKS)
                 .stream()
                 .peek(employee -> {

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.*;
 import springcore.annotations.InjectRandomInt;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
-import springcore.orm.*;
+import springcore.dao.*;
 import springcore.position.Position;
 import springcore.salary.Salary;
 import springcore.statuses.EmployeeStatus;
@@ -23,43 +23,43 @@ import static springcore.constants.VariablesConstants.*;
 public class SalaryService {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final PositionsOrm positionsOrm;
-    private final EmployeesOrm employeesOrm;
+    private final PositionsImplDb positionsImplDb;
+    private final EmployeesImplDb employeesImplDb;
     @InjectRandomInt(max = 1000)
     private int salaryValueMax;
     @InjectRandomInt(max = 16)
     private int percentageOfIndexing;
 
-    public SalaryService(PositionsOrm positionsOrm, EmployeesOrm employeesOrm) {
-        this.positionsOrm = positionsOrm;
-        this.employeesOrm = employeesOrm;
+    public SalaryService(PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb) {
+        this.positionsImplDb = positionsImplDb;
+        this.employeesImplDb = employeesImplDb;
     }
 
     public void assignSalaries() throws SQLException {
-        List<Position> positions = positionsOrm.getPositions(SALARY_QUERY, DECIMAL_BASE);
+        List<Position> positions = positionsImplDb.getPositions(SALARY_QUERY, DECIMAL_BASE);
         for (Position position : positions) {
             Usd salary = new Usd(new Random().nextInt(salaryValueMax) + 1);
             position.setSalary(salary);
             LOGGER.info(String.format(ASSIGNED_SALARY_QUERY,
                     position, salary.toString()));
         }
-        positionsOrm.assignSalaries(positions);
+        positionsImplDb.assignSalaries(positions);
     }
 
     public void paySalary() throws SQLException {
-        List<Employee> employees = employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         for (Employee employee : employees) {
-            Usd salaryRate = new Usd(positionsOrm.getPositionSalary(employee.getPosition()
+            Usd salaryRate = new Usd(positionsImplDb.getPositionSalary(employee.getPosition()
                     .getPositionName()).getValue());
             int timeWorked = employee.getTimeWorked();
             BigDecimal personalBonuses = employee.getPersonalBonuses();
             Salary salary = new Salary(salaryRate, timeWorked, personalBonuses);
-            salary.paySalary(employee);
+            salary.setSalary(employee);
         }
     }
 
     public void assignBonuses() throws SQLException {
-        List<Employee> employees = employeesOrm.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int count = 0;
         for (Employee employee : employees) {
             int randPositive =
@@ -85,11 +85,11 @@ public class SalaryService {
             }
             count++;
         }
-        employeesOrm.updateEmployees(employees);
+        employeesImplDb.updateEmployees(employees);
     }
 
     public void increaseSalariesDueToInflation() throws SQLException {
-        List<Position> positions = positionsOrm.getAllPositions();
+        List<Position> positions = positionsImplDb.getAllPositions();
         int inflationRate = new Random().nextInt(percentageOfIndexing);
         LOGGER.info(String.format(INFLATION_MESSAGE, inflationRate));
         LOGGER.info(START_INDEXING_MESSAGE);
@@ -101,6 +101,6 @@ public class SalaryService {
                     position, oldSalary, newSalary));
         }
         LOGGER.info(END_INDEXING_MESSAGE);
-        positionsOrm.updatePositions(positions);
+        positionsImplDb.updatePositions(positions);
     }
 }

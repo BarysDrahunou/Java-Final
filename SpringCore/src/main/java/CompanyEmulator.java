@@ -23,7 +23,7 @@ public class CompanyEmulator {
 
         try (AnnotationConfigApplicationContext context
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
-             Connection connection = context.getBean(Connect.class).getConnection()) {
+            Connection connection = context.getBean(Connect.class).getConnection()) {
             truncateTables(connection);
             EmployeeService employeeService = context.getBean(EmployeeService.class);
             PositionService positionService = context.getBean(PositionService.class);
