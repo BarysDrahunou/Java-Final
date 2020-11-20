@@ -51,18 +51,18 @@ public class PositionServiceTest {
         MockitoAnnotations.initMocks(this);
         path = "src/main/resources/testJobs.txt";
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        positionService = new PositionService(positionsImplDb, employeesImplDb, path);
+        positionService = new PositionServiceImplementation(positionsImplDb, employeesImplDb, path);
         positionService.setCompany(company);
-        Field jobsField = PositionService.class.getDeclaredField("jobs");
+        Field jobsField = PositionServiceImplementation.class.getDeclaredField("jobs");
         jobsField.setAccessible(true);
         ReflectionUtils.setField(jobsField, positionService, jobs);
-        Field positionsToOpen = PositionService.class.getDeclaredField("positionsToOpen");
+        Field positionsToOpen = PositionServiceImplementation.class.getDeclaredField("positionsToOpen");
         positionsToOpen.setAccessible(true);
         ReflectionUtils.setField(positionsToOpen, positionService, 10);
-        Field positionsToClose = PositionService.class.getDeclaredField("positionsToClose");
+        Field positionsToClose = PositionServiceImplementation.class.getDeclaredField("positionsToClose");
         positionsToClose.setAccessible(true);
         ReflectionUtils.setField(positionsToClose, positionService, 100500);
-        Field employeesToChangeWork = PositionService.class.getDeclaredField("employeesToChangeWork");
+        Field employeesToChangeWork = PositionServiceImplementation.class.getDeclaredField("employeesToChangeWork");
         employeesToChangeWork.setAccessible(true);
         ReflectionUtils.setField(employeesToChangeWork, positionService, 100500);
     }

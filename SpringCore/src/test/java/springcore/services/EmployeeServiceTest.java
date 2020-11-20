@@ -38,13 +38,13 @@ public class EmployeeServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        employeeService = new EmployeeService();
+        employeeService = new EmployeeServiceImplementation();
         employeeService.setCompany(company);
         employeeService.setEmployeesImplDb(employeesImplDb);
-        Field employeesToFire = EmployeeService.class.getDeclaredField("employeesToFire");
+        Field employeesToFire = EmployeeServiceImplementation.class.getDeclaredField("employeesToFire");
         employeesToFire.setAccessible(true);
         ReflectionUtils.setField(employeesToFire, employeeService, 100500);
-        Field employeesToHire = EmployeeService.class.getDeclaredField("employeesToHire");
+        Field employeesToHire = EmployeeServiceImplementation.class.getDeclaredField("employeesToHire");
         employeesToHire.setAccessible(true);
         ReflectionUtils.setField(employeesToHire, employeeService, 100500);
     }

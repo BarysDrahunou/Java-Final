@@ -42,13 +42,13 @@ public class SalaryServiceTest {
     @Before
     public void setUp() throws NoSuchFieldException{
         MockitoAnnotations.initMocks(this);
-        salaryService = new SalaryService(positionsImplDb, employeesImplDb);
+        salaryService = new SalaryServiceImplementation(positionsImplDb, employeesImplDb);
         positions = new ArrayList<>(Arrays.asList(position1, position2));
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        Field salaryValueMax = SalaryService.class.getDeclaredField("salaryValueMax");
+        Field salaryValueMax = SalaryServiceImplementation.class.getDeclaredField("salaryValueMax");
         salaryValueMax.setAccessible(true);
         ReflectionUtils.setField(salaryValueMax, salaryService, 100500);
-        Field percentageOfIndexing = SalaryService.class.getDeclaredField("percentageOfIndexing");
+        Field percentageOfIndexing = SalaryServiceImplementation.class.getDeclaredField("percentageOfIndexing");
         percentageOfIndexing.setAccessible(true);
         ReflectionUtils.setField(percentageOfIndexing, salaryService, 10);
     }

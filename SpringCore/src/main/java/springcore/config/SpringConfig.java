@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import springcore.dao.*;
 import springcore.services.SalaryService;
+import springcore.services.SalaryServiceImplementation;
 
 
 @Configuration
@@ -14,6 +15,6 @@ public class SpringConfig {
     @Autowired
     public SalaryService getSalaryService(PositionsImplDb positionsImplDb,
                                           EmployeesImplDb employeesImplDb) {
-        return new SalaryService(positionsImplDb, employeesImplDb);
+        return new SalaryServiceImplementation(positionsImplDb, employeesImplDb);
     }
 }
