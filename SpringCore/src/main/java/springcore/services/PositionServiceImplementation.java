@@ -50,11 +50,13 @@ public class PositionServiceImplementation implements PositionService {
         List<Position> positionsToAdd = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
         List<Position> positions = positionsImplDb.getAllPositions();
+
         for (int i = 0; i < positionsToAddAmount; i++) {
             int jobsScopeSize = jobs.size();
             Position position = jobsScopeSize > 0
                     ? new Position(jobs.get(new Random().nextInt(jobs.size())))
                     : new Position(DEFAULT_JOB);
+
             if (positions.contains(position)) {
                 position = positions.get(positions.indexOf(position));
                 position.setVacancies(position.getVacancies() + INITIAL_VACANCIES);
@@ -64,11 +66,14 @@ public class PositionServiceImplementation implements PositionService {
                 position.setVacancies(INITIAL_VACANCIES);
                 positionsToAdd.add(position);
             }
+
             positions.add(position);
             company.openVacancy();
+
             LOGGER.info(String.format(ADDED_POSITION_MESSAGE,
                     position));
         }
+
         positionsImplDb.updatePositions(positionsToUpdate);
         positionsImplDb.addPositions(positionsToAdd);
     }
@@ -79,21 +84,27 @@ public class PositionServiceImplementation implements PositionService {
         List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY,
                 DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
+
         for (Employee employee : newEmployees) {
             Position position = positions
                     .get(new Random().nextInt(positions.size()));
+
             position.setVacancies(position.getVacancies() - 1);
             position.setActiveWorkers(position.getActiveWorkers() + 1);
+
             if (position.getVacancies() == DECIMAL_BASE) {
                 positions.remove(position);
             }
             positionsToUpdate.remove(position);
             positionsToUpdate.add(position);
+
             employee.setPosition(position);
             employee.setStatus(EmployeeStatus.WORKS);
+
             LOGGER.info(String.format(ASSIGNED_EMPLOYEE_MESSAGE,
                     employee, position));
         }
+
         employeesImplDb.updateEmployees(newEmployees);
         positionsImplDb.updatePositions(positionsToUpdate);
     }
@@ -104,22 +115,29 @@ public class PositionServiceImplementation implements PositionService {
                 .stream()
                 .map(Employee::getPosition)
                 .collect(Collectors.toList());
+        List<Position> positionsToUpdate = new ArrayList<>();
+
         employeesImplDb.updateEmployeesStatusByStatus(EmployeeStatus.WENT_OUT,
                 EmployeeStatus.FIRED);
-        List<Position> positionsToUpdate = new ArrayList<>();
+
         for (Position position : positions) {
             Position oldPosition = positionsImplDb
                     .getPositions(POSITION_QUERY, position.getPositionName())
                     .get(DECIMAL_BASE);
+
             if (positionsToUpdate.contains(oldPosition)) {
                 oldPosition = positionsToUpdate.get(positionsToUpdate.indexOf(oldPosition));
             }
+
             oldPosition.setVacancies(oldPosition.getVacancies() + 1);
             oldPosition.setActiveWorkers(oldPosition.getActiveWorkers() - 1);
+
             positionsToUpdate.add(oldPosition);
             company.openVacancy();
+
             LOGGER.info(String.format(OPENED_VACANCY_MESSAGE, position));
         }
+
         positionsImplDb.updatePositions(positionsToUpdate);
     }
 
@@ -128,15 +146,21 @@ public class PositionServiceImplementation implements PositionService {
         List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
         int positionsToCloseAmount = new Random().nextInt(positionsToClose + 1);
+
         for (int i = 0; i < positionsToCloseAmount && !positions.isEmpty(); i++) {
             Position position = positions.get(new Random().nextInt(positions.size()));
+
             position.setVacancies(position.getVacancies() - 1);
+
             if (position.getVacancies() == DECIMAL_BASE) {
                 positions.remove(position);
             }
+
             positionsToUpdate.remove(position);
             positionsToUpdate.add(position);
+
             company.closeVacancy();
+
             LOGGER.info(String.format(CLOSED_POSITION_MESSAGE, position));
         }
         positionsImplDb.updatePositions(positionsToUpdate);
@@ -151,12 +175,14 @@ public class PositionServiceImplementation implements PositionService {
                 .filter(position -> position.getVacancies() > DECIMAL_BASE)
                 .collect(Collectors.toList());
         Set<Position> positionsToUpdate = new HashSet<>();
+
         for (int i = 0; i < employees.size() && !positionsWithVacancies.isEmpty(); i++) {
             Employee employee = employees.get(i);
             Position oldPosition = allPositionList
                     .get(allPositionList.indexOf(employee.getPosition()));
             Position newPosition = positionsWithVacancies
                     .get(new Random().nextInt(positionsWithVacancies.size()));
+
             if (!oldPosition.equals(newPosition)) {
                 updatePositions(employee, oldPosition,
                         newPosition, allPositionList, positionsWithVacancies);
@@ -164,6 +190,7 @@ public class PositionServiceImplementation implements PositionService {
                 positionsToUpdate.add(newPosition);
             }
         }
+
         employeesImplDb.updateEmployees(employees);
         positionsImplDb.updatePositions(new ArrayList<>(positionsToUpdate));
     }
@@ -183,7 +210,9 @@ public class PositionServiceImplementation implements PositionService {
                     position.setSalary(positionSalary);
                 })
                 .collect(Collectors.toList());
+
         Collections.shuffle(employees);
+
         return employees.subList(0, Math.min(amountEmployeesToChangeWork
                 , employees.size()));
     }
@@ -193,19 +222,26 @@ public class PositionServiceImplementation implements PositionService {
                                  List<Position> positionsWithVacancies) {
         employee.setPosition(newPosition);
         employee.setTimeWorked(DECIMAL_BASE);
+
         LOGGER.info(String.format(CLEAR_EXPERIENCE_MESSAGE, employee));
+
         oldPosition.setActiveWorkers(oldPosition.getActiveWorkers() - 1);
         oldPosition.setVacancies(oldPosition.getVacancies() + 1);
+
         newPosition.setActiveWorkers(newPosition.getActiveWorkers() + 1);
         newPosition.setVacancies(newPosition.getVacancies() - 1);
+
         allPositionList.remove(oldPosition);
         allPositionList.remove(newPosition);
         allPositionList.add(newPosition);
         allPositionList.add(oldPosition);
+
         positionsWithVacancies.remove(newPosition);
+
         if (newPosition.getVacancies() > DECIMAL_BASE) {
             positionsWithVacancies.add(newPosition);
         }
+
         if (oldPosition.getSalary().getValue() > newPosition.getSalary().getValue()) {
             LOGGER.info(String.format(DEMOTED_EMPLOYEE_MESSAGE, employee, oldPosition,
                     newPosition, oldPosition.getSalary(), newPosition.getSalary()));

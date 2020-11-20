@@ -42,6 +42,7 @@ public final class Usd {
 
     @Override
     public String toString() {
-        return new BigDecimal(BigInteger.valueOf(value)).movePointLeft(2).toString();
+        return new BigDecimal(BigInteger.valueOf(value))
+                .movePointLeft(2).toString();
     }
 }

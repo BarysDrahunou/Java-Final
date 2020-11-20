@@ -24,7 +24,9 @@ public class EmployeesImplDb implements EmployeesDao {
 
     @Override
     public void addEmployees(List<Employee> employees) throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ADD_EMPLOYEES_QUERY);
+        PreparedStatement preparedStatement = connectTemporary
+                .getPreparedStatement(ADD_EMPLOYEES_QUERY);
+
         for (Employee employee : employees) {
             preparedStatement.setString(1, employee.getName());
             preparedStatement.setString(2, employee.getSurname());
@@ -33,7 +35,9 @@ public class EmployeesImplDb implements EmployeesDao {
             preparedStatement.addBatch();
             preparedStatement.clearParameters();
         }
+
         preparedStatement.executeBatch();
+
         connectTemporary.commit();
     }
 
@@ -41,9 +45,12 @@ public class EmployeesImplDb implements EmployeesDao {
     public List<Employee> getEmployeesByStatus(EmployeeStatus status) throws SQLException {
         List<Employee> employees = new ArrayList<>();
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_EMPLOYEES_BY_STATUS_QUERY);
+
         preparedStatement.setString(1, status.name());
         preparedStatement.execute();
+
         ResultSet resultSet = preparedStatement.getResultSet();
+
         while (resultSet.next()) {
             Employee employee = new Employee(resultSet.getString(NAME),
                     resultSet.getString(SURNAME));
@@ -54,6 +61,7 @@ public class EmployeesImplDb implements EmployeesDao {
             employee.setTimeWorked(resultSet.getInt(TIME_WORKED));
             employees.add(employee);
         }
+
         return employees;
     }
 
@@ -61,6 +69,7 @@ public class EmployeesImplDb implements EmployeesDao {
     public void updateEmployees(List<Employee> employees) throws SQLException {
         PreparedStatement preparedStatement =
                 connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
+
         for (Employee employee : employees) {
             preparedStatement.setString(1, employee.getName());
             preparedStatement.setString(2, employee.getSurname());
@@ -72,18 +81,22 @@ public class EmployeesImplDb implements EmployeesDao {
             preparedStatement.addBatch();
             preparedStatement.clearParameters();
         }
+
         preparedStatement.executeBatch();
+
         connectTemporary.commit();
     }
 
     @Override
     public void updateEmployeesStatusByStatus(EmployeeStatus setStatus, EmployeeStatus findStatus)
             throws SQLException {
-        PreparedStatement preparedStatement =
-                connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_STATUS_BY_STATUS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary
+                        .getPreparedStatement(UPDATE_EMPLOYEES_STATUS_BY_STATUS_QUERY);
+
         preparedStatement.setString(1, setStatus.name());
         preparedStatement.setString(2, findStatus.name());
         preparedStatement.execute();
+
         connectTemporary.commit();
     }
 
@@ -92,26 +105,32 @@ public class EmployeesImplDb implements EmployeesDao {
             throws SQLException {
         PreparedStatement preparedStatement =
                 connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_STATUS_BY_ID_QUERY);
+
         for (Employee employee : employees) {
             preparedStatement.setString(1, status.name());
             preparedStatement.setInt(2, employee.getId());
             preparedStatement.addBatch();
             preparedStatement.clearParameters();
         }
+
         preparedStatement.executeBatch();
+
         connectTemporary.commit();
     }
 
     @Override
     public void increaseExp(List<Employee> employees) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(INCREASE_EXPERIENCE_QUERY);
+
         for (Employee employee : employees) {
             preparedStatement.setInt(1, employee.getTimeWorked() + 1);
             preparedStatement.setInt(2, employee.getId());
             preparedStatement.addBatch();
             preparedStatement.clearParameters();
         }
+
         preparedStatement.executeBatch();
+
         connectTemporary.commit();
     }
 }

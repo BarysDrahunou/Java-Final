@@ -14,9 +14,12 @@ public class InjectRandomIntAnnotationBeanPostProcessor implements BeanPostProce
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName)
             throws BeansException {
+
         Field[] fields = bean.getClass().getDeclaredFields();
+
         for (Field field : fields) {
             InjectRandomInt annotation = field.getAnnotation(InjectRandomInt.class);
+
             if (annotation != null) {
                 int max = annotation.max() > 0 ? annotation.max() : 1;
                 Random random = new Random();
@@ -25,6 +28,7 @@ public class InjectRandomIntAnnotationBeanPostProcessor implements BeanPostProce
                 ReflectionUtils.setField(field, bean, value);
             }
         }
+
         return bean;
     }
 }

@@ -26,16 +26,21 @@ public class ConnectTemporary implements AutoCloseable {
             LOGGER.error(DRIVER_ERROR_MESSAGE, e);
         }
         Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD);
+
         connection.setAutoCommit(false);
+
         this.connection = connection;
     }
 
     public void truncateTables(String... tableNames) throws SQLException {
         Statement statement = getStatement();
+
         for (String tableName : tableNames) {
             statement.addBatch(tableName);
         }
+
         statement.executeBatch();
+
         commit();
     }
 

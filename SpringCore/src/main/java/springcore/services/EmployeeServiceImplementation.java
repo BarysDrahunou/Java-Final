@@ -34,13 +34,16 @@ public class EmployeeServiceImplementation implements EmployeeService {
     public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
+
         for (int i = 0; i < amountEmployeesToHire && company.getVacanciesCount() > 0; i++) {
             Employee employee = employeeCreator.createEmployeeAndGet();
+
             employee.setStatus(EmployeeStatus.NEW);
             employeesToHireList.add(employee);
             company.closeVacancy();
             LOGGER.info(String.format(HIRED_EMPLOYEE_MESSAGE, employee));
         }
+
         employeesImplDb.addEmployees(employeesToHireList);
     }
 
@@ -48,16 +51,21 @@ public class EmployeeServiceImplementation implements EmployeeService {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int amountEmployeesToFire = new Random().nextInt(employeesToFire + 1);
         List<Employee> employeesToFireList = new ArrayList<>();
+
         for (int i = 0; i < amountEmployeesToFire && employees.size() > 0; i++) {
             Employee employee = employees.remove(new Random().nextInt(employees.size()));
+
             employeesToFireList.add(employee);
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));
         }
+
         employeesImplDb.updateEmployeesStatusById(EmployeeStatus.FIRED, employeesToFireList);
     }
 
     public void increaseExperience() throws SQLException {
-        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Employee> employees = employeesImplDb
+                .getEmployeesByStatus(EmployeeStatus.WORKS);
+
         employeesImplDb.increaseExp(employees);
     }
 

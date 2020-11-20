@@ -27,15 +27,19 @@ public class CompanyEmulator {
         try (AnnotationConfigApplicationContext context
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
              ConnectTemporary connectTemporary = context.getBean(ConnectTemporary.class)) {
+
             connectTemporary.truncateTables(EMPLOYEES_TABLE_TRUNCATE_SQL,
                     POSITIONS_TABLE_TRUNCATE_SQL);
+
             Company company = new Company();
             EmployeeService employeeService = context.getBean(EmployeeService.class);
-            employeeService.setCompany(company);
             PositionService positionService = context.getBean(PositionService.class);
-            positionService.setCompany(company);
             SalaryService salaryService = context.getBean(SalaryService.class);
             EmployeeCreator employeeCreator = new EmployeeCreator(NAMES_PATH, SURNAMES_PATH);
+
+            employeeService.setCompany(company);
+            positionService.setCompany(company);
+
             for (int year = INITIAL_YEAR_VALUE; year <= years; year++) {
                 for (int month = INITIAL_MONTH_VALUE; month <= LAST_MONTH_VALUE; month++) {
                     positionService.addPositions();

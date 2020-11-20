@@ -23,7 +23,9 @@ public class Salary {
     }
 
     public static Usd changeSalaryFromInflation(int inflationRate, Usd oldSalaryRate) {
-        return oldSalaryRate.multiplication(inflationRate + PERCENT_BASE).division(PERCENT_BASE);
+        return oldSalaryRate
+                .multiplication(inflationRate + PERCENT_BASE)
+                .division(PERCENT_BASE);
     }
 
     public Usd getSalaryWithBonuses(Usd bonusSum, Usd experienceBonus) {

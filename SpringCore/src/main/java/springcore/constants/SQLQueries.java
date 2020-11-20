@@ -2,10 +2,14 @@ package springcore.constants;
 
 public final class SQLQueries {
 
-    public static final String EMPLOYEES_TABLE_TRUNCATE_SQL = "TRUNCATE TABLE SPRING.EMPLOYEES";
-    public static final String POSITIONS_TABLE_TRUNCATE_SQL = "TRUNCATE TABLE SPRING.POSITIONS";
+    public static final String EMPLOYEES_TABLE_TRUNCATE_SQL =
+            "TRUNCATE TABLE SPRING.EMPLOYEES";
+    public static final String POSITIONS_TABLE_TRUNCATE_SQL =
+            "TRUNCATE TABLE SPRING.POSITIONS";
+
     public static final String ADD_EMPLOYEES_QUERY =
-            "INSERT INTO SPRING.EMPLOYEES (NAME,SURNAME,STATUS,PERSONAL_BONUSES) VALUES (?,?,?,?)";
+            "INSERT INTO SPRING.EMPLOYEES (NAME,SURNAME,STATUS,PERSONAL_BONUSES) " +
+                    "VALUES (?,?,?,?)";
     public static final String GET_EMPLOYEES_BY_STATUS_QUERY =
             "SELECT * FROM SPRING.EMPLOYEES WHERE STATUS = ?";
     public static final String UPDATE_EMPLOYEES_QUERY =
@@ -17,6 +21,7 @@ public final class SQLQueries {
             "UPDATE SPRING.EMPLOYEES SET STATUS =? WHERE ID = ?";
     public static final String INCREASE_EXPERIENCE_QUERY =
             "UPDATE SPRING.EMPLOYEES SET TIME_WORKED= ? WHERE ID = ?";
+
     public static final String ADD_POSITIONS_QUERY =
             "INSERT INTO SPRING.POSITIONS (POSITION, VACANCIES) VALUES (?,?)";
     public static final String GET_ALL_POSITIONS_QUERY =
@@ -30,6 +35,7 @@ public final class SQLQueries {
                     " SALARY=? WHERE POSITION =?";
     public static final String ASSIGN_SALARIES_QUERY =
             "UPDATE SPRING.POSITIONS SET SALARY = ? WHERE POSITION =?";
+
     public static final String NAME = "NAME";
     public static final String SURNAME = "SURNAME";
     public static final String ID = "ID";

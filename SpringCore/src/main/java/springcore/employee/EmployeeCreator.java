@@ -33,9 +33,11 @@ public class EmployeeCreator {
             try {
                 List<String> data = Files.readAllLines(Paths.get(path));
                 hashNamesSurnamesMap.put(path, data);
+
                 return data;
             } catch (IOException e) {
                 LOGGER.error(e);
+
                 return hashNamesSurnamesMap.get(defaultNameInMap);
             }
         }
@@ -43,8 +45,10 @@ public class EmployeeCreator {
 
     public Employee createEmployeeAndGet() {
         Random random = new Random();
+
         String randomName = names.get(random.nextInt(names.size()));
         String randomSurname = surnames.get(random.nextInt(surnames.size()));
+
         return new Employee(randomName, randomSurname);
     }
 }
