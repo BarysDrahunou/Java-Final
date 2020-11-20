@@ -62,14 +62,4 @@ public class UsdTest {
         assertNotEquals(usd1.hashCode(), usd3.hashCode());
         assertEquals(usd1.hashCode(), new Usd(400).addition(usd2).hashCode());
     }
-
-    @Test
-    public void testToString() {
-        assertEquals(usd1.toString(), usd1.toString());
-        assertEquals(usd1.toString(), "5.00");
-        assertEquals(usd2.toString(), "1.00");
-        assertEquals(usd3.toString(), "0.00");
-        assertEquals(new Usd(75).toString(), "0.75");
-        assertEquals(new Usd(1).multiplication(150).toString(), "1.50");
-    }
 }

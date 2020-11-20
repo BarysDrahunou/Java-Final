@@ -58,8 +58,7 @@ public class EmployeeService {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int amountEmployeesToFire = new Random().nextInt(employeesToFire + 1);
         List<Employee> employeesToFireList = new ArrayList<>();
-        for (int i = 0; i < amountEmployeesToFire
-                && employees.size() > 0; i++) {
+        for (int i = 0; i < amountEmployeesToFire && employees.size() > 0; i++) {
             Employee employee = employees.remove(new Random().nextInt(employees.size()));
             employeesToFireList.add(employee);
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));

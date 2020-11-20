@@ -4,7 +4,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springcore.config.SpringConfig;
 import springcore.services.*;
-import springcore.utilityconnection.Connect;
+import springcore.utilityconnection.ConnectTemporary;
 
 import java.sql.*;
 
@@ -23,8 +23,8 @@ public class CompanyEmulator {
 
         try (AnnotationConfigApplicationContext context
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
-            Connection connection = context.getBean(Connect.class).getConnection()) {
-            truncateTables(connection);
+            ConnectTemporary connectTemporary = context.getBean(ConnectTemporary.class)) {
+            truncateTables(connectTemporary.getConnection());
             EmployeeService employeeService = context.getBean(EmployeeService.class);
             PositionService positionService = context.getBean(PositionService.class);
             SalaryService salaryService = context.getBean(SalaryService.class);
@@ -50,7 +50,6 @@ public class CompanyEmulator {
     }
 
     private void truncateTables(Connection connection) throws SQLException {
-        connection.setAutoCommit(false);
         Statement statement = connection.createStatement();
         statement.addBatch(EMPLOYEES_TABLE_MESSAGE);
         statement.addBatch(POSITIONS_TABLE_MESSAGE);

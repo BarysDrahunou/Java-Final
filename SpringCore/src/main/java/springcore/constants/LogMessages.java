@@ -55,4 +55,6 @@ public final class LogMessages {
             "Start indexing:";
     public static final String END_INDEXING_MESSAGE =
             "End indexing";
+    public static final String DRIVER_ERROR_MESSAGE =
+            "Problem with database driver";
 }

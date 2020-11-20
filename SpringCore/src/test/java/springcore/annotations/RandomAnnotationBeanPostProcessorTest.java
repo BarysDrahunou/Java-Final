@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
@@ -15,8 +14,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
 
 public class RandomAnnotationBeanPostProcessorTest {
 
@@ -51,30 +48,6 @@ public class RandomAnnotationBeanPostProcessorTest {
             MODIFIERS.set(field, mods & ~Modifier.FINAL);
         }
         field.set(RandomAnnotationBeanPostProcessor.class, LOGGER);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void setName() throws NoSuchFieldException, IllegalAccessException {
-        processor.setNames("RandomPath");
-        verify(LOGGER).error(any(IOException.class));
-        Field field = processor.getClass().getDeclaredField("names");
-        field.setAccessible(true);
-        List<String> names = (List<String>) field.get(processor);
-        assertEquals(1, names.size());
-        assertEquals("John", names.get(0));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void setSurname() throws NoSuchFieldException, IllegalAccessException {
-        processor.setSurnames("RandomPath");
-        verify(LOGGER).error(any(IOException.class));
-        Field field = processor.getClass().getDeclaredField("surnames");
-        field.setAccessible(true);
-        List<String> surnames = (List<String>) field.get(processor);
-        assertEquals(1, surnames.size());
-        assertEquals("Doe", surnames.get(0));
     }
 
     @Test

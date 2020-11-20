@@ -59,7 +59,7 @@ public class RandomAnnotationBeanPostProcessor implements BeanPostProcessor {
         return bean;
     }
 
-    public static void setRandomValue(Object bean, Field field,
+    private void setRandomValue(Object bean, Field field,
                                       Annotation annotation, List<String> values) {
         if (annotation != null) {
             String value = values.get(new Random().nextInt(values.size()));

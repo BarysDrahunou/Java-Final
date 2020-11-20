@@ -107,7 +107,8 @@ public class PositionService {
         List<Position> positionsToUpdate = new ArrayList<>();
         for (Position position : positions) {
             Position oldPosition = positionsImplDb
-                    .getPositions(POSITION_QUERY, position.getPositionName()).get(DECIMAL_BASE);
+                    .getPositions(POSITION_QUERY, position.getPositionName())
+                    .get(DECIMAL_BASE);
             if (positionsToUpdate.contains(oldPosition)) {
                 oldPosition = positionsToUpdate.get(positionsToUpdate.indexOf(oldPosition));
             }
@@ -124,8 +125,7 @@ public class PositionService {
         List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
         int positionsToCloseAmount = new Random().nextInt(positionsToClose + 1);
-        for (int i = 0; i < positionsToCloseAmount
-                && !positions.isEmpty(); i++) {
+        for (int i = 0; i < positionsToCloseAmount && !positions.isEmpty(); i++) {
             Position position = positions.get(new Random().nextInt(positions.size()));
             position.setVacancies(position.getVacancies() - 1);
             if (position.getVacancies() == DECIMAL_BASE) {
@@ -142,12 +142,12 @@ public class PositionService {
     public void changePosition() throws SQLException {
         List<Position> allPositionList = positionsImplDb.getAllPositions();
         List<Employee> employees = getEmployeesList(allPositionList);
-        List<Position> positionsWithVacancies = allPositionList.stream()
+        List<Position> positionsWithVacancies = allPositionList
+                .stream()
                 .filter(position -> position.getVacancies() > DECIMAL_BASE)
                 .collect(Collectors.toList());
         Set<Position> positionsToUpdate = new HashSet<>();
-        for (int i = 0; i < employees.size()
-                && !positionsWithVacancies.isEmpty(); i++) {
+        for (int i = 0; i < employees.size() && !positionsWithVacancies.isEmpty(); i++) {
             Employee employee = employees.get(i);
             Position oldPosition = allPositionList
                     .get(allPositionList.indexOf(employee.getPosition()));

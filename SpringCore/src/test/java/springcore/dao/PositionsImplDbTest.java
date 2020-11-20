@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
 import springcore.currency.Usd;
 import springcore.position.Position;
-import springcore.utilityconnection.Connect;
+import springcore.utilityconnection.ConnectTemporary;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 public class PositionsImplDbTest {
 
     @Mock
-    Connect connect;
+    ConnectTemporary connectTemporary;
     @Mock
     Connection connection;
     @Mock
@@ -49,8 +49,8 @@ public class PositionsImplDbTest {
         position2.setActiveWorkers(3);
         position2.setSalary(new Usd(250));
         positions = new ArrayList<>(Arrays.asList(position1, position2));
-        positionsImplDb = new PositionsImplDb();
-        Field field = PositionsImplDb.class.getDeclaredField("connection");
+        positionsImplDb = new PositionsImplDb(connectTemporary);
+        Field field = PositionsImplDb.class.getDeclaredField("connectTemporary");
         field.setAccessible(true);
         ReflectionUtils.setField(field, positionsImplDb, connection);
     }

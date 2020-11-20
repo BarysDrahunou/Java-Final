@@ -1,7 +1,7 @@
 package springcore.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import springcore.employee.Employee;
 import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
@@ -15,16 +15,17 @@ import java.util.List;
 
 import static springcore.constants.SQLQueries.*;
 
-@Component
+@Repository
 public class EmployeesImplDb implements EmployeesDao {
 
     private final ConnectTemporary connectTemporary;
 
     @Autowired
-    public EmployeesImplDb() throws SQLException {
-        this.connectTemporary = ConnectTemporary.getInstance();
+    public EmployeesImplDb(ConnectTemporary connectTemporary){
+        this.connectTemporary = connectTemporary;
     }
 
+    @Override
     public void addEmployees(List<Employee> employees) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ADD_EMPLOYEES_QUERY);
         for (Employee employee : employees) {
@@ -39,6 +40,7 @@ public class EmployeesImplDb implements EmployeesDao {
         connectTemporary.commit();
     }
 
+    @Override
     public List<Employee> getEmployeesByStatus(EmployeeStatus status) throws SQLException {
         List<Employee> employees = new ArrayList<>();
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_EMPLOYEES_BY_STATUS_QUERY);
@@ -58,6 +60,7 @@ public class EmployeesImplDb implements EmployeesDao {
         return employees;
     }
 
+    @Override
     public void updateEmployees(List<Employee> employees) throws SQLException {
         PreparedStatement preparedStatement =
                 connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
@@ -76,6 +79,7 @@ public class EmployeesImplDb implements EmployeesDao {
         connectTemporary.commit();
     }
 
+    @Override
     public void updateEmployeesStatusByStatus(EmployeeStatus setStatus, EmployeeStatus findStatus)
             throws SQLException {
         PreparedStatement preparedStatement =
@@ -86,6 +90,7 @@ public class EmployeesImplDb implements EmployeesDao {
         connectTemporary.commit();
     }
 
+    @Override
     public void updateEmployeesStatusById(EmployeeStatus status, List<Employee> employees)
             throws SQLException {
         PreparedStatement preparedStatement =
@@ -100,6 +105,7 @@ public class EmployeesImplDb implements EmployeesDao {
         connectTemporary.commit();
     }
 
+    @Override
     public void increaseExp(List<Employee> employees) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(INCREASE_EXPERIENCE_QUERY);
         for (Employee employee : employees) {

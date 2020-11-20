@@ -1,30 +1,28 @@
 package springcore.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import springcore.currency.Usd;
 import springcore.position.Position;
 import springcore.utilityconnection.ConnectTemporary;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
-import static springcore.constants.VariablesConstants.DECIMAL_BASE;
+import static springcore.constants.VariablesConstants.*;
 
-@Component
-public class PositionsImplDb implements PositionsDao{
+@Repository
+public class PositionsImplDb implements PositionsDao {
 
     private final ConnectTemporary connectTemporary;
 
     @Autowired
-    public PositionsImplDb() throws SQLException {
-        this.connectTemporary = ConnectTemporary.getInstance();
+    public PositionsImplDb(ConnectTemporary connectTemporary){
+        this.connectTemporary = connectTemporary;
     }
 
+    @Override
     public void addPositions(List<Position> positions) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ADD_POSITIONS_QUERY);
         for (Position position : positions) {
@@ -37,11 +35,13 @@ public class PositionsImplDb implements PositionsDao{
         connectTemporary.commit();
     }
 
+    @Override
     public List<Position> getAllPositions() throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_ALL_POSITIONS_QUERY);
         return getPositionsList(preparedStatement);
     }
 
+    @Override
     public List<Position> getPositions(String argument, Object value) throws SQLException {
         String query = String.format(GET_EXACT_POSITIONS_QUERY, argument);
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(query);
@@ -64,6 +64,7 @@ public class PositionsImplDb implements PositionsDao{
         return positions;
     }
 
+    @Override
     public Usd getPositionSalary(String position) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(GET_POSITION_SALARY_QUERY);
         preparedStatement.setString(1, position);
@@ -76,6 +77,7 @@ public class PositionsImplDb implements PositionsDao{
         return usd;
     }
 
+    @Override
     public void updatePositions(List<Position> positions)
             throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(UPDATE_POSITIONS_QUERY);
@@ -91,6 +93,7 @@ public class PositionsImplDb implements PositionsDao{
         connectTemporary.commit();
     }
 
+    @Override
     public void assignSalaries(List<Position> positions) throws SQLException {
         PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ASSIGN_SALARIES_QUERY);
         for (Position position : positions) {

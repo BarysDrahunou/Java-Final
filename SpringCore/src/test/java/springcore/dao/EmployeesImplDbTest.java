@@ -11,7 +11,7 @@ import org.springframework.util.ReflectionUtils;
 import springcore.employee.Employee;
 import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
-import springcore.utilityconnection.Connect;
+import springcore.utilityconnection.ConnectTemporary;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -31,8 +31,9 @@ import static org.mockito.Mockito.*;
 
 @RunWith(JUnit4.class)
 public class EmployeesImplDbTest {
+
     @Mock
-    Connect connect;
+    ConnectTemporary connectTemporary;
     @Mock
     Connection connection;
     @Mock
@@ -61,10 +62,10 @@ public class EmployeesImplDbTest {
         employee2.setTimeWorked(2);
         employee2.setId(2);
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        employeesImplDb = new EmployeesImplDb();
-        Field field = EmployeesImplDb.class.getDeclaredField("connection");
+        employeesImplDb = new EmployeesImplDb(connectTemporary);
+        Field field = EmployeesImplDb.class.getDeclaredField("connectTemporary");
         field.setAccessible(true);
-        ReflectionUtils.setField(field, employeesImplDb, connection);
+        ReflectionUtils.setField(field, employeesImplDb, connectTemporary);
     }
 
     @Test
