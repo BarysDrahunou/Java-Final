@@ -15,7 +15,7 @@ public class EmployeeTest {
     @Before
     public void init() {
         employee1 = new Employee("Vitali", "Egorov");
-        employee2 = new Employee();
+        employee2 = new Employee("Igor","Suvorov");
         employee3 = new Employee("Sergey", "Drobotenko");
     }
 
@@ -24,7 +24,7 @@ public class EmployeeTest {
         assertNotEquals(employee1, employee2);
         assertNotEquals(employee2, employee3);
         assertNotEquals(employee3, employee1);
-        assertEquals(employee2, new Employee());
+        assertEquals(employee2, new Employee("Igor","Suvorov"));
         assertEquals(employee1, new Employee("Vitali", "Egorov"));
     }
 
@@ -33,7 +33,7 @@ public class EmployeeTest {
         assertNotEquals(employee1.hashCode(), employee2.hashCode());
         assertNotEquals(employee2.hashCode(), employee3.hashCode());
         assertNotEquals(employee3.hashCode(), employee1.hashCode());
-        assertEquals(employee2.hashCode(), new Employee().hashCode());
+        assertEquals(employee2.hashCode(), new Employee("Igor","Suvorov").hashCode());
         assertEquals(employee1.hashCode(),
                 new Employee("Vitali", "Egorov").hashCode());
     }

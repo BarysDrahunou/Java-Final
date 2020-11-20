@@ -7,6 +7,7 @@ import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
 import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
+import springcore.employee.EmployeeCreator;
 import springcore.statuses.EmployeeStatus;
 
 import java.lang.reflect.*;
@@ -53,7 +54,7 @@ public class EmployeeServiceTest {
         when(company.getVacanciesCount()).thenReturn(3, 2, 1, 0);
         when(context.getBean(Employee.class)).thenReturn(employee1, employee2, employee3);
         ArgumentCaptor<EmployeeStatus> argumentCaptor = ArgumentCaptor.forClass(EmployeeStatus.class);
-        employeeService.hireEmployees();
+        employeeService.hireEmployees(new EmployeeCreator("Random","Random"));
         verify(employee1).setStatus(argumentCaptor.capture());
         verify(employee2).setStatus(argumentCaptor.capture());
         verify(employee3).setStatus(argumentCaptor.capture());

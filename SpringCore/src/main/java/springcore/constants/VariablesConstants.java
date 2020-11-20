@@ -20,8 +20,9 @@ public final class VariablesConstants {
     public static final String POSITIONS_TABLE_MESSAGE = "TRUNCATE TABLE SPRING.POSITIONS";
     public static final String NAMES_PATH = "src/main/resources/names.txt";
     public static final String SURNAMES_PATH = "src/main/resources/surnames.txt";
-    public static final String JOBS_PATH = "src/main/resources/jobs.txt";
     public static final String DEFAULT_NAME = "John";
     public static final String DEFAULT_SURNAME = "Doe";
+    public static final String DEFAULT_NAMES = "Default names";
+    public static final String DEFAULT_SURNAMES = "Default surnames";
     public static final String DEFAULT_JOB = "Actor";
 }

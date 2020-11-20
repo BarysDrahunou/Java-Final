@@ -4,6 +4,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springcore.company.Company;
 import springcore.config.SpringConfig;
+import springcore.employee.EmployeeCreator;
 import springcore.services.*;
 import springcore.utilityconnection.ConnectTemporary;
 
@@ -26,15 +27,15 @@ public class CompanyEmulator {
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
              ConnectTemporary connectTemporary = context.getBean(ConnectTemporary.class)) {
             truncateTables(connectTemporary);
-            Company company=new Company();
-            EmployeeService employeeService = context.getBean(EmployeeService.class,company);
+            EmployeeService employeeService = context.getBean(EmployeeService.class);
             PositionService positionService = context.getBean(PositionService.class);
             SalaryService salaryService = context.getBean(SalaryService.class);
+            EmployeeCreator employeeCreator = new EmployeeCreator(NAMES_PATH, SURNAMES_PATH);
             for (int year = INITIAL_YEAR_VALUE; year <= years; year++) {
                 for (int month = INITIAL_MONTH_VALUE; month <= LAST_MONTH_VALUE; month++) {
                     positionService.addPositions();
                     salaryService.assignSalaries();
-                    employeeService.hireEmployees();
+                    employeeService.hireEmployees(employeeCreator);
                     positionService.assignPositions();
                     employeeService.increaseExperience();
                     salaryService.assignBonuses();

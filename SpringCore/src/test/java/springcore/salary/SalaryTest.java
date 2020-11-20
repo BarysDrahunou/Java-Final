@@ -2,7 +2,6 @@ package springcore.salary;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 import springcore.currency.Usd;
 import springcore.employee.Employee;

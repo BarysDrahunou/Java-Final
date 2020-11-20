@@ -1,6 +1,5 @@
 package springcore.employee;
 
-import springcore.annotations.*;
 import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
 
@@ -11,16 +10,11 @@ public class Employee {
 
     private int id;
     private int timeWorked;
-    @RandomName
-    private String name;
-    @RandomSurname
-    private String surname;
+    private final String name;
+    private final String surname;
     private EmployeeStatus status;
     private Position position;
     private BigDecimal personalBonuses = BigDecimal.ZERO;
-
-    public Employee() {
-    }
 
     public Employee(String name, String surname) {
         this.name = name;

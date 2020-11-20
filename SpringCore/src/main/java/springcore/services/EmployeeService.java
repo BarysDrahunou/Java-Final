@@ -2,13 +2,13 @@ package springcore.services;
 
 import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
+import springcore.employee.EmployeeCreator;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.SQLException;
@@ -41,11 +41,11 @@ public class EmployeeService {
         this.employeesImplDb = employeesImplDb;
     }
 
-    public void hireEmployees() throws SQLException {
+    public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
         for (int i = 0; i < amountEmployeesToHire && company.getVacanciesCount() > 0; i++) {
-            Employee employee = new Employee();
+            Employee employee = employeeCreator.createEmployeeAndGet();
             employee.setStatus(EmployeeStatus.NEW);
             employeesToHireList.add(employee);
             company.closeVacancy();
