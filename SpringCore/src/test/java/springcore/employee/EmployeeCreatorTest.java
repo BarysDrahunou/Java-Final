@@ -25,6 +25,7 @@ public class EmployeeCreatorTest {
         baseSurnames = new ArrayList<>(Arrays.asList("Smith",
                 "Johnson",
                 "Williams"));
+
         employeeCreator1 = new EmployeeCreator("src/main/resources/testNames.txt",
                 "src/main/resources/testSurnames.txt");
         employeeCreator2 = new EmployeeCreator("random",
@@ -35,6 +36,7 @@ public class EmployeeCreatorTest {
     public void createEmployeeAndGet() {
         List<String> names = new ArrayList<>();
         List<String> surnames = new ArrayList<>();
+
         IntStream
                 .range(0, 500)
                 .mapToObj(x -> employeeCreator1.createEmployeeAndGet())
@@ -42,6 +44,7 @@ public class EmployeeCreatorTest {
                     names.add(employee.getName());
                     surnames.add(employee.getSurname());
                 });
+
         assertTrue(baseNames.containsAll(names));
         assertTrue(baseSurnames.containsAll(surnames));
         assertTrue(IntStream

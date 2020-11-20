@@ -10,13 +10,15 @@ public class CompanyTest {
 
     @Test
     public void companyTest() {
-
         assertEquals(0, company.getVacanciesCount());
+
         company.openVacancy();
         assertEquals(1, company.getVacanciesCount());
+
         company.openVacancy();
         company.openVacancy();
         assertEquals(3, company.getVacanciesCount());
+
         company.closeVacancy();
         assertEquals(2,company.getVacanciesCount());
     }

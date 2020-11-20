@@ -21,11 +21,13 @@ public class InjectRandomIntAnnotationBeanPostProcessorTest {
     @Test
     public void postProcessBeforeInitialization() {
         List<TestClass> beans = new ArrayList<>();
+
         for (int i = 0; i < 500; i++) {
             TestClass bean = (TestClass) processor
                     .postProcessBeforeInitialization(new TestClass(), "BeanName");
             beans.add(bean);
         }
+
         assertTrue(beans
                 .stream()
                 .allMatch(bean1 -> bean1.notRandomField == 15

@@ -30,6 +30,7 @@ public class SalaryTest {
         salary4 = new Salary(new Usd(700), 0, BigDecimal.ONE);
         salary5 = new Salary(new Usd(700), 0, BigDecimal.ONE.negate());
         salary6 = new Salary(new Usd(700), 5, BigDecimal.ZERO);
+
         employee = new Employee("Vitali", "Burakovski");
     }
 
@@ -43,6 +44,7 @@ public class SalaryTest {
                 Salary.changeSalaryFromInflation(20, new Usd(600)));
         assertEquals(new Usd(11),
                 Salary.changeSalaryFromInflation(0, new Usd(11)));
+
         assertNotEquals(new Usd(11),
                 Salary.changeSalaryFromInflation(10, new Usd(11)));
     }

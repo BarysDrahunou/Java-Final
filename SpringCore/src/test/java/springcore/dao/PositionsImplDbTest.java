@@ -170,19 +170,27 @@ public class PositionsImplDbTest {
     @Test
     public void assignSalaries() throws SQLException {
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
+
         positionsImplDb.assignSalaries(positions);
+
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
                 stringArgumentCaptor.capture());
+
         List<String> stringArguments = stringArgumentCaptor.getAllValues();
+
         assertEquals(position1.getPositionName(), stringArguments.get(0));
         assertEquals(position2.getPositionName(), stringArguments.get(1));
+
         ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(preparedStatement, times(2)).setInt(anyInt(),
                 integerArgumentCaptor.capture());
+
         List<Integer> integerArguments = integerArgumentCaptor.getAllValues();
+
         assertEquals(position1.getSalary().getValue(), (long) integerArguments.get(0));
         assertEquals(position2.getSalary().getValue(), (long) integerArguments.get(1));
+
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();

@@ -23,6 +23,7 @@ public class PositionTest {
         assertNotEquals(position1, position2);
         assertNotEquals(position2, position3);
         assertNotEquals(position1, position3);
+
         assertEquals(position1, new Position("Agent"));
     }
 
@@ -31,6 +32,7 @@ public class PositionTest {
         assertNotEquals(position1.hashCode(), position2.hashCode());
         assertNotEquals(position2.hashCode(), position3.hashCode());
         assertNotEquals(position1.hashCode(), position3.hashCode());
+
         assertEquals(position1.hashCode(), new Position("Agent").hashCode());
     }
 }

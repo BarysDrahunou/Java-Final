@@ -49,20 +49,30 @@ public class PositionServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
         path = "src/main/resources/testJobs.txt";
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
         positionService = new PositionServiceImplementation(positionsImplDb, employeesImplDb, path);
+
         positionService.setCompany(company);
+
         Field jobsField = PositionServiceImplementation.class.getDeclaredField("jobs");
+
         jobsField.setAccessible(true);
         ReflectionUtils.setField(jobsField, positionService, jobs);
+
         Field positionsToOpen = PositionServiceImplementation.class.getDeclaredField("positionsToOpen");
+
         positionsToOpen.setAccessible(true);
         ReflectionUtils.setField(positionsToOpen, positionService, 10);
+
         Field positionsToClose = PositionServiceImplementation.class.getDeclaredField("positionsToClose");
+
         positionsToClose.setAccessible(true);
         ReflectionUtils.setField(positionsToClose, positionService, 100500);
+
         Field employeesToChangeWork = PositionServiceImplementation.class.getDeclaredField("employeesToChangeWork");
+
         employeesToChangeWork.setAccessible(true);
         ReflectionUtils.setField(employeesToChangeWork, positionService, 100500);
     }
@@ -79,7 +89,9 @@ public class PositionServiceTest {
                 .thenReturn(new Position("Rocker"),
                         new Position("Actor"));
         when(positions.indexOf(any(Position.class))).thenReturn(1, 2);
+
         positionService.addPositions();
+
         verify(company, atMost(10)).openVacancy();
         verify(positions, atMost(10)).remove(any(Position.class));
         verify(positions, atMost(10)).add(any(Position.class));
@@ -96,7 +108,9 @@ public class PositionServiceTest {
         when(positions.remove(any(Position.class))).thenReturn(true);
         when(position1.getVacancies()).thenReturn(1, 0);
         when(position2.getVacancies()).thenReturn(5, 4);
+
         positionService.assignPositions();
+
         verify(employee1).setPosition(any(Position.class));
         verify(employee1).setStatus(any(EmployeeStatus.class));
         verify(employee2).setPosition(any(Position.class));
@@ -119,7 +133,9 @@ public class PositionServiceTest {
         when(positions.get(0)).thenReturn(position1, position2);
         when(position1.getVacancies()).thenReturn(1);
         when(position2.getVacancies()).thenReturn(4);
+
         positionService.clearPositions();
+
         verify(employeesImplDb).updateEmployeesStatusByStatus(any(EmployeeStatus.class)
                 , any(EmployeeStatus.class));
         verify(company, times(2)).openVacancy();
@@ -137,7 +153,9 @@ public class PositionServiceTest {
         when(positions.remove(any(Position.class))).thenReturn(true);
         when(position1.getVacancies()).thenReturn(1, 0);
         when(position2.getVacancies()).thenReturn(5, 4);
+
         positionService.closePositions();
+
         verify(positions, times(1)).remove(any(Position.class));
         verify(company, times(2)).closeVacancy();
         verify(positionsImplDb).updatePositions(anyList());
@@ -145,28 +163,36 @@ public class PositionServiceTest {
 
     @Test
     public void changePosition() throws SQLException {
+        Usd salary1 = new Usd(100);
+        Usd salary2 = new Usd(500);
+        int firstPositionVacancies=5;
+        int secondPositionVacancies=10;
+
         employees.addAll(new ArrayList<>(employees));
+
         when(positionsImplDb.getAllPositions()).thenReturn(positions);
         when(employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS)).thenReturn(employees);
         when(positions.stream()).thenReturn(Stream.of(position1,position2));
+
         when(employee1.getPosition()).thenReturn(position1);
         when(employee2.getPosition()).thenReturn(position2);
+
         when(positions.get(anyInt())).thenReturn(position1,position2);
-        Usd salary1 = new Usd(100);
-        Usd salary2 = new Usd(500);
         when(position1.getSalary()).thenReturn(salary1);
         when(position2.getSalary()).thenReturn(salary2);
-        int firstPositionVacancies=5;
-        int secondPositionVacancies=10;
         when(position1.getVacancies()).thenReturn(firstPositionVacancies);
         when(position2.getVacancies()).thenReturn(secondPositionVacancies);
-        ArgumentCaptor<Usd> argumentCaptor=ArgumentCaptor.forClass(Usd.class);
         when(positions.get(anyInt())).thenReturn(position2,position1,position1,position2);
+
+        ArgumentCaptor<Usd> argumentCaptor=ArgumentCaptor.forClass(Usd.class);
+
         positionService.changePosition();
+
         verify(position1,times(2)).setSalary(argumentCaptor.capture());
         verify(position2,times(2)).setSalary(argumentCaptor.capture());
+        verify(employeesImplDb).updateEmployees(anyList());
+
         assertEquals(salary1,argumentCaptor.getAllValues().get(1));
         assertEquals(salary2,argumentCaptor.getAllValues().get(0));
-        verify(employeesImplDb).updateEmployees(anyList());
     }
 }
