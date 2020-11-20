@@ -1,30 +1,24 @@
 package springcore.annotations;
 
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class RandomAnnotationBeanPostProcessorTest {
 
-    @Mock
-    Logger LOGGER;
     RandomAnnotationBeanPostProcessor processor;
     List<String> randomNames;
     List<String> randomSurnames;
 
     @Before
-    public void init() throws NoSuchFieldException, IllegalAccessException {
+    public void init() throws NoSuchFieldException {
         MockitoAnnotations.initMocks(this);
         randomNames = new ArrayList<>(Arrays.asList("Vitya", "Vasya", "Petya", "Igorek"));
         randomSurnames = new ArrayList<>(Arrays.asList("Petrov", "Sidorov"));
@@ -38,16 +32,6 @@ public class RandomAnnotationBeanPostProcessorTest {
                 .class.getDeclaredField("surnames");
         surnames.setAccessible(true);
         ReflectionUtils.setField(surnames, processor, randomSurnames);
-        Field field = RandomAnnotationBeanPostProcessor.class.getDeclaredField("LOGGER");
-        field.setAccessible(true);
-        var lookup = MethodHandles.privateLookupIn(Field.class,
-                MethodHandles.lookup());
-        VarHandle MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods) && Modifier.isStatic(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
-        field.set(RandomAnnotationBeanPostProcessor.class, LOGGER);
     }
 
     @Test

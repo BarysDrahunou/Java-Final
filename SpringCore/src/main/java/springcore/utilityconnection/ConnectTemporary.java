@@ -4,10 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static springcore.constants.LogMessages.*;
 
@@ -33,12 +30,12 @@ public class ConnectTemporary implements AutoCloseable {
         this.connection = connection;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
     public PreparedStatement getPreparedStatement(String sql) throws SQLException {
         return connection != null ? connection.prepareStatement(sql) : null;
+    }
+
+    public Statement getStatement() throws SQLException {
+        return connection != null ? connection.createStatement() : null;
     }
 
     public void commit() throws SQLException {

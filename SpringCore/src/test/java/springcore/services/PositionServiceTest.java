@@ -1,6 +1,5 @@
 package springcore.services;
 
-import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -11,10 +10,8 @@ import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
-import springcore.salary.Salary;
 import springcore.statuses.EmployeeStatus;
 
-import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.sql.SQLException;
 import java.util.*;
@@ -44,8 +41,6 @@ public class PositionServiceTest {
     Position position1;
     @Mock
     Position position2;
-    @Mock
-    Logger LOGGER;
     String path;
     @Mock
     List<Position> positions;
@@ -60,15 +55,6 @@ public class PositionServiceTest {
         Field jobsField = PositionService.class.getDeclaredField("jobs");
         jobsField.setAccessible(true);
         ReflectionUtils.setField(jobsField, positionService, jobs);
-        Field field = PositionService.class.getDeclaredField("LOGGER");
-        field.setAccessible(true);
-        var lookup = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup());
-        VarHandle MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods) && Modifier.isStatic(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
-        field.set(Salary.class, LOGGER);
         Field positionsToOpen = PositionService.class.getDeclaredField("positionsToOpen");
         positionsToOpen.setAccessible(true);
         ReflectionUtils.setField(positionsToOpen, positionService, 10);
@@ -95,7 +81,6 @@ public class PositionServiceTest {
         positionService.addPositions();
         verify(company, atMost(10)).openVacancy();
         verify(positions, atMost(10)).remove(any(Position.class));
-        verify(LOGGER, atMost(10)).info(anyString());
         verify(positions, atMost(10)).add(any(Position.class));
         verify(positionsImplDb).updatePositions(anyList());
         verify(positionsImplDb).addPositions(anyList());
@@ -120,7 +105,6 @@ public class PositionServiceTest {
         verify(positions, times(2)).size();
         verify(positions, times(1)).remove(any(Position.class));
         verify(positions, times(2)).get(anyInt());
-        verify(LOGGER, times(2)).info(anyString());
     }
 
     @Test
@@ -138,7 +122,6 @@ public class PositionServiceTest {
         verify(employeesImplDb).updateEmployeesStatusByStatus(any(EmployeeStatus.class)
                 , any(EmployeeStatus.class));
         verify(company, times(2)).openVacancy();
-        verify(LOGGER, times(2)).info(anyString());
         verify(positionsImplDb).updatePositions(anyList());
     }
 
@@ -156,7 +139,6 @@ public class PositionServiceTest {
         positionService.closePositions();
         verify(positions, times(1)).remove(any(Position.class));
         verify(company, times(2)).closeVacancy();
-        verify(LOGGER, times(2)).info(anyString());
         verify(positionsImplDb).updatePositions(anyList());
     }
 
@@ -184,7 +166,6 @@ public class PositionServiceTest {
         verify(position2,times(2)).setSalary(argumentCaptor.capture());
         assertEquals(salary1,argumentCaptor.getAllValues().get(1));
         assertEquals(salary2,argumentCaptor.getAllValues().get(0));
-        verify(LOGGER,atMost(8)).info(anyString());
         verify(employeesImplDb).updateEmployees(anyList());
     }
 }

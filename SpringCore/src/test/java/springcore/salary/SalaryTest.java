@@ -1,30 +1,20 @@
 package springcore.salary;
 
-import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
 
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class SalaryTest {
 
-    @Mock
-    Logger LOGGER;
     Salary salary1;
     Salary salary2;
     Salary salary3;
@@ -34,7 +24,7 @@ public class SalaryTest {
     Employee employee;
 
     @Before
-    public void init() throws NoSuchFieldException, IllegalAccessException {
+    public void init() {
         MockitoAnnotations.initMocks(this);
         salary1 = new Salary(new Usd(700), 3, BigDecimal.ONE);
         salary2 = new Salary(new Usd(300), 5, BigDecimal.TEN.negate());
@@ -43,15 +33,6 @@ public class SalaryTest {
         salary5 = new Salary(new Usd(700), 0, BigDecimal.ONE.negate());
         salary6 = new Salary(new Usd(700), 5, BigDecimal.ZERO);
         employee = new Employee("Vitali", "Burakovski");
-        Field field = Salary.class.getDeclaredField("LOGGER");
-        field.setAccessible(true);
-        var lookup = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup());
-        VarHandle MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods) && Modifier.isStatic(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
-        field.set(Salary.class, LOGGER);
     }
 
     @Test
@@ -77,8 +58,7 @@ public class SalaryTest {
         salary5.setSalary(employee);
         salary6.setSalary(employee);
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(LOGGER,times(9)).info(argumentCaptor.capture());
-        List<String> logMessages=argumentCaptor.getAllValues();
+        List<String> logMessages = argumentCaptor.getAllValues();
         assertEquals("Employee Vitali Burakovski will receive an experience" +
                 " bonus in amount 0.70", logMessages.get(0));
         assertEquals("Employee Vitali Burakovski received a salary 7.00 with " +
@@ -92,7 +72,7 @@ public class SalaryTest {
         assertEquals("Employee Vitali Burakovski received a salary 7.00 " +
                 "with bonus 0.07, in total 7.07", logMessages.get(5));
         assertEquals("Employee Vitali Burakovski received a salary 7.00 with fine -0.07," +
-                        " in total 6.93", logMessages.get(6));
+                " in total 6.93", logMessages.get(6));
         assertEquals("Employee Vitali Burakovski will receive an experience bonus" +
                 " in amount 0.70", logMessages.get(7));
         assertEquals("Employee Vitali Burakovski received a salary 7.00 with " +

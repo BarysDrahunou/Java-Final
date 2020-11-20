@@ -2,7 +2,8 @@ package springcore.annotations;
 
 import java.lang.annotation.*;
 
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface RandomSurname {
+
 }

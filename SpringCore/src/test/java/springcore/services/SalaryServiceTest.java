@@ -1,6 +1,5 @@
 package springcore.services;
 
-import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -13,7 +12,6 @@ import springcore.position.Position;
 import springcore.salary.Salary;
 import springcore.statuses.EmployeeStatus;
 
-import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -30,8 +28,6 @@ public class SalaryServiceTest {
     @Mock
     EmployeesImplDb employeesImplDb;
     @Mock
-    Logger LOGGER;
-    @Mock
     Position position1;
     @Mock
     Position position2;
@@ -44,21 +40,11 @@ public class SalaryServiceTest {
     SalaryService salaryService;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() throws NoSuchFieldException{
         MockitoAnnotations.initMocks(this);
         salaryService = new SalaryService(positionsImplDb, employeesImplDb);
         positions = new ArrayList<>(Arrays.asList(position1, position2));
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        Field field = SalaryService.class.getDeclaredField("LOGGER");
-        field.setAccessible(true);
-        var lookup = MethodHandles.privateLookupIn(Field.class,
-                MethodHandles.lookup());
-        VarHandle MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods) && Modifier.isStatic(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
-        field.set(SalaryService.class, LOGGER);
         Field salaryValueMax = SalaryService.class.getDeclaredField("salaryValueMax");
         salaryValueMax.setAccessible(true);
         ReflectionUtils.setField(salaryValueMax, salaryService, 100500);
@@ -71,7 +57,6 @@ public class SalaryServiceTest {
     public void assignSalaries() throws SQLException {
         when(positionsImplDb.getPositions(anyString(), any())).thenReturn(positions);
         salaryService.assignSalaries();
-        verify(LOGGER, times(2)).info(anyString());
         verify(positionsImplDb).assignSalaries(anyList());
     }
 
@@ -109,7 +94,6 @@ public class SalaryServiceTest {
         List<BigDecimal> values=argumentCaptor.getAllValues();
         assertTrue(BigDecimal.TEN.compareTo(values.get(0))>0);
         assertTrue(BigDecimal.TEN.negate().compareTo(values.get(1))<0);
-        verify(LOGGER,times(2)).info(anyString());
         verify(employeesImplDb).updateEmployees(employeesList);
     }
 
@@ -123,7 +107,6 @@ public class SalaryServiceTest {
         when(position2.getSalary()).thenReturn(salary2);
         ArgumentCaptor<Usd> argumentCaptor = ArgumentCaptor.forClass(Usd.class);
         salaryService.increaseSalariesDueToInflation();
-        verify(LOGGER, times(5)).info(anyString());
         verify(positionsImplDb).updatePositions(positions);
         verify(position1).getSalary();
         verify(position1).setSalary(argumentCaptor.capture());

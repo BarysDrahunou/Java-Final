@@ -41,11 +41,11 @@ public class EmployeeService {
         this.employeesImplDb = employeesImplDb;
     }
 
-    public void hireEmployees(AnnotationConfigApplicationContext context) throws SQLException {
+    public void hireEmployees() throws SQLException {
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
         for (int i = 0; i < amountEmployeesToHire && company.getVacanciesCount() > 0; i++) {
-            Employee employee = context.getBean(Employee.class);
+            Employee employee = new Employee();
             employee.setStatus(EmployeeStatus.NEW);
             employeesToHireList.add(employee);
             company.closeVacancy();

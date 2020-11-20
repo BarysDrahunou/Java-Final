@@ -1,6 +1,5 @@
 package springcore.services;
 
-import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import org.mockito.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,7 +9,6 @@ import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
 import springcore.statuses.EmployeeStatus;
 
-import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,8 +22,6 @@ public class EmployeeServiceTest {
     EmployeesImplDb employeesImplDb;
     @Mock
     Company company;
-    @Mock
-    Logger LOGGER;
     @Mock
     Employee employee1;
     @Mock
@@ -50,16 +46,6 @@ public class EmployeeServiceTest {
         Field employeesToHire = EmployeeService.class.getDeclaredField("employeesToHire");
         employeesToHire.setAccessible(true);
         ReflectionUtils.setField(employeesToHire, employeeService, 100500);
-        Field field = EmployeeService.class.getDeclaredField("LOGGER");
-        field.setAccessible(true);
-        var lookup = MethodHandles.privateLookupIn(Field.class,
-                MethodHandles.lookup());
-        VarHandle MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
-        int mods = field.getModifiers();
-        if (Modifier.isFinal(mods) && Modifier.isStatic(mods)) {
-            MODIFIERS.set(field, mods & ~Modifier.FINAL);
-        }
-        field.set(EmployeeService.class, LOGGER);
     }
 
     @Test
@@ -67,14 +53,13 @@ public class EmployeeServiceTest {
         when(company.getVacanciesCount()).thenReturn(3, 2, 1, 0);
         when(context.getBean(Employee.class)).thenReturn(employee1, employee2, employee3);
         ArgumentCaptor<EmployeeStatus> argumentCaptor = ArgumentCaptor.forClass(EmployeeStatus.class);
-        employeeService.hireEmployees(context);
+        employeeService.hireEmployees();
         verify(employee1).setStatus(argumentCaptor.capture());
         verify(employee2).setStatus(argumentCaptor.capture());
         verify(employee3).setStatus(argumentCaptor.capture());
         assertTrue(argumentCaptor.getAllValues().stream()
                 .allMatch(employeeStatus -> employeeStatus.equals(EmployeeStatus.NEW)));
         verify(company, times(3)).closeVacancy();
-        verify(LOGGER, times(3)).info(anyString());
         verify(employeesImplDb).addEmployees(anyList());
     }
 
@@ -88,7 +73,6 @@ public class EmployeeServiceTest {
         employeeService.fireEmployees();
         verify(employees, times(7)).size();
         verify(employees, times(3)).remove(anyInt());
-        verify(LOGGER, times(3)).info(anyString());
         verify(employeesImplDb).updateEmployeesStatusById(eq(EmployeeStatus.FIRED), anyList());
     }
 

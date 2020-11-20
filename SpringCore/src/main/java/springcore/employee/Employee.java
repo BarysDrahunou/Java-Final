@@ -1,7 +1,5 @@
 package springcore.employee;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import springcore.annotations.*;
 import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
@@ -9,8 +7,6 @@ import springcore.statuses.EmployeeStatus;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Component
-@Scope("prototype")
 public class Employee {
 
     private int id;

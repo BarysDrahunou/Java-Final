@@ -41,13 +41,6 @@ public class UsdTest {
     }
 
     @Test
-    public void getValue() {
-        assertEquals(500, usd1.getValue());
-        assertEquals(100, usd2.getValue());
-        assertNotEquals(1, usd3.getValue());
-    }
-
-    @Test
     public void testEquals() {
         assertEquals(usd1, usd1);
         assertEquals(usd1, usd2.multiplication(5));
