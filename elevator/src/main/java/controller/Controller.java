@@ -43,20 +43,29 @@ public class Controller {
     public void sitPassenger(Passenger passenger) {
         lock.lock();
         try {
+
             while (!canElevatorAcceptAPassenger(activeElevator, passenger)) {
                 floorPassengersConditionsList.get(passenger.getSourceFloor() - 1).await();
             }
+
             Floor currentFloor = getCurrentFloor(activeElevator);
+
             currentFloor.getDispatchContainer().remove(passenger);
             passengerCount--;
+
             List<Passenger> elevatorContainer = activeElevator.getContainer();
+
             elevatorContainer.add(passenger);
             passengerElevatorMap.put(passenger, activeElevator);
+
             LOGGER.info(String.format(BOARDING_OF_PASSENGER, passenger.getPersonalId(),
                     currentFloor.getFloorNumber(), activeElevator.getPersonalId()));
+
             elevatorCondition.signal();
         } catch (InterruptedException e) {
+
             LOGGER.error(e);
+
             Thread.currentThread().interrupt();
         } finally {
             lock.unlock();
@@ -72,20 +81,29 @@ public class Controller {
 
     public void releasePassenger(Passenger passenger) {
         lock.lock();
+
         try {
             Elevator elevator = passengerElevatorMap.get(passenger);
+
             while (elevator.getCurrentFloorNumber() != passenger.getDestinationFloor()) {
                 elevatorPassengersConditionsList.get(passenger.getDestinationFloor() - 1).await();
             }
+
             Floor currentFloor = getCurrentFloor(elevator);
+
             currentFloor.addPassengerToArrivalContainer(passenger);
+
             List<Passenger> elevatorContainer = elevator.getContainer();
+
             elevatorContainer.remove(passenger);
+
             LOGGER.info(String.format(DEBOARDING_OF_PASSENGER, passenger.getPersonalId(),
                     currentFloor.getFloorNumber(), elevator.getPersonalId()));
+
             elevatorCondition.signal();
         } catch (InterruptedException e) {
             LOGGER.error(e);
+
             Thread.currentThread().interrupt();
         } finally {
             lock.unlock();
@@ -95,8 +113,11 @@ public class Controller {
     public void sitPassengers(Elevator elevator) {
         lock.lock();
         try {
+
             activeElevator = elevator;
+
             floorPassengersConditionsList.get(elevator.getCurrentFloorNumber() - 1).signalAll();
+
             while (elevator.hasFreeSpace() && getCurrentFloor(elevator)
                     .getDispatchContainer()
                     .stream()
@@ -104,9 +125,11 @@ public class Controller {
                             == elevator.getMovementDirection())) {
                 elevatorCondition.await();
             }
+
             activeElevator = null;
         } catch (InterruptedException e) {
             LOGGER.error(e);
+
             Thread.currentThread().interrupt();
         } finally {
             lock.unlock();
@@ -121,16 +144,20 @@ public class Controller {
         int currentFloor = elevator.getCurrentFloorNumber();
         int old_floor = currentFloor;
         MovementDirection currentDirection = elevator.getMovementDirection();
+
         if (currentDirection == MovementDirection.UP) {
             elevator.setCurrentFloorNumber(++currentFloor);
         } else {
             elevator.setCurrentFloorNumber(--currentFloor);
         }
+
         LOGGER.info(String.format(MOVING_ELEVATOR, elevator.getPersonalId(),
                 old_floor, currentFloor));
+
         if (currentFloor == INITIAL_FLOOR) {
             elevator.setMovementDirection(MovementDirection.UP);
         }
+
         if (currentFloor == building.getBuildingHeight()) {
             elevator.setMovementDirection(MovementDirection.DOWN);
         }
@@ -138,9 +165,11 @@ public class Controller {
 
     public void releasePassengers(Elevator elevator) {
         lock.lock();
+
         try {
             elevatorPassengersConditionsList.get(elevator.getCurrentFloorNumber() - 1)
                     .signalAll();
+
             while (elevator
                     .getContainer()
                     .stream()
@@ -150,6 +179,7 @@ public class Controller {
             }
         } catch (InterruptedException e) {
             LOGGER.error(e);
+
             Thread.currentThread().interrupt();
         } finally {
             lock.unlock();
@@ -158,6 +188,7 @@ public class Controller {
 
     public boolean doTask(Elevator elevator) {
         lock.lock();
+
         try {
             if (elevator.getContainer().size() > 0
                     || passengerCount >
@@ -165,6 +196,7 @@ public class Controller {
                 return true;
             } else {
                 elevators.remove(elevator);
+
                 return false;
             }
         } finally {
@@ -173,7 +205,8 @@ public class Controller {
     }
 
     private int getActiveElevatorsFreeCapacity() {
-        return elevators.stream()
+        return elevators
+                .stream()
                 .map(elevator -> elevator.getCapacity() - elevator.getContainer().size())
                 .reduce(0, Integer::sum);
     }

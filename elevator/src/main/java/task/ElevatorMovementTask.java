@@ -28,8 +28,10 @@ public class ElevatorMovementTask implements Runnable {
 
     public void run() {
         LOGGER.info(String.format(STARTING_TRANSPORTATION, elevator.getPersonalId()));
+
         while (controller.doTask(elevator)) {
             lock.lock();
+
             try {
                 controller.sitPassengers(elevator);
                 controller.move(elevator);
@@ -38,7 +40,9 @@ public class ElevatorMovementTask implements Runnable {
                 lock.unlock();
             }
         }
+
         LOGGER.info(String.format(COMPLETION_TRANSPORTATION, elevator.getPersonalId()));
+
         countDownLatch.countDown();
     }
 }

@@ -23,43 +23,54 @@ public final class EndTaskValidator {
         isAllStatusesCompleted(floors);
         isDestinationCorrect(floors);
         areAllPeopleWereTransported(floors, passengersNumber);
-
     }
 
     private static void isAllDispatchContainersEmpty(List<Floor> floors) {
-        boolean isAllContainersEmpty = floors.stream()
+        boolean isAllContainersEmpty = floors
+                .stream()
                 .map(floor -> floor.getDispatchContainer().size())
                 .noneMatch(size -> size > 0);
+
         LOGGER.debug(String.format(IS_ALL_DISPATCH_CONTAINERS_ARE_EMPTY, isAllContainersEmpty));
     }
 
     private static void isElevatorsContainersEmpty(List<Elevator> elevators) {
-        boolean isElevatorContainerEmpty = elevators.stream().allMatch(elevator -> elevator.getContainer().size() == 0);
+        boolean isElevatorContainerEmpty = elevators
+                .stream()
+                .allMatch(elevator -> elevator.getContainer().size() == 0);
+
         LOGGER.debug(String.format(IS_ELEVATOR_CONTAINER_EMPTY, isElevatorContainerEmpty));
     }
 
     private static void isAllStatusesCompleted(List<Floor> floors) {
-        boolean isAllStatusesIsCompleted = floors.stream()
+        boolean isAllStatusesIsCompleted = floors
+                .stream()
                 .map(Floor::getArrivalContainer)
                 .allMatch(floor -> floor
                         .stream()
                         .map(Passenger::getTransportationState)
                         .allMatch(state -> state == TransportationState.COMPLETED));
+
         LOGGER.debug(String.format(IS_ALL_STATUSES_COMPLETED, isAllStatusesIsCompleted));
     }
 
     private static void isDestinationCorrect(List<Floor> floors) {
-        boolean isDestinationCorrect = floors.stream()
-                .allMatch(floor -> floor.getDispatchContainer()
+        boolean isDestinationCorrect = floors
+                .stream()
+                .allMatch(floor -> floor
+                        .getDispatchContainer()
                         .stream()
                         .allMatch(passenger -> passenger.getDestinationFloor() == floor.getFloorNumber()));
+
         LOGGER.debug(String.format(IS_DESTINATION_CORRECT, isDestinationCorrect));
     }
 
     private static void areAllPeopleWereTransported(List<Floor> floors, int passengersNumber) {
-        boolean areAllPeopleWereTransported = floors.stream()
+        boolean areAllPeopleWereTransported = floors
+                .stream()
                 .map(floor -> floor.getArrivalContainer().size())
                 .reduce(INITIAL_SUM, Integer::sum) == passengersNumber;
+
         LOGGER.debug(String.format(ARE_ALL_PEOPLE_WERE_TRANSPORTED, areAllPeopleWereTransported));
     }
 }

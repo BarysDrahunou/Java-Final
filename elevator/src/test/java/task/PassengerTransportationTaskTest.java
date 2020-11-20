@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PassengerTransportationTaskTest {
+
     @Mock
     Passenger passenger;
     @Mock
@@ -26,9 +27,12 @@ public class PassengerTransportationTaskTest {
         doNothing().when(controller).sitPassenger(passenger);
         doNothing().when(controller).releasePassenger(passenger);
         when(passenger.getTransportationState()).thenReturn(TransportationState.IN_PROGRESS);
+
         passengerTransportationTask.run();
+
         verify(controller, times(1)).sitPassenger(passenger);
         verify(controller, times(1)).releasePassenger(passenger);
+
         assertEquals(TransportationState.IN_PROGRESS, passenger.getTransportationState());
         assertNotEquals(TransportationState.NOT_STARTED, passenger.getTransportationState());
     }

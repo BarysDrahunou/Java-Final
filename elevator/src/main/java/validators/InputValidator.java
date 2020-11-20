@@ -24,6 +24,7 @@ public final class InputValidator {
 
     public static Map<String, Integer> getIntProperties(String configFileName) {
         Optional<Properties> properties = getProperties(configFileName);
+
         return properties.map(InputValidator::validateProperties).get();
     }
 
@@ -31,29 +32,37 @@ public final class InputValidator {
         Properties properties = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream = loader.getResourceAsStream(propertiesFile);
+
         try {
             properties.load(stream);
+
             return Optional.of(properties);
         } catch (IOException e) {
             LOGGER.error(String.format(ERROR_LOADING_RESOURCES_MESSAGE, propertiesFile));
+
             return Optional.empty();
         } catch (NullPointerException e) {
             LOGGER.error(String.format(FILE_NOT_FOUND_MESSAGE, propertiesFile));
+
             return Optional.empty();
         }
     }
 
     private static Map<String, Integer> validateProperties(Properties properties) {
-        return REQUIRED_PARAMETERS.stream().collect(
-                Collectors.toMap(
-                        propertyName -> propertyName,
-                        propertyName -> {
-                            String propertyValue = properties.computeIfAbsent(propertyName,
-                                    DEFAULT_PARAMETERS_MAP::get).toString();
-                            return validatePropertyRange(propertyName, propertyValue);
-                        }
-                )
-        );
+        return REQUIRED_PARAMETERS
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                propertyName -> propertyName,
+                                propertyName -> {
+                                    String propertyValue = properties
+                                            .computeIfAbsent(propertyName,
+                                                    DEFAULT_PARAMETERS_MAP::get)
+                                            .toString();
+                                    return validatePropertyRange(propertyName, propertyValue);
+                                }
+                        )
+                );
     }
 
     private static int validatePropertyRange(String propertyName, String propertyValue) {
@@ -61,11 +70,14 @@ public final class InputValidator {
                 .compile(REG_EXP_FOR_NON_NEGATIVE_INTEGER_NUMBERS)
                 .matcher(propertyValue)
                 .matches();
+
         if (isInputInteger && Integer.valueOf(propertyValue)
                 >= DEFAULT_PARAMETERS_MAP.get(propertyName)) {
+
             return Integer.valueOf(propertyValue);
         } else {
             LOGGER.error(String.format(INCORRECT_PROPERTY_VALUE, propertyName, propertyValue));
+
             return DEFAULT_PARAMETERS_MAP.get(propertyName);
         }
     }

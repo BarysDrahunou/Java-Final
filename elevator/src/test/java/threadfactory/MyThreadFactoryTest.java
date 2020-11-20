@@ -23,6 +23,7 @@ public class MyThreadFactoryTest {
     @Test
     public void getThreadFactory() {
         thread.setName("Thread");
+
         assertEquals("Thread 1",
                 threadFactory.newThread(thread).getName());
         assertEquals("Thread 2",

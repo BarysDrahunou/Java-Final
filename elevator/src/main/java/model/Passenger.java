@@ -17,8 +17,9 @@ public class Passenger {
     private TransportationState transportationState;
 
     public Passenger(int floorsNumber) {
-        this.personalId = id++;
         List<Integer> randomFloors = getRandomFloors(floorsNumber);
+
+        this.personalId = id++;
         this.sourceFloor = randomFloors.get(0);
         this.destinationFloor = randomFloors.get(randomFloors.size() - 1);
         this.transportationState = TransportationState.NOT_STARTED;
@@ -31,7 +32,9 @@ public class Passenger {
                 .range(INITIAL_FLOOR, floorsNumber + INITIAL_FLOOR)
                 .boxed()
                 .collect(Collectors.toList());
+
         Collections.shuffle(randomFloorsArray);
+
         return randomFloorsArray;
     }
 

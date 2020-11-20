@@ -24,7 +24,7 @@ public class Elevator {
 
     private int generateCurrentFloor(int floorsNumber, int currentFloor) {
         if (currentFloor > 0) {
-            return currentFloor%floorsNumber;
+            return currentFloor % floorsNumber;
         } else {
             return (int) (Math.ceil(Math.random() * floorsNumber));
         }
@@ -33,10 +33,13 @@ public class Elevator {
     private MovementDirection getRandomMovementDirection(int floorsNumber) {
         MovementDirection[] directions = IntStream
                 .range(0, floorsNumber)
-                .mapToObj(floor -> DIRECTION_MAP.get((int) Math.floor(Math.random() * DIRECTION_MAP.size())))
+                .mapToObj(floor -> DIRECTION_MAP
+                        .get((int) Math.floor(Math.random() * DIRECTION_MAP.size())))
                 .toArray(MovementDirection[]::new);
+
         directions[0] = MovementDirection.UP;
         directions[directions.length - 1] = MovementDirection.DOWN;
+
         return directions[currentFloor - 1];
     }
 
