@@ -1,19 +1,14 @@
 package springcore.salary;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import springcore.currency.Usd;
-import springcore.employee.Employee;
 
 import java.math.BigDecimal;
 
-import static springcore.constants.LogMessages.*;
 import static springcore.constants.VariablesConstants.*;
 
 
 public class Salary {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final Usd salaryRate;
     private final Usd bonusSum;
     private final Usd experienceBonus;
@@ -31,38 +26,23 @@ public class Salary {
         return oldSalaryRate.multiplication(inflationRate + PERCENT_BASE).division(PERCENT_BASE);
     }
 
-    private Usd getSalaryWithBonuses(Usd bonusSum, Usd experienceBonus) {
+    public Usd getSalaryWithBonuses(Usd bonusSum, Usd experienceBonus) {
         return salaryRate.addition(bonusSum).addition(experienceBonus);
     }
 
-    private Usd getSalaryWithBonus(Usd bonusSum) {
+    public Usd getSalaryWithBonus(Usd bonusSum) {
         return salaryRate.addition(bonusSum);
     }
 
-    public void setSalary(Employee employee) {
-        if (experienceBonus.getValue() > DECIMAL_BASE) {
-            LOGGER.info(String.format(EXPERIENCE_BONUS_INFO_MESSAGE, employee, experienceBonus));
-        }
-        if (bonusSum.getValue() > DECIMAL_BASE && experienceBonus.getValue() > DECIMAL_BASE) {
-            LOGGER.info(String.format(ALL_BONUSES_MESSAGE, employee, salaryRate, bonusSum, experienceBonus,
-                    getSalaryWithBonuses(bonusSum, experienceBonus)));
-        }
-        if (bonusSum.getValue() < DECIMAL_BASE && experienceBonus.getValue() > DECIMAL_BASE) {
-            LOGGER.info(String.format(FINE_AND_EXPERIENCE_BONUS_MESSAGE, employee, salaryRate, bonusSum,
-                    experienceBonus, getSalaryWithBonuses(bonusSum, experienceBonus)));
-        }
-        if (bonusSum.getValue() == DECIMAL_BASE && experienceBonus.getValue() == DECIMAL_BASE) {
-            LOGGER.info(String.format(ONLY_SALARY_MESSAGE, employee, salaryRate));
-        }
-        if (bonusSum.getValue() > DECIMAL_BASE && experienceBonus.getValue() == DECIMAL_BASE) {
-            LOGGER.info(String.format(BONUS_MESSAGE, employee, salaryRate, bonusSum, getSalaryWithBonus(bonusSum)));
-        }
-        if (bonusSum.getValue() < DECIMAL_BASE && experienceBonus.getValue() == DECIMAL_BASE) {
-            LOGGER.info(String.format(FINE_MESSAGE, employee, salaryRate, bonusSum, getSalaryWithBonus(bonusSum)));
-        }
-        if (bonusSum.getValue() == DECIMAL_BASE && experienceBonus.getValue() > DECIMAL_BASE) {
-            LOGGER.info(String.format(EXPERIENCE_BONUS_MESSAGE, employee, salaryRate, experienceBonus,
-                    getSalaryWithBonus(experienceBonus)));
-        }
+    public Usd getSalaryRate() {
+        return salaryRate;
+    }
+
+    public Usd getBonusSum() {
+        return bonusSum;
+    }
+
+    public Usd getExperienceBonus() {
+        return experienceBonus;
     }
 }
