@@ -9,7 +9,6 @@ import springcore.employee.Employee;
 
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -47,35 +46,5 @@ public class SalaryTest {
                 Salary.changeSalaryFromInflation(0, new Usd(11)));
         assertNotEquals(new Usd(11),
                 Salary.changeSalaryFromInflation(10, new Usd(11)));
-    }
-
-    @Test
-    public void paySalary() {
-        salary1.setSalary(employee);
-        salary2.setSalary(employee);
-        salary3.setSalary(employee);
-        salary4.setSalary(employee);
-        salary5.setSalary(employee);
-        salary6.setSalary(employee);
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        List<String> logMessages = argumentCaptor.getAllValues();
-        assertEquals("Employee Vitali Burakovski will receive an experience" +
-                " bonus in amount 0.70", logMessages.get(0));
-        assertEquals("Employee Vitali Burakovski received a salary 7.00 with " +
-                "bonus 0.07 and experience bonus 0.70, in total 7.77", logMessages.get(1));
-        assertEquals("Employee Vitali Burakovski will receive an experience" +
-                " bonus in amount 0.30", logMessages.get(2));
-        assertEquals("Employee Vitali Burakovski received a salary 3.00 with " +
-                "fine -0.30 and experience bonus 0.30, in total 3.00", logMessages.get(3));
-        assertEquals("Employee Vitali Burakovski received a salary 5.00",
-                logMessages.get(4));
-        assertEquals("Employee Vitali Burakovski received a salary 7.00 " +
-                "with bonus 0.07, in total 7.07", logMessages.get(5));
-        assertEquals("Employee Vitali Burakovski received a salary 7.00 with fine -0.07," +
-                " in total 6.93", logMessages.get(6));
-        assertEquals("Employee Vitali Burakovski will receive an experience bonus" +
-                " in amount 0.70", logMessages.get(7));
-        assertEquals("Employee Vitali Burakovski received a salary 7.00 with " +
-                "experience bonus 0.70, in total 7.70", logMessages.get(8));
     }
 }
