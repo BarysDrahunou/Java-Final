@@ -42,6 +42,7 @@ public class CompanyEmulator {
                     salaryService.assignSalaries();
                     employeeService.hireEmployees(employeeCreator);
                     positionService.assignPositions();
+
                     employeeService.increaseExperience();
                     salaryService.assignBonuses();
                     salaryService.paySalary();

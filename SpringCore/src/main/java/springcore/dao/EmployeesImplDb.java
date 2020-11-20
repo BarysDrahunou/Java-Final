@@ -7,11 +7,8 @@ import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
 import springcore.utilityconnection.ConnectTemporary;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
 

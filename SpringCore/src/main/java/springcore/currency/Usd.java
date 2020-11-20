@@ -1,7 +1,6 @@
 package springcore.currency;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.*;
 import java.util.*;
 
 public final class Usd {

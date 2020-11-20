@@ -4,7 +4,6 @@ import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Employee {
 
@@ -67,21 +66,6 @@ public class Employee {
 
     public int getTimeWorked() {
         return timeWorked;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Employee employee = (Employee) o;
-        return Objects.equals(name, employee.name) &&
-                Objects.equals(surname, employee.surname) &&
-                Objects.equals(position, employee.position);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, surname, position);
     }
 
     @Override
