@@ -12,8 +12,7 @@ import springcore.statuses.EmployeeStatus;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.*;
 
 import static springcore.constants.LogMessages.*;
 import static springcore.constants.SQLQueries.*;
@@ -62,30 +61,33 @@ public class SalaryServiceImplementation implements SalaryService {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int count = 0;
         for (Employee employee : employees) {
-            int randPositive =
-                    IntStream.range(LOWER_BONUS_BOUND, UPPER_BONUS_BOUND)
-                            .boxed()
-                            .collect(Collectors.toList())
-                            .get(new Random().nextInt(UPPER_BONUS_BOUND - LOWER_BONUS_BOUND));
-            int randNegative =
-                    IntStream.range(LOWER_FINE_BOUND, UPPER_FINE_BOUND)
-                            .boxed()
-                            .collect(Collectors.toList())
-                            .get(new Random().nextInt(UPPER_FINE_BOUND - LOWER_FINE_BOUND));
             if (count % BONUS_CONSTANT == DECIMAL_BASE) {
-                employee.setPersonalBonuses(BigDecimal.valueOf(randPositive));
-                LOGGER.info(String.format(ASSIGNED_BONUS_QUERY,
-                        employee, employee.getPersonalBonuses()));
+                int randPositive =
+                        getRandomBonusOrFineValue(LOWER_BONUS_BOUND, UPPER_BONUS_BOUND);
+                setBonusOrFine(employee, randPositive);
             } else {
                 if (count % FINE_CONSTANT == DECIMAL_BASE) {
-                    employee.setPersonalBonuses(BigDecimal.valueOf(randNegative));
-                    LOGGER.info(String.format(ASSIGNED_FINE_QUERY,
-                            employee, employee.getPersonalBonuses()));
+                    int randNegative =
+                            getRandomBonusOrFineValue(LOWER_FINE_BOUND, UPPER_FINE_BOUND);
+                    setBonusOrFine(employee, randNegative);
                 }
             }
             count++;
         }
         employeesImplDb.updateEmployees(employees);
+    }
+
+    private int getRandomBonusOrFineValue(int lowerBound, int upperBound) {
+        return IntStream.range(lowerBound, upperBound)
+                .boxed()
+                .collect(Collectors.toList())
+                .get(new Random().nextInt(upperBound - lowerBound));
+    }
+
+    private void setBonusOrFine(Employee employee, int value) {
+        employee.setPersonalBonuses(BigDecimal.valueOf(value));
+        LOGGER.info(String.format(ASSIGNED_BONUS_QUERY,
+                employee, employee.getPersonalBonuses()));
     }
 
     public void increaseSalariesDueToInflation() throws SQLException {
