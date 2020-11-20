@@ -1,5 +1,6 @@
 package springcore.dao;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,18 +15,11 @@ import springcore.statuses.EmployeeStatus;
 import springcore.utilityconnection.ConnectTemporary;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.*;
+import java.sql.*;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +28,6 @@ public class EmployeesImplDbTest {
 
     @Mock
     ConnectTemporary connectTemporary;
-    @Mock
-    Connection connection;
     @Mock
     ResultSet resultSet;
     @Mock
@@ -71,7 +63,7 @@ public class EmployeesImplDbTest {
     @Test
     public void addEmployees() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         employeesImplDb.addEmployees(employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(6))
@@ -92,13 +84,13 @@ public class EmployeesImplDbTest {
         assertEquals(employee2.getPersonalBonuses(), bigDecimalArguments.get(1));
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void getEmployeesByStatus() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         when(resultSet.getString("NAME")).thenReturn("Vitali");
@@ -128,7 +120,7 @@ public class EmployeesImplDbTest {
     @Test
     public void updateEmployees() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         employeesImplDb.updateEmployees(employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(8))
@@ -160,12 +152,12 @@ public class EmployeesImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void updateEmployeesStatusByStatus() throws SQLException {
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         employeesImplDb.updateEmployeesStatusByStatus(EmployeeStatus.FIRED, EmployeeStatus.WENT_OUT);
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
@@ -174,12 +166,12 @@ public class EmployeesImplDbTest {
         assertEquals(EmployeeStatus.FIRED, EmployeeStatus.valueOf(arguments.get(0)));
         assertEquals(EmployeeStatus.WENT_OUT, EmployeeStatus.valueOf(arguments.get(1)));
         verify(preparedStatement).execute();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void updateEmployeesStatusById() throws SQLException {
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         employeesImplDb.updateEmployeesStatusById(EmployeeStatus.WORKS, employees);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
@@ -196,12 +188,12 @@ public class EmployeesImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void increaseExp() throws SQLException {
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         employeesImplDb.increaseExp(employees);
         ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(preparedStatement, times(4)).setInt(anyInt(),
@@ -214,6 +206,11 @@ public class EmployeesImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
+    }
+
+    @After
+    public void destroy() throws SQLException {
+        connectTemporary.close();
     }
 }

@@ -26,8 +26,6 @@ public class PositionsImplDbTest {
     @Mock
     ConnectTemporary connectTemporary;
     @Mock
-    Connection connection;
-    @Mock
     ResultSet resultSet;
     @Mock
     PreparedStatement preparedStatement;
@@ -52,13 +50,13 @@ public class PositionsImplDbTest {
         positionsImplDb = new PositionsImplDb(connectTemporary);
         Field field = PositionsImplDb.class.getDeclaredField("connectTemporary");
         field.setAccessible(true);
-        ReflectionUtils.setField(field, positionsImplDb, connection);
+        ReflectionUtils.setField(field, positionsImplDb, connectTemporary);
     }
 
     @Test
     public void addPositions() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         positionsImplDb.addPositions(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
@@ -75,13 +73,13 @@ public class PositionsImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void getAllPositions() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         when(resultSet.getString("POSITION")).thenReturn("Actor");
@@ -99,7 +97,7 @@ public class PositionsImplDbTest {
     @Test
     public void getPositions() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
         when(resultSet.getString("POSITION")).thenReturn("Actor").thenReturn("Ment");
@@ -129,7 +127,7 @@ public class PositionsImplDbTest {
     @Test
     public void getPositionSalary() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getInt(anyString())).thenReturn(100500);
@@ -145,7 +143,7 @@ public class PositionsImplDbTest {
     @Test
     public void updatePositions() throws SQLException {
 
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         positionsImplDb.updatePositions(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
@@ -166,12 +164,12 @@ public class PositionsImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
     }
 
     @Test
     public void assignSalaries() throws SQLException {
-        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         positionsImplDb.assignSalaries(positions);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(preparedStatement, times(2)).setString(anyInt(),
@@ -188,6 +186,11 @@ public class PositionsImplDbTest {
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement).executeBatch();
-        verify(connection).commit();
+        verify(connectTemporary).commit();
+    }
+
+    @After
+    public void destroy() throws SQLException {
+        connectTemporary.close();
     }
 }
