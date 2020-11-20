@@ -2,7 +2,6 @@ package springcore.services;
 
 import org.junit.*;
 import org.mockito.*;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
 import springcore.employee.Employee;
@@ -30,7 +29,7 @@ public class EmployeeServiceTest {
     @Mock
     Employee employee3;
     @Mock
-    AnnotationConfigApplicationContext context;
+    EmployeeCreator employeeCreator;
     @Mock
     List<Employee> employees;
     EmployeeService employeeService;
@@ -52,9 +51,10 @@ public class EmployeeServiceTest {
     @Test
     public void hireEmployees() throws SQLException {
         when(company.getVacanciesCount()).thenReturn(3, 2, 1, 0);
-        when(context.getBean(Employee.class)).thenReturn(employee1, employee2, employee3);
+        when(employeeCreator.createEmployeeAndGet()).thenReturn(employee1, employee2, employee3);
         ArgumentCaptor<EmployeeStatus> argumentCaptor = ArgumentCaptor.forClass(EmployeeStatus.class);
-        employeeService.hireEmployees(new EmployeeCreator("Random","Random"));
+        employeeService.hireEmployees(employeeCreator);
+        verify(employeeCreator,times(3)).createEmployeeAndGet();
         verify(employee1).setStatus(argumentCaptor.capture());
         verify(employee2).setStatus(argumentCaptor.capture());
         verify(employee3).setStatus(argumentCaptor.capture());

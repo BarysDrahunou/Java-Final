@@ -46,4 +46,14 @@ public class SalaryTest {
         assertNotEquals(new Usd(11),
                 Salary.changeSalaryFromInflation(10, new Usd(11)));
     }
+
+    @Test
+    public void getSalaryWithBonuses() {
+        assertEquals(910,salary1
+                .getSalaryWithBonuses(new Usd(10),new Usd(200)).getValue());
+        assertEquals(500,salary2
+                .getSalaryWithBonuses(new Usd(0),new Usd(200)).getValue());
+        assertEquals(510,salary3
+                .getSalaryWithBonuses(new Usd(10),new Usd(0)).getValue());
+    }
 }
