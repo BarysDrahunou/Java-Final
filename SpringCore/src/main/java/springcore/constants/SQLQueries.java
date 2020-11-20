@@ -2,6 +2,8 @@ package springcore.constants;
 
 public final class SQLQueries {
 
+    public static final String EMPLOYEES_TABLE_TRUNCATE_SQL = "TRUNCATE TABLE SPRING.EMPLOYEES";
+    public static final String POSITIONS_TABLE_TRUNCATE_SQL = "TRUNCATE TABLE SPRING.POSITIONS";
     public static final String ADD_EMPLOYEES_QUERY =
             "INSERT INTO SPRING.EMPLOYEES (NAME,SURNAME,STATUS,PERSONAL_BONUSES) VALUES (?,?,?,?)";
     public static final String GET_EMPLOYEES_BY_STATUS_QUERY =

@@ -16,8 +16,6 @@ public final class VariablesConstants {
     public static final int UPPER_FINE_BOUND = 0;
     public static final int FINE_CONSTANT = 4;
     public static final int BONUS_CONSTANT = 5;
-    public static final String EMPLOYEES_TABLE_MESSAGE = "TRUNCATE TABLE SPRING.EMPLOYEES";
-    public static final String POSITIONS_TABLE_MESSAGE = "TRUNCATE TABLE SPRING.POSITIONS";
     public static final String NAMES_PATH = "src/main/resources/names.txt";
     public static final String SURNAMES_PATH = "src/main/resources/surnames.txt";
     public static final String DEFAULT_NAME = "John";

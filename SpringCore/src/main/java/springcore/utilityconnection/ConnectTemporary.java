@@ -30,6 +30,15 @@ public class ConnectTemporary implements AutoCloseable {
         this.connection = connection;
     }
 
+    public void truncateTables(String... tableNames) throws SQLException {
+        Statement statement = getStatement();
+        for (String tableName : tableNames) {
+            statement.addBatch(tableName);
+        }
+        statement.executeBatch();
+        commit();
+    }
+
     public PreparedStatement getPreparedStatement(String sql) throws SQLException {
         return connection != null ? connection.prepareStatement(sql) : null;
     }

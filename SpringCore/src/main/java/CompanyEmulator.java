@@ -10,6 +10,7 @@ import springcore.utilityconnection.ConnectTemporary;
 
 import java.sql.*;
 
+import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
 
 public class CompanyEmulator {
@@ -26,7 +27,8 @@ public class CompanyEmulator {
         try (AnnotationConfigApplicationContext context
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
              ConnectTemporary connectTemporary = context.getBean(ConnectTemporary.class)) {
-            truncateTables(connectTemporary);
+            connectTemporary.truncateTables(EMPLOYEES_TABLE_TRUNCATE_SQL,
+                    POSITIONS_TABLE_TRUNCATE_SQL);
             Company company = new Company();
             EmployeeService employeeService = context.getBean(EmployeeService.class);
             employeeService.setCompany(company);
@@ -53,14 +55,5 @@ public class CompanyEmulator {
         } catch (BeanCreationException | BeanDefinitionStoreException | SQLException e) {
             LOGGER.error(e);
         }
-    }
-
-    private void truncateTables(ConnectTemporary connectTemporary) throws SQLException {
-
-        Statement statement = connectTemporary.getStatement();
-        statement.addBatch(EMPLOYEES_TABLE_MESSAGE);
-        statement.addBatch(POSITIONS_TABLE_MESSAGE);
-        statement.executeBatch();
-        connectTemporary.commit();
     }
 }
