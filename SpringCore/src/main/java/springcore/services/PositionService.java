@@ -26,9 +26,9 @@ public class PositionService {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<String> jobs;
-    private final Company company;
     private final PositionsImplDb positionsImplDb;
     private final EmployeesImplDb employeesImplDb;
+    private Company company;
     @InjectRandomInt(max = 10)
     private int positionsToClose;
     @InjectRandomInt(max = 20)
@@ -37,9 +37,8 @@ public class PositionService {
     private int employeesToChangeWork;
 
     @Autowired
-    public PositionService(Company company, PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb,
+    public PositionService(PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb,
                            @Value("${jobs.path}") String path) throws IOException {
-        this.company = company;
         this.positionsImplDb = positionsImplDb;
         this.employeesImplDb = employeesImplDb;
         this.jobs = Files.readAllLines(Paths.get(path));
@@ -209,5 +208,9 @@ public class PositionService {
             LOGGER.info(String.format(PROMOTED_EMPLOYEE_MESSAGE, employee, oldPosition,
                     newPosition, oldPosition.getSalary(), newPosition.getSalary()));
         }
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

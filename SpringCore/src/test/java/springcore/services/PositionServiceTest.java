@@ -51,7 +51,8 @@ public class PositionServiceTest {
         MockitoAnnotations.initMocks(this);
         path = "src/main/resources/testJobs.txt";
         employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        positionService = new PositionService(company, positionsImplDb, employeesImplDb, path);
+        positionService = new PositionService(positionsImplDb, employeesImplDb, path);
+        positionService.setCompany(company);
         Field jobsField = PositionService.class.getDeclaredField("jobs");
         jobsField.setAccessible(true);
         ReflectionUtils.setField(jobsField, positionService, jobs);

@@ -31,16 +31,6 @@ public class EmployeeService {
     public EmployeeService() {
     }
 
-    @Autowired
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    @Autowired
-    public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
-        this.employeesImplDb = employeesImplDb;
-    }
-
     public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
@@ -69,5 +59,14 @@ public class EmployeeService {
     public void increaseExperience() throws SQLException {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         employeesImplDb.increaseExp(employees);
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Autowired
+    public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
+        this.employeesImplDb = employeesImplDb;
     }
 }
