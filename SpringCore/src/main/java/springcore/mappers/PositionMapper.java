@@ -21,70 +21,77 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
      *
      * @param resultSet source object from database
      * @return list of mapped positions
-     * @throws SQLException if positions cannot be retrieved
      */
     @Override
-    public List<Position> map(ResultSet resultSet) throws SQLException {
-        List<Position> positions = new ArrayList<>();
+    public List<Position> map(ResultSet resultSet) {
+        try {
+            List<Position> positions = new ArrayList<>();
 
-        while (resultSet.next()) {
-            Position position = new Position(resultSet.getString(POSITION));
+            while (resultSet.next()) {
+                Position position = new Position(resultSet.getString(POSITION));
 
-            position.setVacancies(resultSet.getInt(VACANCIES));
-            position.setActiveWorkers(resultSet.getInt(ACTIVE_WORKERS));
-            position.setSalary(new Usd(resultSet.getInt(SALARY)));
+                position.setVacancies(resultSet.getInt(VACANCIES));
+                position.setActiveWorkers(resultSet.getInt(ACTIVE_WORKERS));
+                position.setSalary(new Usd(resultSet.getInt(SALARY)));
 
-            positions.add(position);
+                positions.add(position);
+            }
+
+            return positions;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        return positions;
     }
 
     /**
      * Add positions to database
      *
-     * @param positions list of positions to add
-     * @param preparedStatement   target object to put positions into database
-     * @throws SQLException if there are problems with database
+     * @param positions         list of positions to add
+     * @param preparedStatement target object to put positions into database
      */
     @Override
-    public void add(List<Position> positions, PreparedStatement preparedStatement)
-            throws SQLException {
+    public void add(List<Position> positions, PreparedStatement preparedStatement) {
+        try {
 
-        for (Position position : positions) {
-            preparedStatement.setString(1, position.getPositionName());
-            preparedStatement.setInt(2, position.getVacancies());
-            preparedStatement.setInt(3, position.getActiveWorkers());
-            preparedStatement.setInt(4, position.getSalary().getValue());
+            for (Position position : positions) {
+                preparedStatement.setString(1, position.getPositionName());
+                preparedStatement.setInt(2, position.getVacancies());
+                preparedStatement.setInt(3, position.getActiveWorkers());
+                preparedStatement.setInt(4, position.getSalary().getValue());
 
-            preparedStatement.addBatch();
-            preparedStatement.clearParameters();
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        preparedStatement.executeBatch();
     }
 
     /**
      * Update positions into database
      *
-     * @param positions list of positions to update
-     * @param preparedStatement   target object to put positions into database
-     * @throws SQLException if there are problems with database
+     * @param positions         list of positions to update
+     * @param preparedStatement target object to put positions into database
      */
     @Override
-    public void update(List<Position> positions, PreparedStatement preparedStatement)
-            throws SQLException {
+    public void update(List<Position> positions, PreparedStatement preparedStatement) {
+        try {
 
-        for (Position position : positions) {
-            preparedStatement.setInt(1, position.getVacancies());
-            preparedStatement.setInt(2, position.getActiveWorkers());
-            preparedStatement.setInt(3, position.getSalary().getValue());
-            preparedStatement.setString(4, position.getPositionName());
+            for (Position position : positions) {
+                preparedStatement.setInt(1, position.getVacancies());
+                preparedStatement.setInt(2, position.getActiveWorkers());
+                preparedStatement.setInt(3, position.getSalary().getValue());
+                preparedStatement.setString(4, position.getPositionName());
 
-            preparedStatement.addBatch();
-            preparedStatement.clearParameters();
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        preparedStatement.executeBatch();
     }
 }

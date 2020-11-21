@@ -22,76 +22,83 @@ public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
      *
      * @param resultSet source object from database
      * @return list of mapped employees
-     * @throws SQLException if employees cannot be retrieved
      */
     @Override
-    public List<Employee> map(ResultSet resultSet) throws SQLException {
-        List<Employee> employees = new ArrayList<>();
+    public List<Employee> map(ResultSet resultSet) {
+        try {
+            List<Employee> employees = new ArrayList<>();
 
-        while (resultSet.next()) {
-            Employee employee = new Employee(resultSet.getString(NAME),
-                    resultSet.getString(SURNAME));
+            while (resultSet.next()) {
+                Employee employee = new Employee(resultSet.getString(NAME),
+                        resultSet.getString(SURNAME));
 
-            employee.setId(resultSet.getInt(ID));
-            employee.setStatus(EmployeeStatus.valueOf(resultSet.getString(STATUS)));
-            employee.setPosition(new Position(resultSet.getString(POSITION)));
-            employee.setPersonalBonuses(resultSet.getBigDecimal(PERSONAL_BONUSES));
-            employee.setTimeWorked(resultSet.getInt(TIME_WORKED));
+                employee.setId(resultSet.getInt(ID));
+                employee.setStatus(EmployeeStatus.valueOf(resultSet.getString(STATUS)));
+                employee.setPosition(new Position(resultSet.getString(POSITION)));
+                employee.setPersonalBonuses(resultSet.getBigDecimal(PERSONAL_BONUSES));
+                employee.setTimeWorked(resultSet.getInt(TIME_WORKED));
 
-            employees.add(employee);
+                employees.add(employee);
+            }
+
+            return employees;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        return employees;
     }
 
     /**
      * Add employees to database
      *
-     * @param employees list of employees to add
-     * @param preparedStatement   target object to put employees into database
-     * @throws SQLException if there are problems with database
+     * @param employees         list of employees to add
+     * @param preparedStatement target object to put employees into database
      */
     @Override
-    public void add(List<Employee> employees, PreparedStatement preparedStatement)
-            throws SQLException {
+    public void add(List<Employee> employees, PreparedStatement preparedStatement) {
+        try {
 
-        for (Employee employee : employees) {
-            preparedStatement.setString(1, employee.getName());
-            preparedStatement.setString(2, employee.getSurname());
-            preparedStatement.setString(3, employee.getStatus().name());
-            preparedStatement.setBigDecimal(4, employee.getPersonalBonuses());
+            for (Employee employee : employees) {
+                preparedStatement.setString(1, employee.getName());
+                preparedStatement.setString(2, employee.getSurname());
+                preparedStatement.setString(3, employee.getStatus().name());
+                preparedStatement.setBigDecimal(4, employee.getPersonalBonuses());
 
-            preparedStatement.addBatch();
-            preparedStatement.clearParameters();
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        preparedStatement.executeBatch();
     }
 
     /**
      * Update employees into database
      *
-     * @param employees list of employees to update
-     * @param preparedStatement   target object to put employees into database
-     * @throws SQLException if there are problems with database
+     * @param employees         list of employees to update
+     * @param preparedStatement target object to put employees into database
      */
     @Override
-    public void update(List<Employee> employees, PreparedStatement preparedStatement)
-            throws SQLException {
+    public void update(List<Employee> employees, PreparedStatement preparedStatement) {
+        try {
 
-        for (Employee employee : employees) {
-            preparedStatement.setString(1, employee.getName());
-            preparedStatement.setString(2, employee.getSurname());
-            preparedStatement.setString(3, employee.getStatus().name());
-            preparedStatement.setString(4, employee.getPosition().getPositionName());
-            preparedStatement.setBigDecimal(5, employee.getPersonalBonuses());
-            preparedStatement.setInt(6, employee.getTimeWorked());
-            preparedStatement.setInt(7, employee.getId());
+            for (Employee employee : employees) {
+                preparedStatement.setString(1, employee.getName());
+                preparedStatement.setString(2, employee.getSurname());
+                preparedStatement.setString(3, employee.getStatus().name());
+                preparedStatement.setString(4, employee.getPosition().getPositionName());
+                preparedStatement.setBigDecimal(5, employee.getPersonalBonuses());
+                preparedStatement.setInt(6, employee.getTimeWorked());
+                preparedStatement.setInt(7, employee.getId());
 
-            preparedStatement.addBatch();
-            preparedStatement.clearParameters();
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        preparedStatement.executeBatch();
     }
 }

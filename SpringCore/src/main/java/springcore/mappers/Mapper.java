@@ -15,25 +15,22 @@ public interface Mapper<MAP_SOURCE, MAP_TARGET, UPDATE_SOURCE, UPDATE_TARGET> {
      *
      * @param from source object to map
      * @return target object
-     * @throws Exception if data cannot be retrieved
      */
-    MAP_TARGET map(MAP_SOURCE from) throws Exception;
+    MAP_TARGET map(MAP_SOURCE from);
 
     /**
      * Add objects
      *
      * @param from source object to add
      * @param to   target object to add
-     * @throws Exception if data cannot be added
      */
-    void add(UPDATE_SOURCE from, UPDATE_TARGET to) throws Exception;
+    void add(UPDATE_SOURCE from, UPDATE_TARGET to);
 
     /**
      * Update objects
      *
      * @param from source object to update
      * @param to   target object to update
-     * @throws Exception if data cannot be updated
      */
-    void update(UPDATE_SOURCE from, UPDATE_TARGET to) throws Exception;
+    void update(UPDATE_SOURCE from, UPDATE_TARGET to);
 }

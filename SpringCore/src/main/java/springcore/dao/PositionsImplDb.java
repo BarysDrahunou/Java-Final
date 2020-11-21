@@ -2,7 +2,7 @@ package springcore.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import springcore.mappers.PositionMapper;
+import springcore.mappers.Mapper;
 import springcore.position.Position;
 import springcore.services.ConnectTemporary;
 
@@ -20,19 +20,21 @@ import static springcore.constants.SQLQueries.*;
 public class PositionsImplDb implements PositionsDao<List<Position>> {
 
     private final ConnectTemporary connectTemporary;
-    private final PositionMapper positionMapper;
+    private final Mapper<ResultSet, List<Position>,
+            List<Position>, PreparedStatement> mapper;
 
     /**
      * Instantiates a new Positions impl db.
      *
      * @param connectTemporary an instance of the class which provides a connection
      *                         to database
-     * @param positionMapper   the position mapper to perform operations with positions
+     * @param mapper           the position mapper to perform operations with positions
      */
     @Autowired
-    public PositionsImplDb(ConnectTemporary connectTemporary, PositionMapper positionMapper) {
+    public PositionsImplDb(ConnectTemporary connectTemporary, Mapper<ResultSet, List<Position>,
+            List<Position>, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
-        this.positionMapper = positionMapper;
+        this.mapper = mapper;
     }
 
     /**
@@ -46,7 +48,7 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(ADD_POSITIONS_QUERY);
 
-            positionMapper.add(positions, preparedStatement);
+            mapper.add(positions, preparedStatement);
 
             connectTemporary.commit();
         } catch (SQLException e) {
@@ -69,7 +71,7 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
 
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return positionMapper.map(resultSet);
+            return mapper.map(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +97,7 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
 
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return positionMapper.map(resultSet);
+            return mapper.map(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -112,7 +114,7 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(UPDATE_POSITIONS_QUERY);
 
-            positionMapper.update(positions, preparedStatement);
+            mapper.update(positions, preparedStatement);
 
             connectTemporary.commit();
         } catch (SQLException e) {

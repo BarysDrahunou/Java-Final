@@ -3,7 +3,7 @@ package springcore.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import springcore.employee.Employee;
-import springcore.mappers.EmployeeMapper;
+import springcore.mappers.Mapper;
 import springcore.statuses.EmployeeStatus;
 import springcore.services.ConnectTemporary;
 
@@ -21,20 +21,22 @@ import static springcore.constants.SQLQueries.*;
 public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
 
     private final ConnectTemporary connectTemporary;
-    private final EmployeeMapper employeeMapper;
+    private final Mapper<ResultSet, List<Employee>,
+            List<Employee>, PreparedStatement> mapper;
 
     /**
      * Instantiates a new Employees impl db.
      *
      * @param connectTemporary an instance of the class which provides a connection
      *                         to database
-     * @param employeeMapper   the employee mapper to perform operations with employees
+     * @param mapper   the employee mapper to perform operations with employees
      */
     @Autowired
     public EmployeesImplDb(ConnectTemporary connectTemporary,
-                           EmployeeMapper employeeMapper) {
+                           Mapper<ResultSet, List<Employee>,
+                                   List<Employee>, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
-        this.employeeMapper = employeeMapper;
+        this.mapper = mapper;
     }
 
     /**
@@ -48,7 +50,7 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(ADD_EMPLOYEES_QUERY);
 
-            employeeMapper.add(employees, preparedStatement);
+            mapper.add(employees, preparedStatement);
 
             connectTemporary.commit();
         } catch (SQLException e) {
@@ -73,7 +75,7 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
 
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return employeeMapper.map(resultSet);
+            return mapper.map(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -89,7 +91,7 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
         try {
             PreparedStatement preparedStatement = getPreparedStatementForUpdate();
 
-            employeeMapper.update(employees, preparedStatement);
+            mapper.update(employees, preparedStatement);
 
             connectTemporary.commit();
         } catch (SQLException e) {
