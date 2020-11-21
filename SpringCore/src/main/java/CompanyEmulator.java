@@ -1,14 +1,10 @@
 import org.apache.logging.log4j.*;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springcore.company.Company;
 import springcore.config.SpringConfig;
 import springcore.employee.EmployeeCreator;
 import springcore.services.*;
 import springcore.utilityconnection.ConnectTemporary;
-
-import java.sql.*;
 
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
@@ -52,12 +48,13 @@ public class CompanyEmulator {
                     salaryService.paySalary();
                     employeeService.fireEmployees();
                     positionService.clearPositions();
+                    employeeService.releaseEmployees();
                     positionService.closePositions();
                     positionService.changePosition();
                 }
                 salaryService.increaseSalariesDueToInflation();
             }
-        } catch (BeanCreationException | BeanDefinitionStoreException | SQLException e) {
+        } catch (Exception e) {
             LOGGER.error(e);
         }
     }

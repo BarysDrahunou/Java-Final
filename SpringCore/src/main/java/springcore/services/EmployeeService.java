@@ -11,6 +11,8 @@ public interface EmployeeService {
 
     void fireEmployees() throws Exception;
 
+    void releaseEmployees() throws Exception;
+
     void increaseExperience() throws Exception;
 
     void setCompany(Company company);

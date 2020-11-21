@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static springcore.constants.LogMessages.*;
+import static springcore.statuses.EmployeeStatus.*;
 
 @Service
 @Scope("prototype")
@@ -29,12 +30,13 @@ public class EmployeeServiceImplementation implements EmployeeService {
     private int employeesToHire;
 
     public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
+
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
 
         for (int i = 0; i < amountEmployeesToHire && company.getVacanciesCount() > 0; i++) {
-            Employee employee = employeeCreator.createEmployeeAndGet();
 
+            Employee employee = employeeCreator.createEmployeeAndGet();
             employee.setStatus(EmployeeStatus.NEW);
             employeesToHireList.add(employee);
             company.closeVacancy();
@@ -52,18 +54,31 @@ public class EmployeeServiceImplementation implements EmployeeService {
         for (int i = 0; i < amountEmployeesToFire && employees.size() > 0; i++) {
             Employee employee = employees.remove(new Random().nextInt(employees.size()));
 
+            employee.setStatus(FIRED);
             employeesToFireList.add(employee);
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));
         }
 
-        employeesImplDb.updateEmployeesStatusById(EmployeeStatus.FIRED, employeesToFireList);
+        employeesImplDb.updateEmployees(employeesToFireList);
+    }
+
+    public void releaseEmployees() throws SQLException {
+        List<Employee> employees = employeesImplDb
+                .getEmployeesByStatus(FIRED);
+
+        employees.forEach(employee -> employee.setStatus(WENT_OUT));
+
+        employeesImplDb.updateEmployees(employees);
     }
 
     public void increaseExperience() throws SQLException {
         List<Employee> employees = employeesImplDb
                 .getEmployeesByStatus(EmployeeStatus.WORKS);
 
-        employeesImplDb.increaseExp(employees);
+        employees.forEach(employee -> employee
+                .setTimeWorked(employee.getTimeWorked() + 1));
+
+        employeesImplDb.updateEmployees(employees);
     }
 
     public void setCompany(Company company) {

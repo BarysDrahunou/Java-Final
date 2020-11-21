@@ -46,15 +46,16 @@ public class SalaryServiceImplementation implements SalaryService {
                     position, salary.toString()));
         }
 
-        positionsImplDb.assignSalaries(positions);
+        positionsImplDb.updatePositions(positions);
     }
 
     public void paySalary() throws SQLException {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Position> positions=positionsImplDb.getAllPositions();
 
         for (Employee employee : employees) {
-            Usd salaryRate = new Usd(positionsImplDb.getPositionSalary(employee.getPosition()
-                    .getPositionName()).getValue());
+            Position employeePosition=positions.get(positions.indexOf(employee.getPosition()));
+            Usd salaryRate = employeePosition.getSalary();
             int timeWorked = employee.getTimeWorked();
             BigDecimal personalBonuses = employee.getPersonalBonuses();
             Salary salary = new Salary(salaryRate, timeWorked, personalBonuses);

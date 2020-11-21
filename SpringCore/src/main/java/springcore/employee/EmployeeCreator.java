@@ -22,11 +22,11 @@ public class EmployeeCreator {
     }
 
     public EmployeeCreator(String namesPath, String surnamesPath) {
-        this.names = getField(namesPath, DEFAULT_NAMES);
-        this.surnames = getField(surnamesPath, DEFAULT_SURNAMES);
+        this.names = getField(namesPath, DEFAULT_NAMES, Collections.singletonList(DEFAULT_NAME));
+        this.surnames = getField(surnamesPath, DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }
 
-    private List<String> getField(String path, String defaultNameInMap) {
+    private List<String> getField(String path, String defaultNameInMap, List<String> defaultList) {
         if (hashNamesSurnamesMap.containsKey(path)) {
             return hashNamesSurnamesMap.get(path);
         } else {
@@ -34,7 +34,7 @@ public class EmployeeCreator {
                 List<String> data = Files.readAllLines(Paths.get(path));
                 hashNamesSurnamesMap.put(path, data);
 
-                return data;
+                return data.size() > 0 ? data : defaultList;
             } catch (IOException e) {
                 LOGGER.error(e);
 

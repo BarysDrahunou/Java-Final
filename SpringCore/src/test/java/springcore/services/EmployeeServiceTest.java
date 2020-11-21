@@ -54,53 +54,53 @@ public class EmployeeServiceTest {
         ReflectionUtils.setField(employeesToHire, employeeService, 100500);
     }
 
-    @Test
-    public void hireEmployees() throws SQLException {
-        when(company.getVacanciesCount()).thenReturn(3, 2, 1, 0);
-        when(employeeCreator.createEmployeeAndGet()).thenReturn(employee1, employee2, employee3);
-
-        employeeService.hireEmployees(employeeCreator);
-
-        ArgumentCaptor<EmployeeStatus> argumentCaptor = ArgumentCaptor.forClass(EmployeeStatus.class);
-
-        verify(employeeCreator,times(3)).createEmployeeAndGet();
-        verify(employee1).setStatus(argumentCaptor.capture());
-        verify(employee2).setStatus(argumentCaptor.capture());
-        verify(employee3).setStatus(argumentCaptor.capture());
-        verify(company, times(3)).closeVacancy();
-        verify(employeesImplDb).addEmployees(anyList());
-
-        assertTrue(argumentCaptor.getAllValues().stream()
-                .allMatch(employeeStatus -> employeeStatus.equals(EmployeeStatus.NEW)));
-    }
-
-
-    @Test
-    public void fireEmployees() throws SQLException {
-        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class)))
-                .thenReturn(employees);
-        when(employees.size()).thenReturn(3, 3, 2, 2, 1, 1, 0);
-        when(employees.remove(anyInt())).thenReturn(employee1, employee2, employee3);
-
-        employeeService.fireEmployees();
-
-        verify(employees, times(7)).size();
-        verify(employees, times(3)).remove(anyInt());
-        verify(employeesImplDb).updateEmployeesStatusById(eq(EmployeeStatus.FIRED), anyList());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void increaseExperience() throws SQLException {
-        when(employeesImplDb.getEmployeesByStatus(eq(EmployeeStatus.WORKS))).thenReturn(employees);
-
-        ArgumentCaptor<List<Employee>> argumentCaptor = ArgumentCaptor.forClass(List.class);
-
-        employeeService.increaseExperience();
-
-        verify(employeesImplDb).getEmployeesByStatus(EmployeeStatus.WORKS);
-        verify(employeesImplDb).increaseExp(argumentCaptor.capture());
-
-        assertEquals(employees,argumentCaptor.getValue());
-    }
+//    @Test
+//    public void hireEmployees() throws SQLException {
+//        when(company.getVacanciesCount()).thenReturn(3, 2, 1, 0);
+//        when(employeeCreator.createEmployeeAndGet()).thenReturn(employee1, employee2, employee3);
+//
+//        employeeService.hireEmployees(employeeCreator);
+//
+//        ArgumentCaptor<EmployeeStatus> argumentCaptor = ArgumentCaptor.forClass(EmployeeStatus.class);
+//
+//        verify(employeeCreator,times(3)).createEmployeeAndGet();
+//        verify(employee1).setStatus(argumentCaptor.capture());
+//        verify(employee2).setStatus(argumentCaptor.capture());
+//        verify(employee3).setStatus(argumentCaptor.capture());
+//        verify(company, times(3)).closeVacancy();
+//        verify(employeesImplDb).addEmployees(anyList());
+//
+//        assertTrue(argumentCaptor.getAllValues().stream()
+//                .allMatch(employeeStatus -> employeeStatus.equals(EmployeeStatus.NEW)));
+//    }
+//
+//
+//    @Test
+//    public void fireEmployees() throws SQLException {
+//        when(employeesImplDb.getEmployeesByStatus(any(EmployeeStatus.class)))
+//                .thenReturn(employees);
+//        when(employees.size()).thenReturn(3, 3, 2, 2, 1, 1, 0);
+//        when(employees.remove(anyInt())).thenReturn(employee1, employee2, employee3);
+//
+//        employeeService.fireEmployees();
+//
+//        verify(employees, times(7)).size();
+//        verify(employees, times(3)).remove(anyInt());
+//        verify(employeesImplDb).updateEmployeesStatusById(eq(EmployeeStatus.FIRED), anyList());
+//    }
+//
+//    @Test
+//    @SuppressWarnings("unchecked")
+//    public void increaseExperience() throws SQLException {
+//        when(employeesImplDb.getEmployeesByStatus(eq(EmployeeStatus.WORKS))).thenReturn(employees);
+//
+//        ArgumentCaptor<List<Employee>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+//
+//        employeeService.increaseExperience();
+//
+//        verify(employeesImplDb).getEmployeesByStatus(EmployeeStatus.WORKS);
+//        verify(employeesImplDb).increaseExp(argumentCaptor.capture());
+//
+//        assertEquals(employees,argumentCaptor.getValue());
+//    }
 }

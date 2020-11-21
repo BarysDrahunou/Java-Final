@@ -12,12 +12,4 @@ public interface EmployeesDao {
     List<Employee> getEmployeesByStatus(EmployeeStatus status) throws Exception;
 
     void updateEmployees(List<Employee> employees) throws Exception;
-
-    void updateEmployeesStatusByStatus(EmployeeStatus setStatus, EmployeeStatus findStatus)
-            throws Exception;
-
-    void updateEmployeesStatusById(EmployeeStatus status, List<Employee> employees)
-            throws Exception;
-
-    void increaseExp(List<Employee> employees) throws Exception;
 }

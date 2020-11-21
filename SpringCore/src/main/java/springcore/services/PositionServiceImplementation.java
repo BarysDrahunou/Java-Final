@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static springcore.constants.LogMessages.*;
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
+import static springcore.statuses.EmployeeStatus.*;
 
 @Component
 public class PositionServiceImplementation implements PositionService {
@@ -50,11 +51,11 @@ public class PositionServiceImplementation implements PositionService {
         List<Position> positionsToAdd = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
         List<Position> positions = positionsImplDb.getAllPositions();
+        int jobsScopeSize = jobs.size();
 
         for (int i = 0; i < positionsToAddAmount; i++) {
-            int jobsScopeSize = jobs.size();
             Position position = jobsScopeSize > 0
-                    ? new Position(jobs.get(new Random().nextInt(jobs.size())))
+                    ? new Position(jobs.get(new Random().nextInt(jobsScopeSize)))
                     : new Position(DEFAULT_JOB);
 
             if (positions.contains(position)) {
@@ -111,14 +112,11 @@ public class PositionServiceImplementation implements PositionService {
 
     @Override
     public void clearPositions() throws SQLException {
-        List<Position> positions = employeesImplDb.getEmployeesByStatus(EmployeeStatus.FIRED)
+        List<Position> positions = employeesImplDb.getEmployeesByStatus(FIRED)
                 .stream()
                 .map(Employee::getPosition)
                 .collect(Collectors.toList());
         List<Position> positionsToUpdate = new ArrayList<>();
-
-        employeesImplDb.updateEmployeesStatusByStatus(EmployeeStatus.WENT_OUT,
-                EmployeeStatus.FIRED);
 
         for (Position position : positions) {
             Position oldPosition = positionsImplDb
