@@ -6,6 +6,9 @@ import java.util.Objects;
 
 import static springcore.constants.VariablesConstants.*;
 
+/**
+ * The type Position.
+ */
 public class Position {
 
     private final String positionName;
@@ -13,34 +16,74 @@ public class Position {
     private int activeWorkers;
     private Usd salary = new Usd(DECIMAL_BASE);
 
+    /**
+     * Instantiates a new Position.
+     *
+     * @param positionName the position name
+     */
     public Position(String positionName) {
         this.positionName = positionName;
     }
 
+    /**
+     * Sets vacancies.
+     *
+     * @param vacancies the vacancies for this position
+     */
     public void setVacancies(int vacancies) {
         this.vacancies = vacancies;
     }
 
+    /**
+     * Sets active workers.
+     *
+     * @param activeWorkers the active workers for this position
+     */
     public void setActiveWorkers(int activeWorkers) {
         this.activeWorkers = activeWorkers;
     }
 
+    /**
+     * Sets salary.
+     *
+     * @param salary the salary for this position
+     */
     public void setSalary(Usd salary) {
         this.salary = salary;
     }
 
+    /**
+     * Gets position name.
+     *
+     * @return the position name
+     */
     public String getPositionName() {
         return positionName;
     }
 
+    /**
+     * Gets vacancies.
+     *
+     * @return the vacancies
+     */
     public int getVacancies() {
         return vacancies;
     }
 
+    /**
+     * Gets active workers.
+     *
+     * @return the active workers
+     */
     public int getActiveWorkers() {
         return activeWorkers;
     }
 
+    /**
+     * Gets salary.
+     *
+     * @return the salary
+     */
     public Usd getSalary() {
         return salary;
     }

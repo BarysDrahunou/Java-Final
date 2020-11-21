@@ -1,15 +1,34 @@
 package springcore.dao;
 
-import springcore.employee.Employee;
 import springcore.statuses.EmployeeStatus;
 
-import java.util.List;
+/**
+ * The interface EmployeesDao to working with employees
+ */
+public interface EmployeesDao<SOURCE, TARGET> {
 
-public interface EmployeesDao {
+    /**
+     * Add employees.
+     *
+     * @param employees the bundle of employees
+     * @throws Exception if employees cannot be inserted
+     */
+    void addEmployees(SOURCE employees) throws Exception;
 
-    void addEmployees(List<Employee> employees) throws Exception;
+    /**
+     * Gets employees by status.
+     *
+     * @param status the status by which employees will be retrieved
+     * @return the bundle of employees
+     * @throws Exception if employees cannot be retrieved
+     */
+    TARGET getEmployeesByStatus(EmployeeStatus status) throws Exception;
 
-    List<Employee> getEmployeesByStatus(EmployeeStatus status) throws Exception;
-
-    void updateEmployees(List<Employee> employees) throws Exception;
+    /**
+     * Update employees.
+     *
+     * @param employees the bundle of employees which should be updated
+     * @throws Exception if employees cannot be updated
+     */
+    void updateEmployees(SOURCE employees) throws Exception;
 }

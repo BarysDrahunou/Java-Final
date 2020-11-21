@@ -8,12 +8,21 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Random;
 
+/**
+ * The type Inject random int annotation bean post processor.
+ * The class for using InjectRandomInt annotation
+ */
 @Component
 public class InjectRandomIntAnnotationBeanPostProcessor implements BeanPostProcessor {
 
+    /**
+     * @param bean     object which fields may be annotated as @InjectRandomInt
+     * @param beanName name of the bean which are used inside the method
+     * @return bean object
+     * @throws BeansException if bean cannot be instantiated
+     */
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName)
-            throws BeansException {
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
 
         Field[] fields = bean.getClass().getDeclaredFields();
 

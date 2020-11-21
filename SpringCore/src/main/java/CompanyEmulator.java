@@ -12,15 +12,26 @@ import springcore.services.companyservices.SalaryService;
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
 
+/**
+ * The type Company emulator.
+ */
 public class CompanyEmulator {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final int years;
 
+    /**
+     * Instantiates a new Company emulator.
+     *
+     * @param years the lifecycle of the company
+     */
     public CompanyEmulator(int years) {
         this.years = years;
     }
 
+    /**
+     * Emulate company life
+     */
     public void emulate() {
 
         try (AnnotationConfigApplicationContext context
