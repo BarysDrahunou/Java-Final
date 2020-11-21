@@ -6,15 +6,11 @@ import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
 import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
-import springcore.employee.EmployeeCreator;
-import springcore.statuses.EmployeeStatus;
+import springcore.services.companyservices.EmployeeService;
+import springcore.services.companyservices.EmployeeServiceImplementation;
 
 import java.lang.reflect.*;
-import java.sql.SQLException;
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class EmployeeServiceTest {
 

@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.companyservices;
 
 import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
@@ -8,7 +8,8 @@ import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
-import springcore.employee.EmployeeCreator;
+import springcore.services.EmployeeCreator;
+import springcore.services.companyservices.EmployeeService;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.SQLException;
@@ -91,5 +92,9 @@ public class EmployeeServiceImplementation implements EmployeeService {
     @Autowired
     public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
         this.employeesImplDb = employeesImplDb;
+    }
+
+    public EmployeesImplDb getEmployeesImplDb() {
+        return employeesImplDb;
     }
 }

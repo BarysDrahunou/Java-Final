@@ -3,8 +3,8 @@ package springcore.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import springcore.dao.*;
-import springcore.services.SalaryService;
-import springcore.services.SalaryServiceImplementation;
+import springcore.services.companyservices.SalaryService;
+import springcore.services.companyservices.SalaryServiceImplementation;
 
 
 @Configuration

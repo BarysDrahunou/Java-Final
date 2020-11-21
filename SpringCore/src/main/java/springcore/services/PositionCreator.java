@@ -1,4 +1,4 @@
-package springcore.position;
+package springcore.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import springcore.currency.Usd;
+import springcore.position.Position;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,25 +1,19 @@
 package springcore.services;
 
 import org.junit.*;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
-import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
-import springcore.salary.Salary;
-import springcore.statuses.EmployeeStatus;
+import springcore.services.companyservices.SalaryService;
+import springcore.services.companyservices.SalaryServiceImplementation;
 
 import java.lang.reflect.*;
-import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 public class SalaryServiceTest {
 

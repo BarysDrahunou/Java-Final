@@ -1,8 +1,8 @@
-package springcore.services;
+package springcore.services.companyservices;
 
 import springcore.company.Company;
 import springcore.dao.EmployeesImplDb;
-import springcore.employee.EmployeeCreator;
+import springcore.services.EmployeeCreator;
 
 
 public interface EmployeeService {

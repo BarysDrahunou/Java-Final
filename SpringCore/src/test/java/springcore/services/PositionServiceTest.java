@@ -1,26 +1,16 @@
 package springcore.services;
 
-import org.junit.*;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.util.ReflectionUtils;
 import springcore.company.Company;
-import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
-import springcore.statuses.EmployeeStatus;
+import springcore.services.companyservices.PositionService;
 
-import java.lang.reflect.*;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Stream;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
 
 public class PositionServiceTest {
 

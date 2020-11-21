@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.companyservices;
 
 
 public interface SalaryService {

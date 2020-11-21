@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.companyservices;
 
 import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
@@ -9,7 +9,8 @@ import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
-import springcore.position.PositionCreator;
+import springcore.services.PositionCreator;
+import springcore.services.companyservices.PositionService;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.*;
@@ -245,5 +246,13 @@ public class PositionServiceImplementation implements PositionService {
     @Override
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public PositionsImplDb getPositionsImplDb() {
+        return positionsImplDb;
+    }
+
+    public EmployeesImplDb getEmployeesImplDb() {
+        return employeesImplDb;
     }
 }

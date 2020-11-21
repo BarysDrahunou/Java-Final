@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import springcore.mappers.PositionMapper;
 import springcore.position.Position;
-import springcore.utilityconnection.ConnectTemporary;
+import springcore.services.ConnectTemporary;
 
 import java.sql.*;
 import java.util.*;
@@ -69,5 +69,9 @@ public class PositionsImplDb implements PositionsDao {
         positionMapper.update(positions, preparedStatement);
 
         connectTemporary.commit();
+    }
+
+    public ConnectTemporary getConnectTemporary() {
+        return connectTemporary;
     }
 }

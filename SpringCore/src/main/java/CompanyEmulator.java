@@ -2,10 +2,12 @@ import org.apache.logging.log4j.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springcore.company.Company;
 import springcore.config.SpringConfig;
-import springcore.employee.EmployeeCreator;
-import springcore.position.PositionCreator;
-import springcore.services.*;
-import springcore.utilityconnection.ConnectTemporary;
+import springcore.services.EmployeeCreator;
+import springcore.services.PositionCreator;
+import springcore.services.ConnectTemporary;
+import springcore.services.companyservices.EmployeeService;
+import springcore.services.companyservices.PositionService;
+import springcore.services.companyservices.SalaryService;
 
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;

@@ -10,7 +10,7 @@ import org.springframework.util.ReflectionUtils;
 import springcore.currency.Usd;
 import springcore.mappers.PositionMapper;
 import springcore.position.Position;
-import springcore.utilityconnection.ConnectTemporary;
+import springcore.services.ConnectTemporary;
 
 import java.lang.reflect.Field;
 import java.sql.*;

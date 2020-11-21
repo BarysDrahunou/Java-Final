@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import springcore.employee.Employee;
 import springcore.mappers.EmployeeMapper;
 import springcore.statuses.EmployeeStatus;
-import springcore.utilityconnection.ConnectTemporary;
+import springcore.services.ConnectTemporary;
 
 import java.sql.*;
 import java.util.*;
@@ -60,5 +60,9 @@ public class EmployeesImplDb implements EmployeesDao {
 
     private PreparedStatement getPreparedStatementForUpdate() throws SQLException {
         return connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
+    }
+
+    public ConnectTemporary getConnectTemporary() {
+        return connectTemporary;
     }
 }

@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.companyservices;
 
 import org.apache.logging.log4j.*;
 import springcore.annotations.InjectRandomInt;
@@ -7,6 +7,7 @@ import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
 import springcore.salary.Salary;
+import springcore.services.companyservices.SalaryService;
 import springcore.statuses.EmployeeStatus;
 
 import java.math.BigDecimal;
@@ -163,5 +164,13 @@ public class SalaryServiceImplementation implements SalaryService {
         LOGGER.info(END_INDEXING_MESSAGE);
 
         positionsImplDb.updatePositions(positions);
+    }
+
+    public PositionsImplDb getPositionsImplDb() {
+        return positionsImplDb;
+    }
+
+    public EmployeesImplDb getEmployeesImplDb() {
+        return employeesImplDb;
     }
 }
