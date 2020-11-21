@@ -1,6 +1,8 @@
 package springcore.dao;
 
 
+import springcore.services.ConnectTemporary;
+
 /**
  * The interface Positions dao to working with positions.
  */
@@ -39,4 +41,11 @@ public interface PositionsDao<SOURCE, TARGET> {
      * @throws Exception the exception if positions cannot be got
      */
     void updatePositions(SOURCE positions) throws Exception;
+
+    /**
+     * Gets connect temporary.
+     *
+     * @return the connect temporary
+     */
+    ConnectTemporary getConnectTemporary();
 }

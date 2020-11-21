@@ -8,6 +8,9 @@ import java.sql.*;
 
 import static springcore.constants.LogMessages.*;
 
+/**
+ * Class for creating an instance of temporary connection.
+ */
 @Service
 public class ConnectTemporary implements AutoCloseable {
 
@@ -19,6 +22,11 @@ public class ConnectTemporary implements AutoCloseable {
 
     private final Connection connection;
 
+    /**
+     * Instantiates a new Connect temporary.
+     *
+     * @throws SQLException the sql exception if class for driver is not found
+     */
     public ConnectTemporary() throws SQLException {
         try {
             Class.forName(DRIVER);
@@ -32,6 +40,12 @@ public class ConnectTemporary implements AutoCloseable {
         this.connection = connection;
     }
 
+    /**
+     * Truncate tables.
+     *
+     * @param tableNames the table names which will be truncated
+     * @throws SQLException if there are problems with connection to database
+     */
     public void truncateTables(String... tableNames) throws SQLException {
         Statement statement = getStatement();
 
@@ -44,14 +58,32 @@ public class ConnectTemporary implements AutoCloseable {
         commit();
     }
 
+    /**
+     * Gets prepared statement.
+     *
+     * @param sql query to database
+     * @return the prepared statement
+     * @throws SQLException if there are problems with connection to database
+     */
     public PreparedStatement getPreparedStatement(String sql) throws SQLException {
         return connection != null ? connection.prepareStatement(sql) : null;
     }
 
+    /**
+     * Gets statement.
+     *
+     * @return the statement
+     * @throws SQLException if there are problems with connection to database
+     */
     public Statement getStatement() throws SQLException {
         return connection != null ? connection.createStatement() : null;
     }
 
+    /**
+     * Commit.
+     *
+     * @throws SQLException if there are problems with connection to database
+     */
     public void commit() throws SQLException {
         connection.commit();
     }

@@ -1,5 +1,6 @@
 package springcore.dao;
 
+import springcore.services.ConnectTemporary;
 import springcore.statuses.EmployeeStatus;
 
 /**
@@ -31,4 +32,11 @@ public interface EmployeesDao<SOURCE, TARGET> {
      * @throws Exception if employees cannot be updated
      */
     void updateEmployees(SOURCE employees) throws Exception;
+
+    /**
+     * Gets connect temporary.
+     *
+     * @return the connect temporary
+     */
+    ConnectTemporary getConnectTemporary();
 }

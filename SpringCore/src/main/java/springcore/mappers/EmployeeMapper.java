@@ -10,10 +10,20 @@ import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
 
+/**
+ * The type Employee mapper to work with a database.
+ */
 @Service
 public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
         List<Employee>, PreparedStatement> {
 
+    /**
+     * Map employees from database to list
+     *
+     * @param resultSet source object from database
+     * @return list of mapped employees
+     * @throws SQLException if employees cannot be retrieved
+     */
     @Override
     public List<Employee> map(ResultSet resultSet) throws SQLException {
         List<Employee> employees = new ArrayList<>();
@@ -34,6 +44,13 @@ public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
         return employees;
     }
 
+    /**
+     * Add employees to database
+     *
+     * @param employees list of employees to add
+     * @param preparedStatement   target object to put employees into database
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void add(List<Employee> employees, PreparedStatement preparedStatement)
             throws SQLException {
@@ -51,6 +68,13 @@ public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
         preparedStatement.executeBatch();
     }
 
+    /**
+     * Update employees into database
+     *
+     * @param employees list of employees to update
+     * @param preparedStatement   target object to put employees into database
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void update(List<Employee> employees, PreparedStatement preparedStatement)
             throws SQLException {

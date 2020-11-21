@@ -9,7 +9,6 @@ import springcore.company.Company;
 import springcore.employee.Employee;
 import springcore.dao.EmployeesImplDb;
 import springcore.services.EmployeeCreator;
-import springcore.services.companyservices.EmployeeService;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.SQLException;
@@ -18,6 +17,9 @@ import java.util.*;
 import static springcore.constants.LogMessages.*;
 import static springcore.statuses.EmployeeStatus.*;
 
+/**
+ * The type Employee service implementation.
+ */
 @Service
 @Scope("prototype")
 public class EmployeeServiceImplementation implements EmployeeService {
@@ -30,6 +32,12 @@ public class EmployeeServiceImplementation implements EmployeeService {
     @InjectRandomInt(max = 10)
     private int employeesToHire;
 
+    /**
+     * Creates new employees via employeeCreator and hired them into a company
+     *
+     * @param employeeCreator the instance of EmployeeCreator.class to hire new employees
+     * @throws SQLException if there are problems with database
+     */
     public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
 
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
@@ -49,6 +57,11 @@ public class EmployeeServiceImplementation implements EmployeeService {
         employeesImplDb.addEmployees(employeesToHireList);
     }
 
+    /**
+     * Fire employees from a company
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void fireEmployees() throws SQLException {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int amountEmployeesToFire = new Random().nextInt(employeesToFire + 1);
@@ -66,6 +79,11 @@ public class EmployeeServiceImplementation implements EmployeeService {
         employeesImplDb.updateEmployees(employeesToFireList);
     }
 
+    /**
+     * Release employees from a company after they have received their salaries.
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void releaseEmployees() throws SQLException {
         List<Employee> employees = employeesImplDb
                 .getEmployeesByStatus(FIRED);
@@ -75,6 +93,11 @@ public class EmployeeServiceImplementation implements EmployeeService {
         employeesImplDb.updateEmployees(employees);
     }
 
+    /**
+     * Increase experience of current company's employees
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void increaseExperience() throws SQLException {
         List<Employee> employees = employeesImplDb
                 .getEmployeesByStatus(EmployeeStatus.WORKS);
@@ -85,15 +108,30 @@ public class EmployeeServiceImplementation implements EmployeeService {
         employeesImplDb.updateEmployees(employees);
     }
 
+    /**
+     * Sets company to this service
+     *
+     * @param company company for which current service will operate
+     */
     public void setCompany(Company company) {
         this.company = company;
     }
 
+    /**
+     * Sets employees impl db.
+     *
+     * @param employeesImplDb the employees impl db
+     */
     @Autowired
     public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
         this.employeesImplDb = employeesImplDb;
     }
 
+    /**
+     * Gets employees impl db.
+     *
+     * @return the employees impl db
+     */
     public EmployeesImplDb getEmployeesImplDb() {
         return employeesImplDb;
     }

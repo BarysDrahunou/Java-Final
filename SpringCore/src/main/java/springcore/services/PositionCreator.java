@@ -15,6 +15,9 @@ import java.util.*;
 
 import static springcore.constants.VariablesConstants.*;
 
+/**
+ * Class for creating new Positions with random jobs from input files.
+ */
 @Service
 public class PositionCreator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -25,6 +28,13 @@ public class PositionCreator {
         hashJobsMap.put(DEFAULT_JOBS, Collections.singletonList(DEFAULT_JOB));
     }
 
+    /**
+     * Instantiates a new Position creator.
+     *
+     * @param jobsPath the path to file with list of jobs from which will be chosen job for
+     *                 position. If path is wrong, the default job are assigned to all positions
+     *                 created by this creator.
+     */
     @Autowired
     public PositionCreator(@Value("${jobs.path}") String jobsPath) {
         this.jobs = getJobs(jobsPath);
@@ -47,6 +57,11 @@ public class PositionCreator {
         }
     }
 
+    /**
+     * Create position and get position.
+     *
+     * @return the position
+     */
     public Position createPositionAndGet() {
         Random random = new Random();
 

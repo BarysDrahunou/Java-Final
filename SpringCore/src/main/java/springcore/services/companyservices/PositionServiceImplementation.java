@@ -10,7 +10,6 @@ import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
 import springcore.services.PositionCreator;
-import springcore.services.companyservices.PositionService;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.*;
@@ -22,6 +21,9 @@ import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
 import static springcore.statuses.EmployeeStatus.*;
 
+/**
+ * The type Position service implementation.
+ */
 @Service
 public class PositionServiceImplementation implements PositionService {
 
@@ -36,6 +38,12 @@ public class PositionServiceImplementation implements PositionService {
     @InjectRandomInt(max = 10)
     private int employeesToChangeWork;
 
+    /**
+     * Instantiates a new Position service implementation.
+     *
+     * @param positionsImplDb positionsDAO instance
+     * @param employeesImplDb employeesDAO instance
+     */
     @Autowired
     public PositionServiceImplementation(PositionsImplDb positionsImplDb,
                                          EmployeesImplDb employeesImplDb) {
@@ -43,6 +51,12 @@ public class PositionServiceImplementation implements PositionService {
         this.employeesImplDb = employeesImplDb;
     }
 
+    /**
+     * Create new positions via positionCreator and add them to a company.
+     *
+     * @param positionCreator the position creator
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void addPositions(PositionCreator positionCreator) throws SQLException {
         int positionsToAddAmount = new Random().nextInt(positionsToOpen + 1);
@@ -75,6 +89,11 @@ public class PositionServiceImplementation implements PositionService {
         positionsImplDb.addPositions(positionsToAdd);
     }
 
+    /**
+     * Assign employees to opened positions into a company
+     *
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void assignPositions() throws SQLException {
         List<Employee> newEmployees = employeesImplDb.getEmployeesByStatus(NEW);
@@ -107,6 +126,11 @@ public class PositionServiceImplementation implements PositionService {
         positionsImplDb.updatePositions(positionsToUpdate);
     }
 
+    /**
+     * Clear positions after employees has been fired
+     *
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void clearPositions() throws SQLException {
         List<Position> positions = employeesImplDb.getEmployeesByStatus(FIRED)
@@ -136,6 +160,11 @@ public class PositionServiceImplementation implements PositionService {
         positionsImplDb.updatePositions(positionsToUpdate);
     }
 
+    /**
+     * Close positions if company doesn't need any more of current position .
+     *
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void closePositions() throws SQLException {
         List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
@@ -161,6 +190,11 @@ public class PositionServiceImplementation implements PositionService {
         positionsImplDb.updatePositions(positionsToUpdate);
     }
 
+    /**
+     * Change position for employee
+     *
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void changePosition() throws SQLException {
         List<Position> allPositionList = positionsImplDb.getAllPositions();
@@ -243,15 +277,30 @@ public class PositionServiceImplementation implements PositionService {
         }
     }
 
+    /**
+     * Sets company to this service
+     *
+     * @param company company for which current service will operate
+     */
     @Override
     public void setCompany(Company company) {
         this.company = company;
     }
 
+    /**
+     * Gets positions impl db.
+     *
+     * @return the positions impl db
+     */
     public PositionsImplDb getPositionsImplDb() {
         return positionsImplDb;
     }
 
+    /**
+     * Gets employees impl db.
+     *
+     * @return the employees impl db
+     */
     public EmployeesImplDb getEmployeesImplDb() {
         return employeesImplDb;
     }

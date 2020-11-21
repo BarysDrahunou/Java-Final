@@ -12,6 +12,9 @@ import java.util.*;
 
 import static springcore.constants.VariablesConstants.*;
 
+/**
+ * Class for creating new Employees with random names and surnames from input files.
+ */
 @Service
 public class EmployeeCreator {
 
@@ -25,6 +28,16 @@ public class EmployeeCreator {
         hashNamesSurnamesMap.put(DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }
 
+    /**
+     * Instantiates a new Employee creator.
+     *
+     * @param namesPath    the path to file with list of names from which will be chosen name for
+     *                     employee. If path is wrong, the default name are assigned to all employee
+     *                     created by this creator.
+     * @param surnamesPath the path to file with list of surnames from which will be chosen surname
+     *                     for employee. If path is wrong, the default surname are assigned to all
+     *                     employee created by this creator.
+     */
     @Autowired
     public EmployeeCreator(@Value("${names.path}") String namesPath,
                            @Value("${surnames.path}") String surnamesPath) {
@@ -49,6 +62,11 @@ public class EmployeeCreator {
         }
     }
 
+    /**
+     * Creates an employee with random names and surnames
+     *
+     * @return the employee
+     */
     public Employee createEmployeeAndGet() {
         Random random = new Random();
 

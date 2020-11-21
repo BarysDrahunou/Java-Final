@@ -20,6 +20,9 @@ import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
 
 
+/**
+ * The type Salary service implementation.
+ */
 public class SalaryServiceImplementation implements SalaryService {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -30,12 +33,23 @@ public class SalaryServiceImplementation implements SalaryService {
     @InjectRandomInt(max = 16)
     private int percentageOfIndexing;
 
+    /**
+     * Instantiates a new Salary service implementation.
+     *
+     * @param positionsImplDb positionsDAO instance
+     * @param employeesImplDb employeesDAO instance
+     */
     public SalaryServiceImplementation(PositionsImplDb positionsImplDb,
                                        EmployeesImplDb employeesImplDb) {
         this.positionsImplDb = positionsImplDb;
         this.employeesImplDb = employeesImplDb;
     }
 
+    /**
+     * Assign salaries to current opened positions
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void assignSalaries() throws SQLException {
         List<Position> positions = positionsImplDb.getPositions(SALARY_QUERY, DECIMAL_BASE);
 
@@ -51,6 +65,11 @@ public class SalaryServiceImplementation implements SalaryService {
         positionsImplDb.updatePositions(positions);
     }
 
+    /**
+     * Pay salary to all active workers
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void paySalary() throws SQLException {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         List<Position> positions=positionsImplDb.getAllPositions();
@@ -105,6 +124,11 @@ public class SalaryServiceImplementation implements SalaryService {
         }
     }
 
+    /**
+     * Assign bonuses to all active workers in random order
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void assignBonuses() throws SQLException {
         List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
         int count = 0;
@@ -144,6 +168,11 @@ public class SalaryServiceImplementation implements SalaryService {
                 employee, employee.getPersonalBonuses()));
     }
 
+    /**
+     * Increase salaries due to inflation.
+     *
+     * @throws SQLException if there are problems with database
+     */
     public void increaseSalariesDueToInflation() throws SQLException {
         List<Position> positions = positionsImplDb.getAllPositions();
         int inflationRate = new Random().nextInt(percentageOfIndexing);
@@ -166,10 +195,20 @@ public class SalaryServiceImplementation implements SalaryService {
         positionsImplDb.updatePositions(positions);
     }
 
+    /**
+     * Gets positions impl db.
+     *
+     * @return the positions impl db
+     */
     public PositionsImplDb getPositionsImplDb() {
         return positionsImplDb;
     }
 
+    /**
+     * Gets employees impl db.
+     *
+     * @return the employees impl db
+     */
     public EmployeesImplDb getEmployeesImplDb() {
         return employeesImplDb;
     }

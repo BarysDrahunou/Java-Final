@@ -9,10 +9,20 @@ import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
 
+/**
+ * The type Position mapper to work with a database.
+ */
 @Service
 public class PositionMapper implements Mapper<ResultSet, List<Position>,
         List<Position>, PreparedStatement> {
 
+    /**
+     * Map positions from database to list
+     *
+     * @param resultSet source object from database
+     * @return list of mapped positions
+     * @throws SQLException if positions cannot be retrieved
+     */
     @Override
     public List<Position> map(ResultSet resultSet) throws SQLException {
         List<Position> positions = new ArrayList<>();
@@ -30,6 +40,13 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
         return positions;
     }
 
+    /**
+     * Add positions to database
+     *
+     * @param positions list of positions to add
+     * @param preparedStatement   target object to put positions into database
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void add(List<Position> positions, PreparedStatement preparedStatement)
             throws SQLException {
@@ -47,6 +64,13 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
         preparedStatement.executeBatch();
     }
 
+    /**
+     * Update positions into database
+     *
+     * @param positions list of positions to update
+     * @param preparedStatement   target object to put positions into database
+     * @throws SQLException if there are problems with database
+     */
     @Override
     public void update(List<Position> positions, PreparedStatement preparedStatement)
             throws SQLException {
