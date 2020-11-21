@@ -125,6 +125,7 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
      *
      * @return the connect temporary
      */
+    @Override
     public ConnectTemporary getConnectTemporary() {
         return connectTemporary;
     }

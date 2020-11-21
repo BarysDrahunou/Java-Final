@@ -110,6 +110,7 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
      *
      * @return the connect temporary
      */
+    @Override
     public ConnectTemporary getConnectTemporary() {
         return connectTemporary;
     }

@@ -14,30 +14,23 @@ public interface EmployeeService<T> {
      * Creates new employees via employeeCreator and hired them into a company
      *
      * @param employeeCreator the instance of EmployeeCreator.class to hire new employees
-     * @throws Exception if new employees cannot be hired
      */
-    void hireEmployees(EmployeeCreator employeeCreator) throws Exception;
+    void hireEmployees(EmployeeCreator employeeCreator);
 
     /**
      * Fire employees from a company
-     *
-     * @throws Exception if employees cannot be fired
      */
-    void fireEmployees() throws Exception;
+    void fireEmployees();
 
     /**
      * Release employees from a company after they have received their salaries.
-     *
-     * @throws Exception if employees cannot be released
      */
-    void releaseEmployees() throws Exception;
+    void releaseEmployees();
 
     /**
      * Increase experience of current company's employees
-     *
-     * @throws Exception if an experience cannot be increased
      */
-    void increaseExperience() throws Exception;
+    void increaseExperience();
 
     /**
      * Sets company to this service

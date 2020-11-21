@@ -2,12 +2,10 @@ import org.apache.logging.log4j.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import springcore.company.Company;
 import springcore.config.SpringConfig;
-import springcore.services.EmployeeCreator;
-import springcore.services.PositionCreator;
-import springcore.services.ConnectTemporary;
-import springcore.services.companyservices.EmployeeService;
-import springcore.services.companyservices.PositionService;
-import springcore.services.companyservices.SalaryService;
+import springcore.services.*;
+import springcore.services.companyservices.*;
+
+import java.sql.SQLException;
 
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
@@ -42,9 +40,9 @@ public class CompanyEmulator {
                     POSITIONS_TABLE_TRUNCATE_SQL);
 
             Company company = new Company();
-            EmployeeService employeeService = context.getBean(EmployeeService.class);
-            PositionService positionService = context.getBean(PositionService.class);
-            SalaryService salaryService = context.getBean(SalaryService.class);
+            EmployeeService<?> employeeService = context.getBean(EmployeeService.class);
+            PositionService<?, ?> positionService = context.getBean(PositionService.class);
+            SalaryService<?, ?> salaryService = context.getBean(SalaryService.class);
             EmployeeCreator employeeCreator = context.getBean(EmployeeCreator.class);
             PositionCreator positionCreator = context.getBean(PositionCreator.class);
 
@@ -70,7 +68,7 @@ public class CompanyEmulator {
 
                 salaryService.increaseSalariesDueToInflation();
             }
-        } catch (Exception e) {
+        } catch (SQLException | RuntimeException e) {
             LOGGER.error(e);
         }
     }
