@@ -4,15 +4,14 @@ import springcore.company.Company;
 import springcore.dao.EmployeesImplDb;
 import springcore.employee.EmployeeCreator;
 
-import java.sql.SQLException;
 
 public interface EmployeeService {
 
-    void hireEmployees(EmployeeCreator employeeCreator) throws SQLException;
+    void hireEmployees(EmployeeCreator employeeCreator) throws Exception;
 
-    void fireEmployees() throws SQLException;
+    void fireEmployees() throws Exception;
 
-    void increaseExperience() throws SQLException;
+    void increaseExperience() throws Exception;
 
     void setCompany(Company company);
 

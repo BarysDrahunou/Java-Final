@@ -1,14 +1,13 @@
 package springcore.services;
 
-import java.sql.SQLException;
 
 public interface SalaryService {
 
-    void assignSalaries() throws SQLException;
+    void assignSalaries() throws Exception;
 
-    void paySalary() throws SQLException;
+    void paySalary() throws Exception;
 
-    void assignBonuses() throws SQLException;
+    void assignBonuses() throws Exception;
 
-    void increaseSalariesDueToInflation() throws SQLException;
+    void increaseSalariesDueToInflation() throws Exception;
 }

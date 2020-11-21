@@ -28,9 +28,6 @@ public class EmployeeServiceImplementation implements EmployeeService {
     @InjectRandomInt(max = 10)
     private int employeesToHire;
 
-    public EmployeeServiceImplementation() {
-    }
-
     public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();

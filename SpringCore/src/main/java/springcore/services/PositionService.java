@@ -2,19 +2,18 @@ package springcore.services;
 
 import springcore.company.Company;
 
-import java.sql.SQLException;
 
 public interface PositionService {
 
-    void addPositions() throws SQLException;
+    void addPositions() throws Exception;
 
-    void assignPositions() throws SQLException;
+    void assignPositions() throws Exception;
 
-    void clearPositions() throws SQLException;
+    void clearPositions() throws Exception;
 
-    void closePositions() throws SQLException;
+    void closePositions() throws Exception;
 
-    void changePosition() throws SQLException;
+    void changePosition() throws Exception;
 
     void setCompany(Company company);
 }
