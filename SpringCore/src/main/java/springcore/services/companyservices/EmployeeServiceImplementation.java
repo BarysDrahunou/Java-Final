@@ -6,12 +6,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
+import springcore.dao.EmployeesDao;
 import springcore.employee.Employee;
-import springcore.dao.EmployeesImplDb;
 import springcore.services.EmployeeCreator;
 import springcore.statuses.EmployeeStatus;
 
-import java.sql.SQLException;
 import java.util.*;
 
 import static springcore.constants.LogMessages.*;
@@ -22,11 +21,12 @@ import static springcore.statuses.EmployeeStatus.*;
  */
 @Service
 @Scope("prototype")
-public class EmployeeServiceImplementation implements EmployeeService {
+public class EmployeeServiceImplementation
+        implements EmployeeService<List<Employee>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private Company company;
-    private EmployeesImplDb employeesImplDb;
+    private EmployeesDao<List<Employee>> employeesDao;
     @InjectRandomInt(max = 5)
     private int employeesToFire;
     @InjectRandomInt(max = 10)
@@ -36,9 +36,9 @@ public class EmployeeServiceImplementation implements EmployeeService {
      * Creates new employees via employeeCreator and hired them into a company
      *
      * @param employeeCreator the instance of EmployeeCreator.class to hire new employees
-     * @throws SQLException if there are problems with database
      */
-    public void hireEmployees(EmployeeCreator employeeCreator) throws SQLException {
+    @Override
+    public void hireEmployees(EmployeeCreator employeeCreator) {
 
         int amountEmployeesToHire = new Random().nextInt(employeesToHire + 1);
         List<Employee> employeesToHireList = new ArrayList<>();
@@ -54,16 +54,15 @@ public class EmployeeServiceImplementation implements EmployeeService {
             LOGGER.info(String.format(HIRED_EMPLOYEE_MESSAGE, employee));
         }
 
-        employeesImplDb.addEmployees(employeesToHireList);
+        employeesDao.addEmployees(employeesToHireList);
     }
 
     /**
      * Fire employees from a company
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void fireEmployees() throws SQLException {
-        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
+    @Override
+    public void fireEmployees() {
+        List<Employee> employees = employeesDao.getEmployeesByStatus(EmployeeStatus.WORKS);
         int amountEmployeesToFire = new Random().nextInt(employeesToFire + 1);
         List<Employee> employeesToFireList = new ArrayList<>();
 
@@ -76,36 +75,34 @@ public class EmployeeServiceImplementation implements EmployeeService {
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));
         }
 
-        employeesImplDb.updateEmployees(employeesToFireList);
+        employeesDao.updateEmployees(employeesToFireList);
     }
 
     /**
      * Release employees from a company after they have received their salaries.
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void releaseEmployees() throws SQLException {
-        List<Employee> employees = employeesImplDb
+    @Override
+    public void releaseEmployees() {
+        List<Employee> employees = employeesDao
                 .getEmployeesByStatus(FIRED);
 
         employees.forEach(employee -> employee.setStatus(WENT_OUT));
 
-        employeesImplDb.updateEmployees(employees);
+        employeesDao.updateEmployees(employees);
     }
 
     /**
      * Increase experience of current company's employees
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void increaseExperience() throws SQLException {
-        List<Employee> employees = employeesImplDb
+    @Override
+    public void increaseExperience() {
+        List<Employee> employees = employeesDao
                 .getEmployeesByStatus(EmployeeStatus.WORKS);
 
         employees.forEach(employee -> employee
                 .setTimeWorked(employee.getTimeWorked() + 1));
 
-        employeesImplDb.updateEmployees(employees);
+        employeesDao.updateEmployees(employees);
     }
 
     /**
@@ -113,26 +110,29 @@ public class EmployeeServiceImplementation implements EmployeeService {
      *
      * @param company company for which current service will operate
      */
+    @Override
     public void setCompany(Company company) {
         this.company = company;
     }
 
     /**
-     * Sets employees impl db.
+     * Sets employeesDao.
      *
-     * @param employeesImplDb the employees impl db
+     * @param employeesDao employeesDao
      */
     @Autowired
-    public void setEmployeesImplDb(EmployeesImplDb employeesImplDb) {
-        this.employeesImplDb = employeesImplDb;
+    @Override
+    public void setEmployeesDao(EmployeesDao<List<Employee>> employeesDao) {
+        this.employeesDao = employeesDao;
     }
 
     /**
-     * Gets employees impl db.
+     * Gets employeesDao.
      *
-     * @return the employees impl db
+     * @return employeesDao
      */
-    public EmployeesImplDb getEmployeesImplDb() {
-        return employeesImplDb;
+    @Override
+    public EmployeesDao<List<Employee>> getEmployeesDao() {
+        return employeesDao;
     }
 }

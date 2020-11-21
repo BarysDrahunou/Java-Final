@@ -6,32 +6,29 @@ import springcore.statuses.EmployeeStatus;
 /**
  * The interface EmployeesDao to working with employees
  */
-public interface EmployeesDao<SOURCE, TARGET> {
+public interface EmployeesDao<T> {
 
     /**
      * Add employees.
      *
      * @param employees the bundle of employees
-     * @throws Exception if employees cannot be inserted
      */
-    void addEmployees(SOURCE employees) throws Exception;
+    void addEmployees(T employees);
 
     /**
      * Gets employees by status.
      *
      * @param status the status by which employees will be retrieved
      * @return the bundle of employees
-     * @throws Exception if employees cannot be retrieved
      */
-    TARGET getEmployeesByStatus(EmployeeStatus status) throws Exception;
+    T getEmployeesByStatus(EmployeeStatus status);
 
     /**
      * Update employees.
      *
      * @param employees the bundle of employees which should be updated
-     * @throws Exception if employees cannot be updated
      */
-    void updateEmployees(SOURCE employees) throws Exception;
+    void updateEmployees(T employees);
 
     /**
      * Gets connect temporary.

@@ -18,7 +18,7 @@ import static springcore.constants.SQLQueries.*;
  * employees from this base
  */
 @Repository
-public class EmployeesImplDb implements EmployeesDao<List<Employee>, List<Employee>> {
+public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
 
     private final ConnectTemporary connectTemporary;
     private final EmployeeMapper employeeMapper;
@@ -41,17 +41,19 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>, List<Employ
      * Add employees.
      *
      * @param employees the list of employees to insertion
-     * @throws SQLException if there are problems with connection
-     *                      so employees cannot be added
      */
     @Override
-    public void addEmployees(List<Employee> employees) throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(ADD_EMPLOYEES_QUERY);
+    public void addEmployees(List<Employee> employees) {
+        try {
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(ADD_EMPLOYEES_QUERY);
 
-        employeeMapper.add(employees, preparedStatement);
+            employeeMapper.add(employees, preparedStatement);
 
-        connectTemporary.commit();
+            connectTemporary.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -59,41 +61,48 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>, List<Employ
      *
      * @param status the status by which employees will be retrieved
      * @return the list of employees
-     * @throws SQLException if there are problems with connection
-     *                      so employees cannot be got
      */
     @Override
-    public List<Employee> getEmployeesByStatus(EmployeeStatus status)
-            throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(GET_EMPLOYEES_BY_STATUS_QUERY);
+    public List<Employee> getEmployeesByStatus(EmployeeStatus status) {
+        try {
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(GET_EMPLOYEES_BY_STATUS_QUERY);
 
-        preparedStatement.setString(1, status.name());
-        preparedStatement.execute();
+            preparedStatement.setString(1, status.name());
+            preparedStatement.execute();
 
-        ResultSet resultSet = preparedStatement.getResultSet();
+            ResultSet resultSet = preparedStatement.getResultSet();
 
-        return employeeMapper.map(resultSet);
+            return employeeMapper.map(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Update employees.
      *
      * @param employees the list of employees which should be updated
-     * @throws SQLException if there are problems with connection
-     *                      so employees cannot be updated
      */
     @Override
-    public void updateEmployees(List<Employee> employees) throws SQLException {
-        PreparedStatement preparedStatement = getPreparedStatementForUpdate();
+    public void updateEmployees(List<Employee> employees) {
+        try {
+            PreparedStatement preparedStatement = getPreparedStatementForUpdate();
 
-        employeeMapper.update(employees, preparedStatement);
+            employeeMapper.update(employees, preparedStatement);
 
-        connectTemporary.commit();
+            connectTemporary.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private PreparedStatement getPreparedStatementForUpdate() throws SQLException {
-        return connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
+    private PreparedStatement getPreparedStatementForUpdate() {
+        try {
+            return connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

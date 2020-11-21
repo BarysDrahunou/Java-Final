@@ -1,53 +1,45 @@
 package springcore.services.companyservices;
 
 
-import springcore.dao.EmployeesImplDb;
-import springcore.dao.PositionsImplDb;
+import springcore.dao.EmployeesDao;
+import springcore.dao.PositionsDao;
 
 /**
  * The interface Salary service to work with salaries into the company.
  */
-public interface SalaryService {
+public interface SalaryService<T, U> {
 
     /**
      * Assign salaries to current opened positions
-     *
-     * @throws Exception if salaries cannot be assigned
      */
-    void assignSalaries() throws Exception;
+    void assignSalaries();
 
     /**
      * Pay salary to all active workers
-     *
-     * @throws Exception if salary cannot be paid
      */
-    void paySalary() throws Exception;
+    void paySalary();
 
     /**
      * Assign bonuses to all active workers in random order
-     *
-     * @throws Exception if bonuses cannot be assigned
      */
-    void assignBonuses() throws Exception;
+    void assignBonuses();
 
     /**
      * Increase salaries due to inflation.
-     *
-     * @throws Exception if salaries cannot be increased
      */
-    void increaseSalariesDueToInflation() throws Exception;
+    void increaseSalariesDueToInflation();
 
     /**
-     * Gets positions impl db.
+     * Gets positionsDao.
      *
-     * @return the positions impl db
+     * @return positionsDao
      */
-    PositionsImplDb getPositionsImplDb();
+    PositionsDao<T> getPositionsDao();
 
     /**
-     * Gets employees impl db.
+     * Gets employeesDao.
      *
-     * @return the employees impl db
+     * @return employeesDao
      */
-    EmployeesImplDb getEmployeesImplDb();
+    EmployeesDao<U> getEmployeesDao();
 }

@@ -1,15 +1,15 @@
 package springcore.services.companyservices;
 
 import springcore.company.Company;
-import springcore.dao.EmployeesImplDb;
-import springcore.dao.PositionsImplDb;
+import springcore.dao.EmployeesDao;
+import springcore.dao.PositionsDao;
 import springcore.services.PositionCreator;
 
 
 /**
  * The interface to work with positions into the company.
  */
-public interface PositionService {
+public interface PositionService<T,U> {
 
     /**
      * Create new positions via positionCreator and add them to a company.
@@ -55,16 +55,16 @@ public interface PositionService {
     void setCompany(Company company);
 
     /**
-     * Gets positions impl db.
+     * Gets positionsDao.
      *
-     * @return the positions impl db
+     * @return positionsDao
      */
-    PositionsImplDb getPositionsImplDb();
+    PositionsDao<T> getPositionsDao();
 
     /**
-     * Gets employees impl db.
+     * Gets employeesDao.
      *
-     * @return the employees impl db
+     * @return employeesDao
      */
-    EmployeesImplDb getEmployeesImplDb();
+    EmployeesDao<U> getEmployeesDao();
 }

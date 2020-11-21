@@ -17,7 +17,7 @@ import static springcore.constants.SQLQueries.*;
  * positions from this base
  */
 @Repository
-public class PositionsImplDb implements PositionsDao<List<Position>, List<Position>> {
+public class PositionsImplDb implements PositionsDao<List<Position>> {
 
     private final ConnectTemporary connectTemporary;
     private final PositionMapper positionMapper;
@@ -39,78 +39,85 @@ public class PositionsImplDb implements PositionsDao<List<Position>, List<Positi
      * Add positions.
      *
      * @param positions the list of positions to insertion
-     * @throws SQLException if there are problems with connection
-     *                      so positions cannot be added
      */
     @Override
-    public void addPositions(List<Position> positions) throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(ADD_POSITIONS_QUERY);
+    public void addPositions(List<Position> positions) {
+        try {
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(ADD_POSITIONS_QUERY);
 
-        positionMapper.add(positions, preparedStatement);
+            positionMapper.add(positions, preparedStatement);
 
-        connectTemporary.commit();
+            connectTemporary.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Gets all positions.
      *
      * @return the list of all positions from database
-     * @throws SQLException if there are problems with connection
-     *                      so positions cannot be got
      */
     @Override
-    public List<Position> getAllPositions() throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(GET_ALL_POSITIONS_QUERY);
+    public List<Position> getAllPositions() {
+        try {
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(GET_ALL_POSITIONS_QUERY);
 
-        preparedStatement.execute();
+            preparedStatement.execute();
 
-        ResultSet resultSet = preparedStatement.getResultSet();
+            ResultSet resultSet = preparedStatement.getResultSet();
 
-        return positionMapper.map(resultSet);
+            return positionMapper.map(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Gets positions by status.
      *
      * @param argument the argument by which positions will be retrieved
-     * @param value the value by which positions will be retrieved
+     * @param value    the value by which positions will be retrieved
      * @return the list of positions
-     * @throws SQLException if there are problems with connection
-     *                      so positions cannot be got
      */
     @Override
-    public List<Position> getPositions(String argument, Object value) throws SQLException {
-        String query = String.format(GET_EXACT_POSITIONS_QUERY, argument);
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(query);
+    public List<Position> getPositions(String argument, Object value) {
+        try {
+            String query = String.format(GET_EXACT_POSITIONS_QUERY, argument);
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(query);
 
-        preparedStatement.setObject(1, value);
+            preparedStatement.setObject(1, value);
 
-        preparedStatement.execute();
+            preparedStatement.execute();
 
-        ResultSet resultSet = preparedStatement.getResultSet();
+            ResultSet resultSet = preparedStatement.getResultSet();
 
-        return positionMapper.map(resultSet);
+            return positionMapper.map(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Update positions.
      *
      * @param positions the list of positions which should be updated
-     * @throws SQLException if there are problems with connection
-     *                      so positions cannot be updated
      */
     @Override
-    public void updatePositions(List<Position> positions)
-            throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary
-                .getPreparedStatement(UPDATE_POSITIONS_QUERY);
+    public void updatePositions(List<Position> positions) {
+        try {
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(UPDATE_POSITIONS_QUERY);
 
-        positionMapper.update(positions, preparedStatement);
+            positionMapper.update(positions, preparedStatement);
 
-        connectTemporary.commit();
+            connectTemporary.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

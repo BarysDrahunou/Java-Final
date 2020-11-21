@@ -1,14 +1,14 @@
 package springcore.services.companyservices;
 
 import springcore.company.Company;
-import springcore.dao.EmployeesImplDb;
+import springcore.dao.EmployeesDao;
 import springcore.services.EmployeeCreator;
 
 
 /**
  * The interface Employee service to work with employees into the company.
  */
-public interface EmployeeService {
+public interface EmployeeService<T> {
 
     /**
      * Creates new employees via employeeCreator and hired them into a company
@@ -47,16 +47,16 @@ public interface EmployeeService {
     void setCompany(Company company);
 
     /**
-     * Sets employees impl db.
+     * Sets employeesDao.
      *
-     * @param employeesImplDb the employees impl db
+     * @param employeesDao employeesDao
      */
-    void setEmployeesImplDb(EmployeesImplDb employeesImplDb);
+    void setEmployeesDao(EmployeesDao<T> employeesDao);
 
     /**
-     * Gets employees impl db.
+     * Gets employeesDao.
      *
-     * @return the employees impl db
+     * @return employeesDao
      */
-    EmployeesImplDb getEmployeesImplDb();
+    EmployeesDao<T> getEmployeesDao();
 }

@@ -12,7 +12,6 @@ import springcore.position.Position;
 import springcore.services.PositionCreator;
 import springcore.statuses.EmployeeStatus;
 
-import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,11 +24,12 @@ import static springcore.statuses.EmployeeStatus.*;
  * The type Position service implementation.
  */
 @Service
-public class PositionServiceImplementation implements PositionService {
+public class PositionServiceImplementation
+        implements PositionService<List<Position>, List<Employee>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final PositionsImplDb positionsImplDb;
-    private final EmployeesImplDb employeesImplDb;
+    private final PositionsDao<List<Position>> positionsDao;
+    private final EmployeesDao<List<Employee>> employeesDao;
     private Company company;
     @InjectRandomInt(max = 10)
     private int positionsToClose;
@@ -41,28 +41,27 @@ public class PositionServiceImplementation implements PositionService {
     /**
      * Instantiates a new Position service implementation.
      *
-     * @param positionsImplDb positionsDAO instance
-     * @param employeesImplDb employeesDAO instance
+     * @param positionsDao positionsDAO instance
+     * @param employeesDao employeesDAO instance
      */
     @Autowired
-    public PositionServiceImplementation(PositionsImplDb positionsImplDb,
-                                         EmployeesImplDb employeesImplDb) {
-        this.positionsImplDb = positionsImplDb;
-        this.employeesImplDb = employeesImplDb;
+    public PositionServiceImplementation(PositionsDao<List<Position>> positionsDao,
+                                         EmployeesDao<List<Employee>> employeesDao) {
+        this.positionsDao = positionsDao;
+        this.employeesDao = employeesDao;
     }
 
     /**
      * Create new positions via positionCreator and add them to a company.
      *
      * @param positionCreator the position creator
-     * @throws SQLException if there are problems with database
      */
     @Override
-    public void addPositions(PositionCreator positionCreator) throws SQLException {
+    public void addPositions(PositionCreator positionCreator) {
         int positionsToAddAmount = new Random().nextInt(positionsToOpen + 1);
         List<Position> positionsToAdd = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
-        List<Position> positions = positionsImplDb.getAllPositions();
+        List<Position> positions = positionsDao.getAllPositions();
 
         for (int i = 0; i < positionsToAddAmount; i++) {
             Position position = positionCreator.createPositionAndGet();
@@ -85,19 +84,17 @@ public class PositionServiceImplementation implements PositionService {
                     position));
         }
 
-        positionsImplDb.updatePositions(positionsToUpdate);
-        positionsImplDb.addPositions(positionsToAdd);
+        positionsDao.updatePositions(positionsToUpdate);
+        positionsDao.addPositions(positionsToAdd);
     }
 
     /**
      * Assign employees to opened positions into a company
-     *
-     * @throws SQLException if there are problems with database
      */
     @Override
-    public void assignPositions() throws SQLException {
-        List<Employee> newEmployees = employeesImplDb.getEmployeesByStatus(NEW);
-        List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY,
+    public void assignPositions() {
+        List<Employee> newEmployees = employeesDao.getEmployeesByStatus(NEW);
+        List<Position> positions = positionsDao.getPositions(OPENED_VACANCIES_QUERY,
                 DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
 
@@ -122,25 +119,23 @@ public class PositionServiceImplementation implements PositionService {
                     employee, position));
         }
 
-        employeesImplDb.updateEmployees(newEmployees);
-        positionsImplDb.updatePositions(positionsToUpdate);
+        employeesDao.updateEmployees(newEmployees);
+        positionsDao.updatePositions(positionsToUpdate);
     }
 
     /**
      * Clear positions after employees has been fired
-     *
-     * @throws SQLException if there are problems with database
      */
     @Override
-    public void clearPositions() throws SQLException {
-        List<Position> positions = employeesImplDb.getEmployeesByStatus(FIRED)
+    public void clearPositions() {
+        List<Position> positions = employeesDao.getEmployeesByStatus(FIRED)
                 .stream()
                 .map(Employee::getPosition)
                 .collect(Collectors.toList());
         List<Position> positionsToUpdate = new ArrayList<>();
 
         for (Position position : positions) {
-            Position oldPosition = positionsImplDb
+            Position oldPosition = positionsDao
                     .getPositions(POSITION_QUERY, position.getPositionName())
                     .get(DECIMAL_BASE);
 
@@ -157,17 +152,15 @@ public class PositionServiceImplementation implements PositionService {
             LOGGER.info(String.format(OPENED_VACANCY_MESSAGE, position));
         }
 
-        positionsImplDb.updatePositions(positionsToUpdate);
+        positionsDao.updatePositions(positionsToUpdate);
     }
 
     /**
      * Close positions if company doesn't need any more of current position .
-     *
-     * @throws SQLException if there are problems with database
      */
     @Override
-    public void closePositions() throws SQLException {
-        List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
+    public void closePositions() {
+        List<Position> positions = positionsDao.getPositions(OPENED_VACANCIES_QUERY, DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
         int positionsToCloseAmount = new Random().nextInt(positionsToClose + 1);
 
@@ -187,17 +180,15 @@ public class PositionServiceImplementation implements PositionService {
 
             LOGGER.info(String.format(CLOSED_POSITION_MESSAGE, position));
         }
-        positionsImplDb.updatePositions(positionsToUpdate);
+        positionsDao.updatePositions(positionsToUpdate);
     }
 
     /**
      * Change position for employee
-     *
-     * @throws SQLException if there are problems with database
      */
     @Override
-    public void changePosition() throws SQLException {
-        List<Position> allPositionList = positionsImplDb.getAllPositions();
+    public void changePosition() {
+        List<Position> allPositionList = positionsDao.getAllPositions();
         List<Employee> employees = getEmployeesList(allPositionList);
         List<Position> positionsWithVacancies = allPositionList
                 .stream()
@@ -220,15 +211,14 @@ public class PositionServiceImplementation implements PositionService {
             }
         }
 
-        employeesImplDb.updateEmployees(employees);
-        positionsImplDb.updatePositions(new ArrayList<>(positionsToUpdate));
+        employeesDao.updateEmployees(employees);
+        positionsDao.updatePositions(new ArrayList<>(positionsToUpdate));
     }
 
-    private List<Employee> getEmployeesList(List<Position> allPositionList)
-            throws SQLException {
+    private List<Employee> getEmployeesList(List<Position> allPositionList) {
         int amountEmployeesToChangeWork = new Random()
                 .nextInt(employeesToChangeWork + 1);
-        List<Employee> employees = employeesImplDb
+        List<Employee> employees = employeesDao
                 .getEmployeesByStatus(EmployeeStatus.WORKS)
                 .stream()
                 .peek(employee -> {
@@ -288,20 +278,22 @@ public class PositionServiceImplementation implements PositionService {
     }
 
     /**
-     * Gets positions impl db.
+     * Gets positionsDao.
      *
-     * @return the positions impl db
+     * @return positionsDao
      */
-    public PositionsImplDb getPositionsImplDb() {
-        return positionsImplDb;
+    @Override
+    public PositionsDao<List<Position>> getPositionsDao() {
+        return positionsDao;
     }
 
     /**
-     * Gets employees impl db.
+     * Gets employeesDao.
      *
-     * @return the employees impl db
+     * @return employeesDao
      */
-    public EmployeesImplDb getEmployeesImplDb() {
-        return employeesImplDb;
+    @Override
+    public EmployeesDao<List<Employee>> getEmployeesDao() {
+        return employeesDao;
     }
 }

@@ -29,26 +29,26 @@ public class EmployeeServiceTest {
     @Mock
     List<Employee> employees;
     EmployeeService employeeService;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
-        employeeService = new EmployeeServiceImplementation();
-
-        employeeService.setCompany(company);
-        employeeService.setEmployeesImplDb(employeesImplDb);
-
-        Field employeesToFire = EmployeeServiceImplementation.class.getDeclaredField("employeesToFire");
-
-        employeesToFire.setAccessible(true);
-        ReflectionUtils.setField(employeesToFire, employeeService, 100500);
-
-        Field employeesToHire = EmployeeServiceImplementation.class.getDeclaredField("employeesToHire");
-
-        employeesToHire.setAccessible(true);
-        ReflectionUtils.setField(employeesToHire, employeeService, 100500);
-    }
+//
+//    @Before
+//    public void setUp() throws Exception {
+//        MockitoAnnotations.initMocks(this);
+//
+//        employeeService = new EmployeeServiceImplementation();
+//
+//        employeeService.setCompany(company);
+//        employeeService.setEmployeesImplDb(employeesImplDb);
+//
+//        Field employeesToFire = EmployeeServiceImplementation.class.getDeclaredField("employeesToFire");
+//
+//        employeesToFire.setAccessible(true);
+//        ReflectionUtils.setField(employeesToFire, employeeService, 100500);
+//
+//        Field employeesToHire = EmployeeServiceImplementation.class.getDeclaredField("employeesToHire");
+//
+//        employeesToHire.setAccessible(true);
+//        ReflectionUtils.setField(employeesToHire, employeeService, 100500);
+//    }
 
 //    @Test
 //    public void hireEmployees() throws SQLException {

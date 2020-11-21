@@ -7,11 +7,9 @@ import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
 import springcore.salary.Salary;
-import springcore.services.companyservices.SalaryService;
 import springcore.statuses.EmployeeStatus;
 
 import java.math.BigDecimal;
-import java.sql.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -23,11 +21,12 @@ import static springcore.constants.VariablesConstants.*;
 /**
  * The type Salary service implementation.
  */
-public class SalaryServiceImplementation implements SalaryService {
+public class SalaryServiceImplementation
+        implements SalaryService<List<Position>, List<Employee>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final PositionsImplDb positionsImplDb;
-    private final EmployeesImplDb employeesImplDb;
+    private final PositionsDao<List<Position>> positionsDao;
+    private final EmployeesDao<List<Employee>> employeesDao;
     @InjectRandomInt(max = 1000)
     private int salaryValueMax;
     @InjectRandomInt(max = 16)
@@ -36,22 +35,21 @@ public class SalaryServiceImplementation implements SalaryService {
     /**
      * Instantiates a new Salary service implementation.
      *
-     * @param positionsImplDb positionsDAO instance
-     * @param employeesImplDb employeesDAO instance
+     * @param positionsDao positionsDAO instance
+     * @param employeesDao employeesDAO instance
      */
-    public SalaryServiceImplementation(PositionsImplDb positionsImplDb,
-                                       EmployeesImplDb employeesImplDb) {
-        this.positionsImplDb = positionsImplDb;
-        this.employeesImplDb = employeesImplDb;
+    public SalaryServiceImplementation(PositionsDao<List<Position>> positionsDao,
+                                       EmployeesDao<List<Employee>> employeesDao) {
+        this.positionsDao = positionsDao;
+        this.employeesDao = employeesDao;
     }
 
     /**
      * Assign salaries to current opened positions
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void assignSalaries() throws SQLException {
-        List<Position> positions = positionsImplDb.getPositions(SALARY_QUERY, DECIMAL_BASE);
+    @Override
+    public void assignSalaries() {
+        List<Position> positions = positionsDao.getPositions(SALARY_QUERY, DECIMAL_BASE);
 
         for (Position position : positions) {
             Usd salary = new Usd(new Random().nextInt(salaryValueMax) + 1);
@@ -62,20 +60,19 @@ public class SalaryServiceImplementation implements SalaryService {
                     position, salary.toString()));
         }
 
-        positionsImplDb.updatePositions(positions);
+        positionsDao.updatePositions(positions);
     }
 
     /**
      * Pay salary to all active workers
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void paySalary() throws SQLException {
-        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
-        List<Position> positions=positionsImplDb.getAllPositions();
+    @Override
+    public void paySalary() {
+        List<Employee> employees = employeesDao.getEmployeesByStatus(EmployeeStatus.WORKS);
+        List<Position> positions = positionsDao.getAllPositions();
 
         for (Employee employee : employees) {
-            Position employeePosition=positions.get(positions.indexOf(employee.getPosition()));
+            Position employeePosition = positions.get(positions.indexOf(employee.getPosition()));
             Usd salaryRate = employeePosition.getSalary();
             int timeWorked = employee.getTimeWorked();
             BigDecimal personalBonuses = employee.getPersonalBonuses();
@@ -126,11 +123,10 @@ public class SalaryServiceImplementation implements SalaryService {
 
     /**
      * Assign bonuses to all active workers in random order
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void assignBonuses() throws SQLException {
-        List<Employee> employees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.WORKS);
+    @Override
+    public void assignBonuses() {
+        List<Employee> employees = employeesDao.getEmployeesByStatus(EmployeeStatus.WORKS);
         int count = 0;
 
         for (Employee employee : employees) {
@@ -151,7 +147,7 @@ public class SalaryServiceImplementation implements SalaryService {
             count++;
         }
 
-        employeesImplDb.updateEmployees(employees);
+        employeesDao.updateEmployees(employees);
     }
 
     private int getRandomBonusOrFineValue(int lowerBound, int upperBound) {
@@ -170,11 +166,10 @@ public class SalaryServiceImplementation implements SalaryService {
 
     /**
      * Increase salaries due to inflation.
-     *
-     * @throws SQLException if there are problems with database
      */
-    public void increaseSalariesDueToInflation() throws SQLException {
-        List<Position> positions = positionsImplDb.getAllPositions();
+    @Override
+    public void increaseSalariesDueToInflation() {
+        List<Position> positions = positionsDao.getAllPositions();
         int inflationRate = new Random().nextInt(percentageOfIndexing);
 
         LOGGER.info(String.format(INFLATION_MESSAGE, inflationRate));
@@ -192,7 +187,7 @@ public class SalaryServiceImplementation implements SalaryService {
 
         LOGGER.info(END_INDEXING_MESSAGE);
 
-        positionsImplDb.updatePositions(positions);
+        positionsDao.updatePositions(positions);
     }
 
     /**
@@ -200,8 +195,9 @@ public class SalaryServiceImplementation implements SalaryService {
      *
      * @return the positions impl db
      */
-    public PositionsImplDb getPositionsImplDb() {
-        return positionsImplDb;
+    @Override
+    public PositionsDao<List<Position>> getPositionsDao() {
+        return positionsDao;
     }
 
     /**
@@ -209,7 +205,8 @@ public class SalaryServiceImplementation implements SalaryService {
      *
      * @return the employees impl db
      */
-    public EmployeesImplDb getEmployeesImplDb() {
-        return employeesImplDb;
+    @Override
+    public EmployeesDao<List<Employee>> getEmployeesDao() {
+        return employeesDao;
     }
 }
