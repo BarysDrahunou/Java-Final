@@ -37,6 +37,8 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
         for (Position position : positions) {
             preparedStatement.setString(1, position.getPositionName());
             preparedStatement.setInt(2, position.getVacancies());
+            preparedStatement.setInt(3, position.getActiveWorkers());
+            preparedStatement.setInt(4, position.getSalary().getValue());
 
             preparedStatement.addBatch();
             preparedStatement.clearParameters();

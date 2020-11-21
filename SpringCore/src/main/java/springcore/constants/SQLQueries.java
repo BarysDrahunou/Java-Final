@@ -8,7 +8,7 @@ public final class SQLQueries {
             "TRUNCATE TABLE SPRING.POSITIONS";
     public static final String ADD_EMPLOYEES_QUERY =
             "INSERT INTO SPRING.EMPLOYEES (NAME,SURNAME,STATUS,PERSONAL_BONUSES) " +
-                    "VALUES (?,?,?,?)";
+                    "VALUES (?, ?, ?, ?)";
     public static final String GET_EMPLOYEES_BY_STATUS_QUERY =
             "SELECT * FROM SPRING.EMPLOYEES WHERE STATUS = ?";
     public static final String UPDATE_EMPLOYEES_QUERY =
@@ -17,7 +17,8 @@ public final class SQLQueries {
     public static final String UPDATE_EMPLOYEES_STATUS_BY_STATUS_QUERY =
             "UPDATE SPRING.EMPLOYEES SET STATUS =? WHERE STATUS = ?";
     public static final String ADD_POSITIONS_QUERY =
-            "INSERT INTO SPRING.POSITIONS (POSITION, VACANCIES) VALUES (?,?)";
+            "INSERT INTO SPRING.POSITIONS (POSITION, VACANCIES, ACTIVE_WORKERS, SALARY) " +
+                    "VALUES (?, ?, ?, ?)";
     public static final String GET_ALL_POSITIONS_QUERY =
             "SELECT * FROM SPRING.POSITIONS";
     public static final String GET_EXACT_POSITIONS_QUERY =

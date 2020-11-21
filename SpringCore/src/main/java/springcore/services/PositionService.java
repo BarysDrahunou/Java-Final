@@ -1,11 +1,12 @@
 package springcore.services;
 
 import springcore.company.Company;
+import springcore.position.PositionCreator;
 
 
 public interface PositionService {
 
-    void addPositions() throws Exception;
+    void addPositions(PositionCreator positionCreator) throws Exception;
 
     void assignPositions() throws Exception;
 

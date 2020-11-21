@@ -3,6 +3,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import springcore.company.Company;
 import springcore.config.SpringConfig;
 import springcore.employee.EmployeeCreator;
+import springcore.position.PositionCreator;
 import springcore.services.*;
 import springcore.utilityconnection.ConnectTemporary;
 
@@ -31,14 +32,15 @@ public class CompanyEmulator {
             EmployeeService employeeService = context.getBean(EmployeeService.class);
             PositionService positionService = context.getBean(PositionService.class);
             SalaryService salaryService = context.getBean(SalaryService.class);
-            EmployeeCreator employeeCreator = new EmployeeCreator(NAMES_PATH, SURNAMES_PATH);
+            EmployeeCreator employeeCreator = context.getBean(EmployeeCreator.class);
+            PositionCreator positionCreator = context.getBean(PositionCreator.class);
 
             employeeService.setCompany(company);
             positionService.setCompany(company);
 
             for (int year = INITIAL_YEAR_VALUE; year <= years; year++) {
                 for (int month = INITIAL_MONTH_VALUE; month <= LAST_MONTH_VALUE; month++) {
-                    positionService.addPositions();
+                    positionService.addPositions(positionCreator);
                     salaryService.assignSalaries();
                     employeeService.hireEmployees(employeeCreator);
                     positionService.assignPositions();

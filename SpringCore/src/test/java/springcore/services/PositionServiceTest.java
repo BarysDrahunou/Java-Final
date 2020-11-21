@@ -46,36 +46,36 @@ public class PositionServiceTest {
     List<Position> positions;
     List<Employee> employees;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
-        path = "src/main/resources/testJobs.txt";
-        employees = new ArrayList<>(Arrays.asList(employee1, employee2));
-        positionService = new PositionServiceImplementation(positionsImplDb, employeesImplDb, path);
-
-        positionService.setCompany(company);
-
-        Field jobsField = PositionServiceImplementation.class.getDeclaredField("jobs");
-
-        jobsField.setAccessible(true);
-        ReflectionUtils.setField(jobsField, positionService, jobs);
-
-        Field positionsToOpen = PositionServiceImplementation.class.getDeclaredField("positionsToOpen");
-
-        positionsToOpen.setAccessible(true);
-        ReflectionUtils.setField(positionsToOpen, positionService, 10);
-
-        Field positionsToClose = PositionServiceImplementation.class.getDeclaredField("positionsToClose");
-
-        positionsToClose.setAccessible(true);
-        ReflectionUtils.setField(positionsToClose, positionService, 100500);
-
-        Field employeesToChangeWork = PositionServiceImplementation.class.getDeclaredField("employeesToChangeWork");
-
-        employeesToChangeWork.setAccessible(true);
-        ReflectionUtils.setField(employeesToChangeWork, positionService, 100500);
-    }
+//    @Before
+//    public void setUp() throws Exception {
+//        MockitoAnnotations.initMocks(this);
+//
+//        path = "src/main/resources/testJobs.txt";
+//        employees = new ArrayList<>(Arrays.asList(employee1, employee2));
+//        positionService = new PositionServiceImplementation(positionsImplDb, employeesImplDb, path);
+//
+//        positionService.setCompany(company);
+//
+//        Field jobsField = PositionServiceImplementation.class.getDeclaredField("jobs");
+//
+//        jobsField.setAccessible(true);
+//        ReflectionUtils.setField(jobsField, positionService, jobs);
+//
+//        Field positionsToOpen = PositionServiceImplementation.class.getDeclaredField("positionsToOpen");
+//
+//        positionsToOpen.setAccessible(true);
+//        ReflectionUtils.setField(positionsToOpen, positionService, 10);
+//
+//        Field positionsToClose = PositionServiceImplementation.class.getDeclaredField("positionsToClose");
+//
+//        positionsToClose.setAccessible(true);
+//        ReflectionUtils.setField(positionsToClose, positionService, 100500);
+//
+//        Field employeesToChangeWork = PositionServiceImplementation.class.getDeclaredField("employeesToChangeWork");
+//
+//        employeesToChangeWork.setAccessible(true);
+//        ReflectionUtils.setField(employeesToChangeWork, positionService, 100500);
+//    }
 
 //    @Test
 //    public void addPositions() throws SQLException {

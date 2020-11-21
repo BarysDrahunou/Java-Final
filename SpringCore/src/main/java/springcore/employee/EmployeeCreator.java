@@ -2,6 +2,8 @@ package springcore.employee;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -9,6 +11,7 @@ import java.util.*;
 
 import static springcore.constants.VariablesConstants.*;
 
+@Service
 public class EmployeeCreator {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -21,7 +24,9 @@ public class EmployeeCreator {
         hashNamesSurnamesMap.put(DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }
 
-    public EmployeeCreator(String namesPath, String surnamesPath) {
+    @Autowired
+    public EmployeeCreator(@Value("${names.path}") String namesPath,
+                           @Value("${surnames.path}") String surnamesPath) {
         this.names = getField(namesPath, DEFAULT_NAMES, Collections.singletonList(DEFAULT_NAME));
         this.surnames = getField(surnamesPath, DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }

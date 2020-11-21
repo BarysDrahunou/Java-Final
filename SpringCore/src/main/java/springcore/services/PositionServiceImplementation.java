@@ -2,17 +2,16 @@ package springcore.services;
 
 import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
+import springcore.position.PositionCreator;
 import springcore.statuses.EmployeeStatus;
 
-import java.io.IOException;
-import java.nio.file.*;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,11 +21,10 @@ import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
 import static springcore.statuses.EmployeeStatus.*;
 
-@Component
+@Service
 public class PositionServiceImplementation implements PositionService {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final List<String> jobs;
     private final PositionsImplDb positionsImplDb;
     private final EmployeesImplDb employeesImplDb;
     private Company company;
@@ -38,33 +36,30 @@ public class PositionServiceImplementation implements PositionService {
     private int employeesToChangeWork;
 
     @Autowired
-    public PositionServiceImplementation(PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb,
-                                         @Value("${jobs.path}") String path) throws IOException {
+    public PositionServiceImplementation(PositionsImplDb positionsImplDb,
+                                         EmployeesImplDb employeesImplDb) {
         this.positionsImplDb = positionsImplDb;
         this.employeesImplDb = employeesImplDb;
-        this.jobs = Files.readAllLines(Paths.get(path));
     }
 
     @Override
-    public void addPositions() throws SQLException {
+    public void addPositions(PositionCreator positionCreator) throws SQLException {
         int positionsToAddAmount = new Random().nextInt(positionsToOpen + 1);
         List<Position> positionsToAdd = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
         List<Position> positions = positionsImplDb.getAllPositions();
-        int jobsScopeSize = jobs.size();
 
         for (int i = 0; i < positionsToAddAmount; i++) {
-            Position position = jobsScopeSize > 0
-                    ? new Position(jobs.get(new Random().nextInt(jobsScopeSize)))
-                    : new Position(DEFAULT_JOB);
+            Position position = positionCreator.createPositionAndGet();
 
             if (positions.contains(position)) {
-                position = positions.get(positions.indexOf(position));
+                position = positions.remove(positions.indexOf(position));
                 position.setVacancies(position.getVacancies() + INITIAL_VACANCIES);
-                positions.remove(position);
+
+                positionsToUpdate.remove(position);
                 positionsToUpdate.add(position);
             } else {
-                position.setVacancies(INITIAL_VACANCIES);
+                positionsToAdd.remove(position);
                 positionsToAdd.add(position);
             }
 
@@ -81,7 +76,7 @@ public class PositionServiceImplementation implements PositionService {
 
     @Override
     public void assignPositions() throws SQLException {
-        List<Employee> newEmployees = employeesImplDb.getEmployeesByStatus(EmployeeStatus.NEW);
+        List<Employee> newEmployees = employeesImplDb.getEmployeesByStatus(NEW);
         List<Position> positions = positionsImplDb.getPositions(OPENED_VACANCIES_QUERY,
                 DECIMAL_BASE);
         List<Position> positionsToUpdate = new ArrayList<>();
@@ -96,6 +91,7 @@ public class PositionServiceImplementation implements PositionService {
             if (position.getVacancies() == DECIMAL_BASE) {
                 positions.remove(position);
             }
+
             positionsToUpdate.remove(position);
             positionsToUpdate.add(position);
 
@@ -219,9 +215,6 @@ public class PositionServiceImplementation implements PositionService {
                                  Position newPosition, List<Position> allPositionList,
                                  List<Position> positionsWithVacancies) {
         employee.setPosition(newPosition);
-        employee.setTimeWorked(DECIMAL_BASE);
-
-        LOGGER.info(String.format(CLEAR_EXPERIENCE_MESSAGE, employee));
 
         oldPosition.setActiveWorkers(oldPosition.getActiveWorkers() - 1);
         oldPosition.setVacancies(oldPosition.getVacancies() + 1);
