@@ -4,9 +4,6 @@ public class Company {
 
     private int vacancies;
 
-    public Company() {
-    }
-
     public void openVacancy() {
         this.vacancies += 1;
     }

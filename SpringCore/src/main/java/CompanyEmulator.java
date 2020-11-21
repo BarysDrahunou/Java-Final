@@ -54,6 +54,7 @@ public class CompanyEmulator {
                     positionService.closePositions();
                     positionService.changePosition();
                 }
+
                 salaryService.increaseSalariesDueToInflation();
             }
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import springcore.services.SalaryServiceImplementation;
 @PropertySource("classpath:configuration.properties")
 @ComponentScan("springcore")
 public class SpringConfig {
+
     @Bean
     @Autowired
     public SalaryService getSalaryService(PositionsImplDb positionsImplDb,

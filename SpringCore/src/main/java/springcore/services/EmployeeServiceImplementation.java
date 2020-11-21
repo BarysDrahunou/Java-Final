@@ -35,11 +35,13 @@ public class EmployeeServiceImplementation implements EmployeeService {
         List<Employee> employeesToHireList = new ArrayList<>();
 
         for (int i = 0; i < amountEmployeesToHire && company.getVacanciesCount() > 0; i++) {
-
             Employee employee = employeeCreator.createEmployeeAndGet();
+
             employee.setStatus(EmployeeStatus.NEW);
+
             employeesToHireList.add(employee);
             company.closeVacancy();
+
             LOGGER.info(String.format(HIRED_EMPLOYEE_MESSAGE, employee));
         }
 
@@ -56,6 +58,7 @@ public class EmployeeServiceImplementation implements EmployeeService {
 
             employee.setStatus(FIRED);
             employeesToFireList.add(employee);
+
             LOGGER.info(String.format(FIRED_EMPLOYEE_MESSAGE, employee));
         }
 

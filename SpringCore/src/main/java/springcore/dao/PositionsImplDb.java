@@ -25,7 +25,8 @@ public class PositionsImplDb implements PositionsDao {
 
     @Override
     public void addPositions(List<Position> positions) throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(ADD_POSITIONS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary
+                .getPreparedStatement(ADD_POSITIONS_QUERY);
 
         positionMapper.add(positions, preparedStatement);
 
@@ -47,7 +48,8 @@ public class PositionsImplDb implements PositionsDao {
     @Override
     public List<Position> getPositions(String argument, Object value) throws SQLException {
         String query = String.format(GET_EXACT_POSITIONS_QUERY, argument);
-        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(query);
+        PreparedStatement preparedStatement = connectTemporary
+                .getPreparedStatement(query);
 
         preparedStatement.setObject(1, value);
 
@@ -61,7 +63,8 @@ public class PositionsImplDb implements PositionsDao {
     @Override
     public void updatePositions(List<Position> positions)
             throws SQLException {
-        PreparedStatement preparedStatement = connectTemporary.getPreparedStatement(UPDATE_POSITIONS_QUERY);
+        PreparedStatement preparedStatement = connectTemporary
+                .getPreparedStatement(UPDATE_POSITIONS_QUERY);
 
         positionMapper.update(positions, preparedStatement);
 

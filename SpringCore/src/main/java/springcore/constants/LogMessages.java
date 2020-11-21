@@ -44,9 +44,6 @@ public final class LogMessages {
             "Employee %s has been promoted from \"%s\" to \"%s\" " +
                     "and salary %s -> %s";
 
-    public static final String CLEAR_EXPERIENCE_MESSAGE =
-            "Employee %s now has no experience on his hew position";
-
     public static final String ASSIGNED_SALARY_QUERY =
             "On position \"%s\" has been assigned salary %s";
     public static final String ASSIGNED_BONUS_QUERY =

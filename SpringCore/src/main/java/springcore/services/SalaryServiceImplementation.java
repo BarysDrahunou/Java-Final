@@ -29,7 +29,8 @@ public class SalaryServiceImplementation implements SalaryService {
     @InjectRandomInt(max = 16)
     private int percentageOfIndexing;
 
-    public SalaryServiceImplementation(PositionsImplDb positionsImplDb, EmployeesImplDb employeesImplDb) {
+    public SalaryServiceImplementation(PositionsImplDb positionsImplDb,
+                                       EmployeesImplDb employeesImplDb) {
         this.positionsImplDb = positionsImplDb;
         this.employeesImplDb = employeesImplDb;
     }
