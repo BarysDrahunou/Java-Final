@@ -85,6 +85,11 @@ public class EmployeesDaoTest {
 
         verify(mapper, atLeastOnce()).map(resultSet);
         verify(mapper, times(2)).map(resultSet);
+
+        while (resultSet.next()){
+            verify(mapper).map(resultSetArgumentCaptor.capture());
+            assertEquals(resultSet, resultSetArgumentCaptor.getValue());
+        }
     }
 
     @Test
@@ -94,7 +99,6 @@ public class EmployeesDaoTest {
         employeesDao.updateEmployees(employees);
         for (Employee employee : employees) {
             verify(mapper, times(2)).update(employee, preparedStatement);
-
         }
         verify(connectTemporary).commit();
 
