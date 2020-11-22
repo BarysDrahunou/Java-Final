@@ -21,17 +21,17 @@ import static springcore.statuses.EmployeeStatus.*;
 
 public class SalaryServiceTest {
 
-    SalaryService<List<Position>, List<Employee>> salaryService;
+    SalaryServiceImplementation salaryService;
     List<Position> positions;
     List<Employee> employees;
     @Mock
     Employee employee;
     @Mock
-    EmployeesDao<List<Employee>> employeesDao;
+    EmployeesDao employeesDao;
     @Mock
     Position position;
     @Mock
-    PositionsDao<List<Position>> positionsDao;
+    PositionsDao positionsDao;
     @Captor
     ArgumentCaptor<Usd> argumentCaptor;
 

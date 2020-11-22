@@ -17,7 +17,7 @@ import static springcore.constants.SQLQueries.*;
  * positions from this base
  */
 @Repository
-public class PositionsImplDb implements PositionsDao<List<Position>> {
+public class PositionsImplDb implements PositionsDao {
 
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, List<Position>,
@@ -122,13 +122,11 @@ public class PositionsImplDb implements PositionsDao<List<Position>> {
         }
     }
 
-    /**
-     * Gets connect temporary.
-     *
-     * @return the connect temporary
-     */
-    @Override
     public ConnectTemporary getConnectTemporary() {
         return connectTemporary;
+    }
+
+    public Mapper<ResultSet, List<Position>, List<Position>, PreparedStatement> getMapper() {
+        return mapper;
     }
 }

@@ -18,7 +18,7 @@ import static springcore.constants.SQLQueries.*;
  * employees from this base
  */
 @Repository
-public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
+public class EmployeesImplDb implements EmployeesDao {
 
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, List<Employee>,
@@ -100,13 +100,11 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
         }
     }
 
-    /**
-     * Gets connect temporary.
-     *
-     * @return the connect temporary
-     */
-    @Override
     public ConnectTemporary getConnectTemporary() {
         return connectTemporary;
+    }
+
+    public Mapper<ResultSet, List<Employee>, List<Employee>, PreparedStatement> getMapper() {
+        return mapper;
     }
 }

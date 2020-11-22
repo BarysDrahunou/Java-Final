@@ -1,13 +1,9 @@
 package springcore.services.companyservices;
 
-
-import springcore.dao.EmployeesDao;
-import springcore.dao.PositionsDao;
-
 /**
  * The interface Salary service to work with salaries into the company.
  */
-public interface SalaryService<T, U> {
+public interface SalaryService {
 
     /**
      * Assign salaries to current opened positions
@@ -28,18 +24,4 @@ public interface SalaryService<T, U> {
      * Increase salaries due to inflation.
      */
     void increaseSalariesDueToInflation();
-
-    /**
-     * Gets positionsDao.
-     *
-     * @return positionsDao
-     */
-    PositionsDao<T> getPositionsDao();
-
-    /**
-     * Gets employeesDao.
-     *
-     * @return employeesDao
-     */
-    EmployeesDao<U> getEmployeesDao();
 }

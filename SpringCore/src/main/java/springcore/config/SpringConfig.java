@@ -24,7 +24,7 @@ public class SpringConfig {
      */
     @Bean
     @Autowired
-    public SalaryService<?, ?> getSalaryService(PositionsImplDb positionsImplDb,
+    public SalaryService getSalaryService(PositionsImplDb positionsImplDb,
                                                 EmployeesImplDb employeesImplDb) {
         return new SalaryServiceImplementation(positionsImplDb, employeesImplDb);
     }

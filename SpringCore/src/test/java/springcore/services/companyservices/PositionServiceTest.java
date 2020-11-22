@@ -21,7 +21,7 @@ import static springcore.statuses.EmployeeStatus.*;
 
 public class PositionServiceTest {
 
-    PositionService<List<Position>, List<Employee>> positionService;
+    PositionServiceImplementation positionService;
     List<Employee> employees;
     @Mock
     PositionCreator positionCreator;
@@ -30,7 +30,7 @@ public class PositionServiceTest {
     @Mock
     Employee employee;
     @Mock
-    EmployeesDao<List<Employee>> employeesDao;
+    EmployeesDao employeesDao;
     @Mock
     Position position;
     @Mock
@@ -42,7 +42,7 @@ public class PositionServiceTest {
     @Mock
     Position position4;
     @Mock
-    PositionsDao<List<Position>> positionsDao;
+    PositionsDao positionsDao;
     @Mock
     List<Position> positions;
     @Captor

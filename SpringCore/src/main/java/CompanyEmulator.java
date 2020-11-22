@@ -40,9 +40,9 @@ public class CompanyEmulator {
                     POSITIONS_TABLE_TRUNCATE_SQL);
 
             Company company = new Company();
-            EmployeeService<?> employeeService = context.getBean(EmployeeService.class);
-            PositionService<?, ?> positionService = context.getBean(PositionService.class);
-            SalaryService<?, ?> salaryService = context.getBean(SalaryService.class);
+            EmployeeService employeeService = context.getBean(EmployeeService.class);
+            PositionService positionService = context.getBean(PositionService.class);
+            SalaryService salaryService = context.getBean(SalaryService.class);
             EmployeeCreator employeeCreator = context.getBean(EmployeeCreator.class);
             PositionCreator positionCreator = context.getBean(PositionCreator.class);
 

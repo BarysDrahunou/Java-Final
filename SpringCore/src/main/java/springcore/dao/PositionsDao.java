@@ -1,26 +1,29 @@
 package springcore.dao;
 
 
+import springcore.position.Position;
 import springcore.services.ConnectTemporary;
+
+import java.util.List;
 
 /**
  * The interface Positions dao to working with positions.
  */
-public interface PositionsDao<T> {
+public interface PositionsDao {
 
     /**
      * Add positions.
      *
-     * @param positions the bundle of positions
+     * @param positions the list of positions
      */
-    void addPositions(T positions);
+    void addPositions(List<Position> positions);
 
     /**
      * Gets all positions.
      *
-     * @return the all positions
+     * @return all positions
      */
-    T getAllPositions();
+    List<Position> getAllPositions();
 
     /**
      * Gets positions.
@@ -29,19 +32,12 @@ public interface PositionsDao<T> {
      * @param value    the second parameter which describes needed positions
      * @return the positions
      */
-    T getPositions(String argument, Object value);
+    List<Position> getPositions(String argument, Object value);
 
     /**
      * Update positions.
      *
-     * @param positions the bundle of positions
+     * @param positions the list of positions
      */
-    void updatePositions(T positions);
-
-    /**
-     * Gets connect temporary.
-     *
-     * @return the connect temporary
-     */
-    ConnectTemporary getConnectTemporary();
+    void updatePositions(List<Position> positions);
 }

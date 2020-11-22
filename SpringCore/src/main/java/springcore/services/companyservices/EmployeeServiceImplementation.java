@@ -21,12 +21,11 @@ import static springcore.statuses.EmployeeStatus.*;
  */
 @Service
 @Scope("prototype")
-public class EmployeeServiceImplementation
-        implements EmployeeService<List<Employee>> {
+public class EmployeeServiceImplementation implements EmployeeService {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private Company company;
-    private EmployeesDao<List<Employee>> employeesDao;
+    private EmployeesDao employeesDao;
     @InjectRandomInt(max = 5)
     private int employeesToFire;
     @InjectRandomInt(max = 10)
@@ -121,8 +120,7 @@ public class EmployeeServiceImplementation
      * @param employeesDao employeesDao
      */
     @Autowired
-    @Override
-    public void setEmployeesDao(EmployeesDao<List<Employee>> employeesDao) {
+    public void setEmployeesDao(EmployeesDao employeesDao) {
         this.employeesDao = employeesDao;
     }
 
@@ -131,8 +129,8 @@ public class EmployeeServiceImplementation
      *
      * @return employeesDao
      */
-    @Override
-    public EmployeesDao<List<Employee>> getEmployeesDao() {
+
+    public EmployeesDao getEmployeesDao() {
         return employeesDao;
     }
 }

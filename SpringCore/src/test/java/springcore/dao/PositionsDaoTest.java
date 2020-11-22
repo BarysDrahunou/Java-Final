@@ -32,7 +32,7 @@ public class PositionsDaoTest {
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
     List<Position> positions;
-    PositionsDao<List<Position>> positionsDao;
+    PositionsDao positionsDao;
     Position position1;
     Position position2;
 

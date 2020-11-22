@@ -24,12 +24,11 @@ import static springcore.statuses.EmployeeStatus.*;
  * The type Position service implementation.
  */
 @Service
-public class PositionServiceImplementation
-        implements PositionService<List<Position>, List<Employee>> {
+public class PositionServiceImplementation implements PositionService{
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final PositionsDao<List<Position>> positionsDao;
-    private final EmployeesDao<List<Employee>> employeesDao;
+    private final PositionsDao positionsDao;
+    private final EmployeesDao employeesDao;
     private Company company;
     @InjectRandomInt(max = 10)
     private int positionsToClose;
@@ -45,8 +44,8 @@ public class PositionServiceImplementation
      * @param employeesDao employeesDAO instance
      */
     @Autowired
-    public PositionServiceImplementation(PositionsDao<List<Position>> positionsDao,
-                                         EmployeesDao<List<Employee>> employeesDao) {
+    public PositionServiceImplementation(PositionsDao positionsDao,
+                                         EmployeesDao employeesDao) {
         this.positionsDao = positionsDao;
         this.employeesDao = employeesDao;
     }
@@ -283,8 +282,8 @@ public class PositionServiceImplementation
      *
      * @return positionsDao
      */
-    @Override
-    public PositionsDao<List<Position>> getPositionsDao() {
+
+    public PositionsDao getPositionsDao() {
         return positionsDao;
     }
 
@@ -293,8 +292,8 @@ public class PositionServiceImplementation
      *
      * @return employeesDao
      */
-    @Override
-    public EmployeesDao<List<Employee>> getEmployeesDao() {
+
+    public EmployeesDao getEmployeesDao() {
         return employeesDao;
     }
 }

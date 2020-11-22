@@ -2,7 +2,8 @@ package springcore.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
@@ -11,33 +12,27 @@ import static springcore.constants.LogMessages.*;
 /**
  * Class for creating an instance of temporary connection.
  */
-@Service
+@Component
 public class ConnectTemporary implements AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    public static final String URL = "jdbc:mysql://localhost:3306?serverTimezone=UTC";
-    public static final String LOGIN = "root";
-    public static final String PASSWORD = "root";
+    public final String driver;
+    public final String url;
+    public final String login;
+    public final String password;
 
-    private final Connection connection;
+    private Connection connection;
 
     /**
      * Instantiates a new Connect temporary.
-     *
-     * @throws SQLException the sql exception if class for driver is not found
      */
-    public ConnectTemporary() throws SQLException {
-        try {
-            Class.forName(DRIVER);
-        } catch (ClassNotFoundException e) {
-            LOGGER.error(DRIVER_ERROR_MESSAGE, e);
-        }
-        Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD);
-
-        connection.setAutoCommit(false);
-
-        this.connection = connection;
+    @Autowired
+    public ConnectTemporary(@Value("${DRIVER}") String driver, @Value("${URL}") String url,
+                            @Value("${LOGIN}") String login, @Value("${PASSWORD}") String password) {
+        this.driver = driver;
+        this.url = url;
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -47,6 +42,9 @@ public class ConnectTemporary implements AutoCloseable {
      * @throws SQLException if there are problems with connection to database
      */
     public void truncateTables(String... tableNames) throws SQLException {
+        if (this.connection == null) {
+            openConnection();
+        }
         Statement statement = getStatement();
 
         for (String tableName : tableNames) {
@@ -66,7 +64,10 @@ public class ConnectTemporary implements AutoCloseable {
      * @throws SQLException if there are problems with connection to database
      */
     public PreparedStatement getPreparedStatement(String sql) throws SQLException {
-        return connection != null ? connection.prepareStatement(sql) : null;
+        if (this.connection == null) {
+            openConnection();
+        }
+        return connection.prepareStatement(sql);
     }
 
     /**
@@ -76,7 +77,10 @@ public class ConnectTemporary implements AutoCloseable {
      * @throws SQLException if there are problems with connection to database
      */
     public Statement getStatement() throws SQLException {
-        return connection != null ? connection.createStatement() : null;
+        if (this.connection == null) {
+            openConnection();
+        }
+        return connection.createStatement();
     }
 
     /**
@@ -85,7 +89,23 @@ public class ConnectTemporary implements AutoCloseable {
      * @throws SQLException if there are problems with connection to database
      */
     public void commit() throws SQLException {
+        if (this.connection == null) {
+            openConnection();
+        }
         connection.commit();
+    }
+
+    private void openConnection() throws SQLException {
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error(DRIVER_ERROR_MESSAGE, e);
+        }
+        Connection connection = DriverManager.getConnection(url, login, password);
+
+        connection.setAutoCommit(false);
+
+        this.connection = connection;
     }
 
     @Override

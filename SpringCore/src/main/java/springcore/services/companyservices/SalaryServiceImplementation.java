@@ -21,12 +21,11 @@ import static springcore.constants.VariablesConstants.*;
 /**
  * The type Salary service implementation.
  */
-public class SalaryServiceImplementation
-        implements SalaryService<List<Position>, List<Employee>> {
+public class SalaryServiceImplementation implements SalaryService {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final PositionsDao<List<Position>> positionsDao;
-    private final EmployeesDao<List<Employee>> employeesDao;
+    private final PositionsDao positionsDao;
+    private final EmployeesDao employeesDao;
     @InjectRandomInt(max = 1000)
     private int salaryValueMax;
     @InjectRandomInt(max = 16)
@@ -38,8 +37,8 @@ public class SalaryServiceImplementation
      * @param positionsDao positionsDAO instance
      * @param employeesDao employeesDAO instance
      */
-    public SalaryServiceImplementation(PositionsDao<List<Position>> positionsDao,
-                                       EmployeesDao<List<Employee>> employeesDao) {
+    public SalaryServiceImplementation(PositionsDao positionsDao,
+                                       EmployeesDao employeesDao) {
         this.positionsDao = positionsDao;
         this.employeesDao = employeesDao;
     }
@@ -195,8 +194,7 @@ public class SalaryServiceImplementation
      *
      * @return the positions impl db
      */
-    @Override
-    public PositionsDao<List<Position>> getPositionsDao() {
+    public PositionsDao getPositionsDao() {
         return positionsDao;
     }
 
@@ -205,8 +203,7 @@ public class SalaryServiceImplementation
      *
      * @return the employees impl db
      */
-    @Override
-    public EmployeesDao<List<Employee>> getEmployeesDao() {
+    public EmployeesDao getEmployeesDao() {
         return employeesDao;
     }
 }

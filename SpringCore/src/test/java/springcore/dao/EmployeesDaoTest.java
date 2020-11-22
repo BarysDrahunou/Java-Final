@@ -31,7 +31,7 @@ public class EmployeesDaoTest {
     @Captor
     ArgumentCaptor<ResultSet> resultSetArgumentCaptor;
     List<Employee> employees;
-    EmployeesDao<List<Employee>> employeesDao;
+    EmployeesDao employeesDao;
     Employee employee1;
     Employee employee2;
     EmployeeStatus status;
