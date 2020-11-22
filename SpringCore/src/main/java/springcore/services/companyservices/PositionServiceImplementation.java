@@ -9,7 +9,7 @@ import springcore.currency.Usd;
 import springcore.employee.Employee;
 import springcore.dao.*;
 import springcore.position.Position;
-import springcore.services.PositionCreator;
+import springcore.services.positioncreator.PositionCreator;
 import springcore.statuses.EmployeeStatus;
 
 import java.util.*;

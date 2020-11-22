@@ -1,6 +1,8 @@
 package springcore.services;
 
 import org.junit.*;
+import springcore.services.positioncreator.PositionCreator;
+import springcore.services.positioncreator.PositionCreatorImpl;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -19,8 +21,8 @@ public class PositionCreatorTest {
                 "Beggar",
                 "Accountant"));
 
-        positionCreator1 = new PositionCreator("src/main/resources/testJobs.txt");
-        positionCreator2 = new PositionCreator("random");
+        positionCreator1 = new PositionCreatorImpl("src/main/resources/testJobs.txt");
+        positionCreator2 = new PositionCreatorImpl("random");
     }
 
     @Test

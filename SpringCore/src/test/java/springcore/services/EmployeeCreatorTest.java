@@ -2,6 +2,8 @@ package springcore.services;
 
 import org.junit.Before;
 import org.junit.Test;
+import springcore.services.employeecreator.EmployeeCreator;
+import springcore.services.employeecreator.EmployeeCreatorImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +28,9 @@ public class EmployeeCreatorTest {
                 "Johnson",
                 "Williams"));
 
-        employeeCreator1 = new EmployeeCreator("src/main/resources/testNames.txt",
+        employeeCreator1 = new EmployeeCreatorImpl("src/main/resources/testNames.txt",
                 "src/main/resources/testSurnames.txt");
-        employeeCreator2 = new EmployeeCreator("random",
+        employeeCreator2 = new EmployeeCreatorImpl("random",
                 "random");
     }
 

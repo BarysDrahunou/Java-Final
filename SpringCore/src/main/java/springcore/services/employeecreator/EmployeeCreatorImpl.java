@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.employeecreator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +16,7 @@ import static springcore.constants.VariablesConstants.*;
  * Class for creating new Employees with random names and surnames from input files.
  */
 @Service
-public class EmployeeCreator {
+public class EmployeeCreatorImpl implements EmployeeCreator {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<String, List<String>> hashNamesSurnamesMap = new HashMap<>();
@@ -39,8 +39,8 @@ public class EmployeeCreator {
      *                     employee created by this creator.
      */
     @Autowired
-    public EmployeeCreator(@Value("${names.path}") String namesPath,
-                           @Value("${surnames.path}") String surnamesPath) {
+    public EmployeeCreatorImpl(@Value("${names.path}") String namesPath,
+                               @Value("${surnames.path}") String surnamesPath) {
         this.names = getField(namesPath, DEFAULT_NAMES, Collections.singletonList(DEFAULT_NAME));
         this.surnames = getField(surnamesPath, DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }

@@ -8,7 +8,7 @@ import springcore.annotations.InjectRandomInt;
 import springcore.company.Company;
 import springcore.dao.EmployeesDao;
 import springcore.employee.Employee;
-import springcore.services.EmployeeCreator;
+import springcore.services.employeecreator.EmployeeCreator;
 import springcore.statuses.EmployeeStatus;
 
 import java.util.*;

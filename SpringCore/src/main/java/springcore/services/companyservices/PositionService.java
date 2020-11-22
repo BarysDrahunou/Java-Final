@@ -1,7 +1,7 @@
 package springcore.services.companyservices;
 
 import springcore.company.Company;
-import springcore.services.PositionCreator;
+import springcore.services.positioncreator.PositionCreator;
 
 
 /**

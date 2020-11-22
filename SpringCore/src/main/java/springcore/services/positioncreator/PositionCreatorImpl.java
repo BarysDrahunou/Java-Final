@@ -1,4 +1,4 @@
-package springcore.services;
+package springcore.services.positioncreator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,7 @@ import static springcore.constants.VariablesConstants.*;
  * Class for creating new Positions with random jobs from input files.
  */
 @Service
-public class PositionCreator {
+public class PositionCreatorImpl implements PositionCreator {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<String, List<String>> hashJobsMap = new HashMap<>();
     private final List<String> jobs;
@@ -36,7 +36,7 @@ public class PositionCreator {
      *                 created by this creator.
      */
     @Autowired
-    public PositionCreator(@Value("${jobs.path}") String jobsPath) {
+    public PositionCreatorImpl(@Value("${jobs.path}") String jobsPath) {
         this.jobs = getJobs(jobsPath);
     }
 
