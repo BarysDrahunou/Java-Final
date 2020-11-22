@@ -29,7 +29,7 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
      *
      * @param connectTemporary an instance of the class which provides a connection
      *                         to database
-     * @param mapper   the employee mapper to perform operations with employees
+     * @param mapper           the employee mapper to perform operations with employees
      */
     @Autowired
     public EmployeesImplDb(ConnectTemporary connectTemporary,
@@ -89,19 +89,12 @@ public class EmployeesImplDb implements EmployeesDao<List<Employee>> {
     @Override
     public void updateEmployees(List<Employee> employees) {
         try {
-            PreparedStatement preparedStatement = getPreparedStatementForUpdate();
+            PreparedStatement preparedStatement = connectTemporary
+                    .getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
 
             mapper.update(employees, preparedStatement);
 
             connectTemporary.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private PreparedStatement getPreparedStatementForUpdate() {
-        try {
-            return connectTemporary.getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1,4 +1,4 @@
-package springcore.employee;
+package springcore.services;
 
 import org.junit.Before;
 import org.junit.Test;

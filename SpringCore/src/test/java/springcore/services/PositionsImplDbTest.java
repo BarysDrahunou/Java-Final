@@ -1,4 +1,4 @@
-package springcore.dao;
+package springcore.services;
 
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.util.ReflectionUtils;
 import springcore.currency.Usd;
+import springcore.dao.PositionsImplDb;
 import springcore.mappers.PositionMapper;
 import springcore.position.Position;
 import springcore.services.ConnectTemporary;
