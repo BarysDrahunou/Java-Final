@@ -190,6 +190,7 @@ public class PositionServiceImplementation
     public void changePosition() {
         List<Position> allPositionList = positionsDao.getAllPositions();
         List<Employee> employees = getEmployeesList(allPositionList);
+
         List<Position> positionsWithVacancies = allPositionList
                 .stream()
                 .filter(position -> position.getVacancies() > DECIMAL_BASE)
