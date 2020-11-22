@@ -21,7 +21,7 @@ import static springcore.constants.SQLQueries.*;
 public class EmployeesImplDb implements EmployeesDao {
 
     private final ConnectTemporary connectTemporary;
-    private final Mapper<ResultSet, List<Employee>,
+    private final Mapper<ResultSet, Employee,
             Employee, PreparedStatement> mapper;
 
     /**
@@ -33,7 +33,7 @@ public class EmployeesImplDb implements EmployeesDao {
      */
     @Autowired
     public EmployeesImplDb(ConnectTemporary connectTemporary,
-                           Mapper<ResultSet, List<Employee>,
+                           Mapper<ResultSet, Employee,
                                    Employee, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
         this.mapper = mapper;
@@ -79,9 +79,15 @@ public class EmployeesImplDb implements EmployeesDao {
             preparedStatement.setString(1, status.name());
             preparedStatement.execute();
 
+            List<Employee> employees = new ArrayList<>();
+
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return mapper.map(resultSet);
+            while (resultSet.next()) {
+                employees.add(mapper.map(resultSet));
+            }
+
+            return employees;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +122,7 @@ public class EmployeesImplDb implements EmployeesDao {
         return connectTemporary;
     }
 
-    public Mapper<ResultSet, List<Employee>, Employee, PreparedStatement> getMapper() {
+    public Mapper<ResultSet, Employee, Employee, PreparedStatement> getMapper() {
         return mapper;
     }
 }

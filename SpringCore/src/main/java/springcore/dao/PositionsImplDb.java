@@ -20,7 +20,7 @@ import static springcore.constants.SQLQueries.*;
 public class PositionsImplDb implements PositionsDao {
 
     private final ConnectTemporary connectTemporary;
-    private final Mapper<ResultSet, List<Position>,
+    private final Mapper<ResultSet, Position,
             Position, PreparedStatement> mapper;
 
     /**
@@ -31,7 +31,7 @@ public class PositionsImplDb implements PositionsDao {
      * @param mapper           the position mapper to perform operations with positions
      */
     @Autowired
-    public PositionsImplDb(ConnectTemporary connectTemporary, Mapper<ResultSet, List<Position>,
+    public PositionsImplDb(ConnectTemporary connectTemporary, Mapper<ResultSet, Position,
             Position, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
         this.mapper = mapper;
@@ -75,9 +75,15 @@ public class PositionsImplDb implements PositionsDao {
 
             preparedStatement.execute();
 
+            List<Position> positions = new ArrayList<>();
+
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return mapper.map(resultSet);
+            while (resultSet.next()) {
+                positions.add(mapper.map(resultSet));
+            }
+
+            return positions;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -101,9 +107,15 @@ public class PositionsImplDb implements PositionsDao {
 
             preparedStatement.execute();
 
+            List<Position> positions = new ArrayList<>();
+
             ResultSet resultSet = preparedStatement.getResultSet();
 
-            return mapper.map(resultSet);
+            while (resultSet.next()) {
+                positions.add(mapper.map(resultSet));
+            }
+
+            return positions;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -138,7 +150,7 @@ public class PositionsImplDb implements PositionsDao {
         return connectTemporary;
     }
 
-    public Mapper<ResultSet, List<Position>, Position, PreparedStatement> getMapper() {
+    public Mapper<ResultSet, Position, Position, PreparedStatement> getMapper() {
         return mapper;
     }
 }

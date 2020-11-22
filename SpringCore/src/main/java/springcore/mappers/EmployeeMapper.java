@@ -6,7 +6,6 @@ import springcore.position.Position;
 import springcore.statuses.EmployeeStatus;
 
 import java.sql.*;
-import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
 
@@ -14,34 +13,28 @@ import static springcore.constants.SQLQueries.*;
  * The type Employee mapper to work with a database.
  */
 @Service
-public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
+public class EmployeeMapper implements Mapper<ResultSet, Employee,
         Employee, PreparedStatement> {
 
     /**
      * Map employees from database to list
      *
      * @param resultSet source object from database
-     * @return list of mapped employees
+     * @return mapped employee
      */
     @Override
-    public List<Employee> map(ResultSet resultSet) {
+    public Employee map(ResultSet resultSet) {
         try {
-            List<Employee> employees = new ArrayList<>();
+            Employee employee = new Employee(resultSet.getString(NAME),
+                    resultSet.getString(SURNAME));
 
-            while (resultSet.next()) {
-                Employee employee = new Employee(resultSet.getString(NAME),
-                        resultSet.getString(SURNAME));
+            employee.setId(resultSet.getInt(ID));
+            employee.setStatus(EmployeeStatus.valueOf(resultSet.getString(STATUS)));
+            employee.setPosition(new Position(resultSet.getString(POSITION)));
+            employee.setPersonalBonuses(resultSet.getBigDecimal(PERSONAL_BONUSES));
+            employee.setTimeWorked(resultSet.getInt(TIME_WORKED));
 
-                employee.setId(resultSet.getInt(ID));
-                employee.setStatus(EmployeeStatus.valueOf(resultSet.getString(STATUS)));
-                employee.setPosition(new Position(resultSet.getString(POSITION)));
-                employee.setPersonalBonuses(resultSet.getBigDecimal(PERSONAL_BONUSES));
-                employee.setTimeWorked(resultSet.getInt(TIME_WORKED));
-
-                employees.add(employee);
-            }
-
-            return employees;
+            return employee;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -5,7 +5,6 @@ import springcore.currency.Usd;
 import springcore.position.Position;
 
 import java.sql.*;
-import java.util.*;
 
 import static springcore.constants.SQLQueries.*;
 
@@ -13,31 +12,25 @@ import static springcore.constants.SQLQueries.*;
  * The type Position mapper to work with a database.
  */
 @Service
-public class PositionMapper implements Mapper<ResultSet, List<Position>,
+public class PositionMapper implements Mapper<ResultSet, Position,
         Position, PreparedStatement> {
 
     /**
      * Map positions from database to list
      *
      * @param resultSet source object from database
-     * @return list of mapped positions
+     * @return mapped position
      */
     @Override
-    public List<Position> map(ResultSet resultSet) {
+    public Position map(ResultSet resultSet) {
         try {
-            List<Position> positions = new ArrayList<>();
+            Position position = new Position(resultSet.getString(POSITION));
 
-            while (resultSet.next()) {
-                Position position = new Position(resultSet.getString(POSITION));
+            position.setVacancies(resultSet.getInt(VACANCIES));
+            position.setActiveWorkers(resultSet.getInt(ACTIVE_WORKERS));
+            position.setSalary(new Usd(resultSet.getInt(SALARY)));
 
-                position.setVacancies(resultSet.getInt(VACANCIES));
-                position.setActiveWorkers(resultSet.getInt(ACTIVE_WORKERS));
-                position.setSalary(new Usd(resultSet.getInt(SALARY)));
-
-                positions.add(position);
-            }
-
-            return positions;
+            return position;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
