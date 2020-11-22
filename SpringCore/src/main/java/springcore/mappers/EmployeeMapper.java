@@ -15,7 +15,7 @@ import static springcore.constants.SQLQueries.*;
  */
 @Service
 public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
-        List<Employee>, PreparedStatement> {
+        Employee, PreparedStatement> {
 
     /**
      * Map employees from database to list
@@ -50,24 +50,18 @@ public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
     /**
      * Add employees to database
      *
-     * @param employees         list of employees to add
-     * @param preparedStatement target object to put employees into database
+     * @param employee          employee to add
+     * @param preparedStatement target object to put employee into database
      */
     @Override
-    public void add(List<Employee> employees, PreparedStatement preparedStatement) {
+    public void add(Employee employee, PreparedStatement preparedStatement) {
         try {
 
-            for (Employee employee : employees) {
-                preparedStatement.setString(1, employee.getName());
-                preparedStatement.setString(2, employee.getSurname());
-                preparedStatement.setString(3, employee.getStatus().name());
-                preparedStatement.setBigDecimal(4, employee.getPersonalBonuses());
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2, employee.getSurname());
+            preparedStatement.setString(3, employee.getStatus().name());
+            preparedStatement.setBigDecimal(4, employee.getPersonalBonuses());
 
-                preparedStatement.addBatch();
-                preparedStatement.clearParameters();
-            }
-
-            preparedStatement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -76,27 +70,21 @@ public class EmployeeMapper implements Mapper<ResultSet, List<Employee>,
     /**
      * Update employees into database
      *
-     * @param employees         list of employees to update
-     * @param preparedStatement target object to put employees into database
+     * @param employee          employee to update
+     * @param preparedStatement target object to put employee into database
      */
     @Override
-    public void update(List<Employee> employees, PreparedStatement preparedStatement) {
+    public void update(Employee employee, PreparedStatement preparedStatement) {
         try {
 
-            for (Employee employee : employees) {
-                preparedStatement.setString(1, employee.getName());
-                preparedStatement.setString(2, employee.getSurname());
-                preparedStatement.setString(3, employee.getStatus().name());
-                preparedStatement.setString(4, employee.getPosition().getPositionName());
-                preparedStatement.setBigDecimal(5, employee.getPersonalBonuses());
-                preparedStatement.setInt(6, employee.getTimeWorked());
-                preparedStatement.setInt(7, employee.getId());
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2, employee.getSurname());
+            preparedStatement.setString(3, employee.getStatus().name());
+            preparedStatement.setString(4, employee.getPosition().getPositionName());
+            preparedStatement.setBigDecimal(5, employee.getPersonalBonuses());
+            preparedStatement.setInt(6, employee.getTimeWorked());
+            preparedStatement.setInt(7, employee.getId());
 
-                preparedStatement.addBatch();
-                preparedStatement.clearParameters();
-            }
-
-            preparedStatement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

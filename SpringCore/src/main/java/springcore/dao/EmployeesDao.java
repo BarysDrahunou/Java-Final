@@ -1,7 +1,6 @@
 package springcore.dao;
 
 import springcore.employee.Employee;
-import springcore.services.ConnectTemporary;
 import springcore.statuses.EmployeeStatus;
 
 import java.util.List;

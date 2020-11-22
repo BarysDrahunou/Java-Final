@@ -14,7 +14,7 @@ import static springcore.constants.SQLQueries.*;
  */
 @Service
 public class PositionMapper implements Mapper<ResultSet, List<Position>,
-        List<Position>, PreparedStatement> {
+        Position, PreparedStatement> {
 
     /**
      * Map positions from database to list
@@ -46,24 +46,18 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
     /**
      * Add positions to database
      *
-     * @param positions         list of positions to add
-     * @param preparedStatement target object to put positions into database
+     * @param position          position to add
+     * @param preparedStatement target object to put position into database
      */
     @Override
-    public void add(List<Position> positions, PreparedStatement preparedStatement) {
+    public void add(Position position, PreparedStatement preparedStatement) {
         try {
 
-            for (Position position : positions) {
-                preparedStatement.setString(1, position.getPositionName());
-                preparedStatement.setInt(2, position.getVacancies());
-                preparedStatement.setInt(3, position.getActiveWorkers());
-                preparedStatement.setInt(4, position.getSalary().getValue());
+            preparedStatement.setString(1, position.getPositionName());
+            preparedStatement.setInt(2, position.getVacancies());
+            preparedStatement.setInt(3, position.getActiveWorkers());
+            preparedStatement.setInt(4, position.getSalary().getValue());
 
-                preparedStatement.addBatch();
-                preparedStatement.clearParameters();
-            }
-
-            preparedStatement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -72,24 +66,18 @@ public class PositionMapper implements Mapper<ResultSet, List<Position>,
     /**
      * Update positions into database
      *
-     * @param positions         list of positions to update
-     * @param preparedStatement target object to put positions into database
+     * @param position          position to update
+     * @param preparedStatement target object to put position into database
      */
     @Override
-    public void update(List<Position> positions, PreparedStatement preparedStatement) {
+    public void update(Position position, PreparedStatement preparedStatement) {
         try {
 
-            for (Position position : positions) {
-                preparedStatement.setInt(1, position.getVacancies());
-                preparedStatement.setInt(2, position.getActiveWorkers());
-                preparedStatement.setInt(3, position.getSalary().getValue());
-                preparedStatement.setString(4, position.getPositionName());
+            preparedStatement.setInt(1, position.getVacancies());
+            preparedStatement.setInt(2, position.getActiveWorkers());
+            preparedStatement.setInt(3, position.getSalary().getValue());
+            preparedStatement.setString(4, position.getPositionName());
 
-                preparedStatement.addBatch();
-                preparedStatement.clearParameters();
-            }
-
-            preparedStatement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

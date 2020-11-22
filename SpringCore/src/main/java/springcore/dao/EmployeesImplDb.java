@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import springcore.employee.Employee;
 import springcore.mappers.Mapper;
 import springcore.statuses.EmployeeStatus;
-import springcore.services.ConnectTemporary;
+import springcore.services.connectionservices.ConnectTemporary;
 
 import java.sql.*;
 import java.util.*;
@@ -22,7 +22,7 @@ public class EmployeesImplDb implements EmployeesDao {
 
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, List<Employee>,
-            List<Employee>, PreparedStatement> mapper;
+            Employee, PreparedStatement> mapper;
 
     /**
      * Instantiates a new Employees impl db.
@@ -34,7 +34,7 @@ public class EmployeesImplDb implements EmployeesDao {
     @Autowired
     public EmployeesImplDb(ConnectTemporary connectTemporary,
                            Mapper<ResultSet, List<Employee>,
-                                   List<Employee>, PreparedStatement> mapper) {
+                                   Employee, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
         this.mapper = mapper;
     }
@@ -50,8 +50,14 @@ public class EmployeesImplDb implements EmployeesDao {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(ADD_EMPLOYEES_QUERY);
 
-            mapper.add(employees, preparedStatement);
+            for (Employee employee : employees) {
+                mapper.add(employee, preparedStatement);
 
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -92,8 +98,14 @@ public class EmployeesImplDb implements EmployeesDao {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(UPDATE_EMPLOYEES_QUERY);
 
-            mapper.update(employees, preparedStatement);
+            for (Employee employee : employees) {
+                mapper.update(employee, preparedStatement);
 
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -104,7 +116,7 @@ public class EmployeesImplDb implements EmployeesDao {
         return connectTemporary;
     }
 
-    public Mapper<ResultSet, List<Employee>, List<Employee>, PreparedStatement> getMapper() {
+    public Mapper<ResultSet, List<Employee>, Employee, PreparedStatement> getMapper() {
         return mapper;
     }
 }

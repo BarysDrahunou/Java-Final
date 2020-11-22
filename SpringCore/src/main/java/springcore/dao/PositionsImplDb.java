@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import springcore.mappers.Mapper;
 import springcore.position.Position;
-import springcore.services.ConnectTemporary;
+import springcore.services.connectionservices.ConnectTemporary;
 
 import java.sql.*;
 import java.util.*;
@@ -21,7 +21,7 @@ public class PositionsImplDb implements PositionsDao {
 
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, List<Position>,
-            List<Position>, PreparedStatement> mapper;
+            Position, PreparedStatement> mapper;
 
     /**
      * Instantiates a new Positions impl db.
@@ -32,7 +32,7 @@ public class PositionsImplDb implements PositionsDao {
      */
     @Autowired
     public PositionsImplDb(ConnectTemporary connectTemporary, Mapper<ResultSet, List<Position>,
-            List<Position>, PreparedStatement> mapper) {
+            Position, PreparedStatement> mapper) {
         this.connectTemporary = connectTemporary;
         this.mapper = mapper;
     }
@@ -48,8 +48,14 @@ public class PositionsImplDb implements PositionsDao {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(ADD_POSITIONS_QUERY);
 
-            mapper.add(positions, preparedStatement);
+            for (Position position : positions) {
+                mapper.add(position, preparedStatement);
 
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -114,8 +120,14 @@ public class PositionsImplDb implements PositionsDao {
             PreparedStatement preparedStatement = connectTemporary
                     .getPreparedStatement(UPDATE_POSITIONS_QUERY);
 
-            mapper.update(positions, preparedStatement);
+            for (Position position : positions) {
+                mapper.update(position, preparedStatement);
 
+                preparedStatement.addBatch();
+                preparedStatement.clearParameters();
+            }
+
+            preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -126,7 +138,7 @@ public class PositionsImplDb implements PositionsDao {
         return connectTemporary;
     }
 
-    public Mapper<ResultSet, List<Position>, List<Position>, PreparedStatement> getMapper() {
+    public Mapper<ResultSet, List<Position>, Position, PreparedStatement> getMapper() {
         return mapper;
     }
 }

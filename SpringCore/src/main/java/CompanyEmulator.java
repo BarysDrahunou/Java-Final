@@ -4,8 +4,7 @@ import springcore.company.Company;
 import springcore.config.SpringConfig;
 import springcore.services.*;
 import springcore.services.companyservices.*;
-
-import java.sql.SQLException;
+import springcore.services.connectionservices.ConnectTemporary;
 
 import static springcore.constants.SQLQueries.*;
 import static springcore.constants.VariablesConstants.*;
@@ -36,6 +35,7 @@ public class CompanyEmulator {
                      = new AnnotationConfigApplicationContext(SpringConfig.class);
              ConnectTemporary connectTemporary = context.getBean(ConnectTemporary.class)) {
 
+            connectTemporary.openConnection();
             connectTemporary.truncateTables(EMPLOYEES_TABLE_TRUNCATE_SQL,
                     POSITIONS_TABLE_TRUNCATE_SQL);
 
@@ -68,7 +68,7 @@ public class CompanyEmulator {
 
                 salaryService.increaseSalariesDueToInflation();
             }
-        } catch (SQLException | RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e);
         }
     }
