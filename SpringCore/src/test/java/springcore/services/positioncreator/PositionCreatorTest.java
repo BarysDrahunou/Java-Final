@@ -1,8 +1,6 @@
-package springcore.services;
+package springcore.services.positioncreator;
 
 import org.junit.*;
-import springcore.services.positioncreator.PositionCreator;
-import springcore.services.positioncreator.PositionCreatorImpl;
 
 import java.util.*;
 import java.util.stream.IntStream;

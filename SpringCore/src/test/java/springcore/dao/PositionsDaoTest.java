@@ -2,26 +2,18 @@ package springcore.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import springcore.mappers.Mapper;
 import springcore.position.Position;
 import springcore.services.connectionservices.ConnectTemporary;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static springcore.constants.SQLQueries.GET_EXACT_POSITIONS_QUERY;
+import static springcore.constants.SQLQueries.*;
 
 public class PositionsDaoTest {
 
@@ -36,8 +28,6 @@ public class PositionsDaoTest {
     PreparedStatement preparedStatement;
     @Captor
     ArgumentCaptor<Position> positionArgumentCaptor;
-    @Captor
-    ArgumentCaptor<ResultSet> resultSetArgumentCaptor;
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
     List<Position> positions;
@@ -62,12 +52,19 @@ public class PositionsDaoTest {
 
         positionsDao.addPositions(positions);
 
-        verify(mapper, times(2)).add(positionArgumentCaptor.capture(), eq(preparedStatement));
-
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement, times(1)).executeBatch();
         verify(connectTemporary, times(1)).commit();
+
+        verify(mapper, times(2)).add(positionArgumentCaptor.capture(), eq(preparedStatement));
+
+        List<Position> capturedPositions = positionArgumentCaptor.getAllValues();
+
+        assertEquals(position1, capturedPositions.get(0));
+        assertEquals(position2, capturedPositions.get(1));
+
+        assertEquals(2, capturedPositions.size());
     }
 
     @Test
@@ -75,23 +72,21 @@ public class PositionsDaoTest {
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
 
-        positionsDao.getAllPositions();
-        verify(preparedStatement).execute();
+        when(resultSet.next()).thenReturn(true, true, true, false);
+        when(mapper.map(resultSet)).thenReturn(position1, position1, position2);
+
+        List<Position> receivedPositions = positionsDao.getAllPositions();
+
         verify(preparedStatement).getResultSet();
+        verify(resultSet, times(4)).next();
+        verify(mapper, times(3)).map(resultSet);
+        verify(preparedStatement).execute();
 
-        while (resultSet.next()) {
-            when(mapper.map(resultSet)).thenReturn(position1);
-            assertEquals(mapper.map(resultSet), position1);
+        assertEquals(3, receivedPositions.size());
 
-            when(mapper.map(resultSet)).thenReturn(position2);
-            assertEquals(mapper.map(resultSet), position2);
-
-            verify(mapper, times(2)).map(resultSet);
-            verify(mapper).map(resultSetArgumentCaptor.capture());
-
-            verify(mapper).map(resultSetArgumentCaptor.capture());
-            assertEquals(resultSet, resultSetArgumentCaptor.getValue());
-        }
+        assertEquals(position1, receivedPositions.get(0));
+        assertEquals(position1, receivedPositions.get(1));
+        assertEquals(position2, receivedPositions.get(2));
     }
 
     @Test
@@ -101,22 +96,24 @@ public class PositionsDaoTest {
 
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true, true, true, false);
+        when(mapper.map(resultSet)).thenReturn(position1, position2, position2);
 
-        positionsDao.getPositions(argument, value);
+        List<Position> receivedPositions = positionsDao.getPositions(argument, value);
+
+        verify(preparedStatement).setObject(eq(1), eq(value));
+        verify(preparedStatement).execute();
+        verify(preparedStatement).getResultSet();
+        verify(resultSet, times(4)).next();
+        verify(mapper, times(3)).map(resultSet);
 
         verify(connectTemporary).getPreparedStatement(stringArgumentCaptor.capture());
-        verify(preparedStatement).setObject(eq(1), stringArgumentCaptor.capture());
-        verify(preparedStatement).execute();
-        while (resultSet.next()) {
-            verify(mapper).map(resultSetArgumentCaptor.capture());
+        assertEquals(String.format(GET_EXACT_POSITIONS_QUERY, argument), stringArgumentCaptor.getValue());
 
-            assertEquals(resultSet, resultSetArgumentCaptor.getValue());
-
-            List<String> values = stringArgumentCaptor.getAllValues();
-
-            assertEquals(String.format(GET_EXACT_POSITIONS_QUERY, argument), values.get(0));
-            assertEquals(value, values.get(1));
-        }
+        assertEquals(3, receivedPositions.size());
+        assertEquals(position1, receivedPositions.get(0));
+        assertEquals(position2, receivedPositions.get(1));
+        assertEquals(position2, receivedPositions.get(2));
     }
 
     @Test
@@ -125,10 +122,19 @@ public class PositionsDaoTest {
 
         positionsDao.updatePositions(positions);
 
-        verify(mapper, times(2)).update(positionArgumentCaptor.capture(), eq(preparedStatement));
+        verify(mapper, times(2))
+                .update(positionArgumentCaptor.capture(), eq(preparedStatement));
+
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
+
         verify(preparedStatement).executeBatch();
         verify(connectTemporary).commit();
+
+        List<Position> capturedPositions = positionArgumentCaptor.getAllValues();
+
+        assertEquals(2, capturedPositions.size());
+        assertEquals(position1, capturedPositions.get(0));
+        assertEquals(position2, capturedPositions.get(1));
     }
 }

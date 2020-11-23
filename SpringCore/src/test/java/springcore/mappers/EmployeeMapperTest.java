@@ -1,27 +1,18 @@
 package springcore.mappers;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.*;
+import org.mockito.*;
 import springcore.employee.Employee;
 import springcore.position.Position;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static springcore.statuses.EmployeeStatus.NEW;
-import static springcore.statuses.EmployeeStatus.WORKS;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static springcore.statuses.EmployeeStatus.*;
 
 public class EmployeeMapperTest {
 
@@ -66,7 +57,6 @@ public class EmployeeMapperTest {
 
     @Test
     public void map() throws SQLException {
-        when(resultSet.next()).thenReturn(true, true, false);
 
         when(resultSet.getString(anyString())).
                 thenReturn("Oleg", "Denisov",
@@ -79,9 +69,9 @@ public class EmployeeMapperTest {
                 .thenReturn(BigDecimal.TEN);
 
         List<Employee> employees = new ArrayList<>();
-        while (resultSet.next()) {
-            employees.add(employeeMapper.map(resultSet));
-        }
+
+        employees.add(employeeMapper.map(resultSet));
+        employees.add(employeeMapper.map(resultSet));
 
         Employee employee1InList = employees.get(0);
         Employee employee2InList = employees.get(1);

@@ -43,6 +43,7 @@ public class PositionMapperTest {
         position1.setVacancies(5);
         position1.setActiveWorkers(3);
         position1.setSalary(new Usd(100));
+
         position2.setVacancies(10);
         position2.setActiveWorkers(8);
         position2.setSalary(new Usd(666));
@@ -52,16 +53,15 @@ public class PositionMapperTest {
 
     @Test
     public void map() throws SQLException {
-        when(resultSet.next()).thenReturn(true, true, false);
+
         when(resultSet.getString(anyString())).thenReturn("Actor", "Ment");
         when(resultSet.getInt(anyString())).thenReturn(5, 3, 100, 10, 8, 666);
 
         List<Position> positions = new ArrayList<>();
-        while (resultSet.next()) {
-            positions.add(positionMapper.map(resultSet));
-        }
 
-        verify(resultSet, times(3)).next();
+        positions.add(positionMapper.map(resultSet));
+        positions.add(positionMapper.map(resultSet));
+
         verify(resultSet, times(2)).getString(anyString());
         verify(resultSet, times(6)).getInt(anyString());
 
@@ -91,6 +91,7 @@ public class PositionMapperTest {
         verify(preparedStatement).setInt(eq(2), eq(position1.getVacancies()));
         verify(preparedStatement).setInt(eq(3), eq(position1.getActiveWorkers()));
         verify(preparedStatement).setInt(eq(4), eq(position1.getSalary().getValue()));
+
         verify(preparedStatement).setInt(eq(2), eq(position2.getVacancies()));
         verify(preparedStatement).setInt(eq(3), eq(position2.getActiveWorkers()));
         verify(preparedStatement).setInt(eq(4), eq(position2.getSalary().getValue()));
@@ -99,17 +100,17 @@ public class PositionMapperTest {
     @Test
     public void update() throws SQLException {
         for (Position position : positions) {
-            positionMapper.add(position, preparedStatement);
+            positionMapper.update(position, preparedStatement);
         }
 
-        verify(preparedStatement).setString(eq(1), eq(position1.getPositionName()));
-        verify(preparedStatement).setInt(eq(2), eq(position1.getVacancies()));
-        verify(preparedStatement).setInt(eq(3), eq(position1.getActiveWorkers()));
-        verify(preparedStatement).setInt(eq(4), eq(position1.getSalary().getValue()));
+        verify(preparedStatement).setString(eq(4), eq(position1.getPositionName()));
+        verify(preparedStatement).setInt(eq(1), eq(position1.getVacancies()));
+        verify(preparedStatement).setInt(eq(2), eq(position1.getActiveWorkers()));
+        verify(preparedStatement).setInt(eq(3), eq(position1.getSalary().getValue()));
 
-        verify(preparedStatement).setString(eq(1), eq(position2.getPositionName()));
-        verify(preparedStatement).setInt(eq(2), eq(position2.getVacancies()));
-        verify(preparedStatement).setInt(eq(3), eq(position2.getActiveWorkers()));
-        verify(preparedStatement).setInt(eq(4), eq(position2.getSalary().getValue()));
+        verify(preparedStatement).setString(eq(4), eq(position2.getPositionName()));
+        verify(preparedStatement).setInt(eq(1), eq(position2.getVacancies()));
+        verify(preparedStatement).setInt(eq(2), eq(position2.getActiveWorkers()));
+        verify(preparedStatement).setInt(eq(3), eq(position2.getSalary().getValue()));
     }
 }

@@ -1,13 +1,9 @@
-package springcore.services;
+package springcore.services.employeecreator;
 
 import org.junit.Before;
 import org.junit.Test;
-import springcore.services.employeecreator.EmployeeCreator;
-import springcore.services.employeecreator.EmployeeCreatorImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;

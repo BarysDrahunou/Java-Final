@@ -1,30 +1,23 @@
 package springcore.dao;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.junit.*;
+import org.mockito.*;
 import org.mockito.MockitoAnnotations;
 import springcore.employee.Employee;
 import springcore.mappers.Mapper;
 import springcore.services.connectionservices.ConnectTemporary;
 import springcore.statuses.EmployeeStatus;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 
 public class EmployeesDaoTest {
+
     @Mock
     Mapper<ResultSet, Employee,
             Employee, PreparedStatement> mapper;
@@ -36,8 +29,6 @@ public class EmployeesDaoTest {
     PreparedStatement preparedStatement;
     @Captor
     ArgumentCaptor<Employee> argumentCaptor;
-    @Captor
-    ArgumentCaptor<ResultSet> resultSetArgumentCaptor;
     List<Employee> employees;
     EmployeesDao employeesDao;
     Employee employee1;
@@ -62,10 +53,25 @@ public class EmployeesDaoTest {
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
 
         employeesDao.addEmployees(employees);
+
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
         verify(preparedStatement, times(1)).executeBatch();
         verify(connectTemporary, times(1)).commit();
+
+        verify(mapper, times(2)).add(argumentCaptor.capture(), eq(preparedStatement));
+
+        List<Employee> capturedEmployees = argumentCaptor.getAllValues();
+
+        assertEquals(employee1.getName(), capturedEmployees.get(0).getName());
+        assertEquals(employee1.getSurname(), capturedEmployees.get(0).getSurname());
+        assertEquals(employee1.getStatus(), capturedEmployees.get(0).getStatus());
+
+        assertEquals(employee2.getName(), capturedEmployees.get(1).getName());
+        assertEquals(employee2.getSurname(), capturedEmployees.get(1).getSurname());
+        assertEquals(employee2.getStatus(), capturedEmployees.get(1).getStatus());
+
+        assertEquals(2, capturedEmployees.size());
     }
 
     @Test
@@ -73,23 +79,29 @@ public class EmployeesDaoTest {
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.getResultSet()).thenReturn(resultSet);
 
-        employeesDao.getEmployeesByStatus(status);
+        when(resultSet.next()).thenReturn(true, true, true, false);
+        when(mapper.map(resultSet)).thenReturn(employee1, employee1, employee2);
+
+        List<Employee> receivedEmployees = employeesDao.getEmployeesByStatus(status);
 
         verify(preparedStatement).setString(eq(1), eq(status.name()));
-        verify(preparedStatement, times(1)).execute();
+        verify(preparedStatement).execute();
 
-        when(mapper.map(resultSet)).thenReturn(employee1);
-        when(mapper.map(resultSet)).thenReturn(employee2);
-        assertEquals(mapper.map(resultSet), employee1);
-        assertEquals(mapper.map(resultSet), employee2);
+        verify(mapper, times(3)).map(resultSet);
 
-        verify(mapper, atLeastOnce()).map(resultSet);
-        verify(mapper, times(2)).map(resultSet);
+        assertEquals(3,receivedEmployees.size());
 
-        while (resultSet.next()){
-            verify(mapper).map(resultSetArgumentCaptor.capture());
-            assertEquals(resultSet, resultSetArgumentCaptor.getValue());
-        }
+        assertEquals(employee1.getName(), receivedEmployees.get(0).getName());
+        assertEquals(employee1.getSurname(), receivedEmployees.get(0).getSurname());
+        assertEquals(employee1.getStatus(), receivedEmployees.get(0).getStatus());
+
+        assertEquals(employee1.getName(), receivedEmployees.get(1).getName());
+        assertEquals(employee1.getSurname(), receivedEmployees.get(1).getSurname());
+        assertEquals(employee1.getStatus(), receivedEmployees.get(1).getStatus());
+
+        assertEquals(employee2.getName(), receivedEmployees.get(2).getName());
+        assertEquals(employee2.getSurname(), receivedEmployees.get(2).getSurname());
+        assertEquals(employee2.getStatus(), receivedEmployees.get(2).getStatus());
     }
 
     @Test
@@ -97,14 +109,26 @@ public class EmployeesDaoTest {
         when(connectTemporary.getPreparedStatement(anyString())).thenReturn(preparedStatement);
 
         employeesDao.updateEmployees(employees);
-        for (Employee employee : employees) {
-            verify(mapper, times(2)).update(employee, preparedStatement);
-        }
+
         verify(connectTemporary).commit();
 
         verify(preparedStatement, times(2)).addBatch();
         verify(preparedStatement, times(2)).clearParameters();
 
         verify(preparedStatement).executeBatch();
+
+        verify(mapper, times(2)).update(argumentCaptor.capture(), eq(preparedStatement));
+
+        List<Employee> capturedEmployees = argumentCaptor.getAllValues();
+
+        assertEquals(employee1.getName(), capturedEmployees.get(0).getName());
+        assertEquals(employee1.getSurname(), capturedEmployees.get(0).getSurname());
+        assertEquals(employee1.getStatus(), capturedEmployees.get(0).getStatus());
+
+        assertEquals(employee2.getName(), capturedEmployees.get(1).getName());
+        assertEquals(employee2.getSurname(), capturedEmployees.get(1).getSurname());
+        assertEquals(employee2.getStatus(), capturedEmployees.get(1).getStatus());
+
+        assertEquals(2, capturedEmployees.size());
     }
 }
