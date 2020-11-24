@@ -40,6 +40,25 @@ public class PositionCreatorImpl implements PositionCreator {
         this.jobs = getJobs(jobsPath);
     }
 
+    /**
+     * Create position and get position.
+     *
+     * @return the position
+     */
+    @Override
+    public Position createPositionAndGet() {
+        Random random = new Random();
+
+        String positionName = jobs.get(random.nextInt(jobs.size()));
+        Position position = new Position(positionName);
+
+        position.setVacancies(INITIAL_VACANCIES);
+        position.setActiveWorkers(INITIAL_WORKERS);
+        position.setSalary(new Usd(INITIAL_SALARY));
+
+        return position;
+    }
+
     private List<String> getJobs(String path) {
         if (hashJobsMap.containsKey(path)) {
             return hashJobsMap.get(path);
@@ -55,23 +74,5 @@ public class PositionCreatorImpl implements PositionCreator {
                 return hashJobsMap.get(DEFAULT_JOBS);
             }
         }
-    }
-
-    /**
-     * Create position and get position.
-     *
-     * @return the position
-     */
-    public Position createPositionAndGet() {
-        Random random = new Random();
-
-        String positionName = jobs.get(random.nextInt(jobs.size()));
-        Position position = new Position(positionName);
-
-        position.setVacancies(INITIAL_VACANCIES);
-        position.setActiveWorkers(INITIAL_WORKERS);
-        position.setSalary(new Usd(INITIAL_SALARY));
-
-        return position;
     }
 }

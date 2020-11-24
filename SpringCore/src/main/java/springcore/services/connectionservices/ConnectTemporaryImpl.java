@@ -1,9 +1,13 @@
 package springcore.services.connectionservices;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+
+import static springcore.constants.SQLExceptionMessages.*;
 
 /**
  * Class for creating an instance of temporary connection.
@@ -11,10 +15,11 @@ import java.sql.*;
 @Component
 public class ConnectTemporaryImpl implements ConnectTemporary {
 
-    public String driver;
-    public String url;
-    public String login;
-    public String password;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final String driver;
+    private final String url;
+    private final String login;
+    private final String password;
 
     private Connection connection;
 
@@ -43,7 +48,13 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
             connection.setAutoCommit(false);
 
             this.connection = connection;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
+            LOGGER.error(CLASS_NOT_FOUND_EXCEPTION_MESSAGE, e);
+
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            LOGGER.error(OPEN_CONNECTION_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -66,6 +77,8 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
 
             commit();
         } catch (SQLException e) {
+            LOGGER.error(TRUNCATE_TABLES_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -81,6 +94,8 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
         try {
             return connection.prepareStatement(sql);
         } catch (SQLException e) {
+            LOGGER.error(PREPARED_STATEMENT_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -95,6 +110,8 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
         try {
             return connection.createStatement();
         } catch (SQLException e) {
+            LOGGER.error(STATEMENT_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -107,6 +124,8 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
         try {
             connection.commit();
         } catch (SQLException e) {
+            LOGGER.error(COMMIT_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -118,6 +137,8 @@ public class ConnectTemporaryImpl implements ConnectTemporary {
                 connection.close();
             }
         } catch (SQLException e) {
+            LOGGER.error(CLOSE_DATABASE_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }

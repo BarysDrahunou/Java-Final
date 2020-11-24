@@ -1,5 +1,7 @@
 package springcore.dao;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import springcore.mappers.Mapper;
@@ -9,6 +11,7 @@ import springcore.services.connectionservices.ConnectTemporary;
 import java.sql.*;
 import java.util.*;
 
+import static springcore.constants.SQLExceptionMessages.*;
 import static springcore.constants.SQLQueries.*;
 
 /**
@@ -19,6 +22,7 @@ import static springcore.constants.SQLQueries.*;
 @Repository
 public class PositionsImplDb implements PositionsDao {
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, Position,
             Position, PreparedStatement> mapper;
@@ -58,6 +62,8 @@ public class PositionsImplDb implements PositionsDao {
             preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
+            LOGGER.error(ADD_POSITIONS_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -85,6 +91,8 @@ public class PositionsImplDb implements PositionsDao {
 
             return positions;
         } catch (SQLException e) {
+            LOGGER.error(GET_ALL_POSITIONS_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -117,6 +125,8 @@ public class PositionsImplDb implements PositionsDao {
 
             return positions;
         } catch (SQLException e) {
+            LOGGER.error(GET_POSITIONS_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -142,6 +152,8 @@ public class PositionsImplDb implements PositionsDao {
             preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
+            LOGGER.error(UPDATE_POSITIONS_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }

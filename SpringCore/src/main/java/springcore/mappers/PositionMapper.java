@@ -1,11 +1,14 @@
 package springcore.mappers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import springcore.currency.Usd;
 import springcore.position.Position;
 
 import java.sql.*;
 
+import static springcore.constants.SQLExceptionMessages.*;
 import static springcore.constants.SQLQueries.*;
 
 /**
@@ -14,6 +17,8 @@ import static springcore.constants.SQLQueries.*;
 @Service
 public class PositionMapper implements Mapper<ResultSet, Position,
         Position, PreparedStatement> {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Map positions from database to list
@@ -32,6 +37,8 @@ public class PositionMapper implements Mapper<ResultSet, Position,
 
             return position;
         } catch (SQLException e) {
+            LOGGER.error(MAP_POSITION_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -52,6 +59,8 @@ public class PositionMapper implements Mapper<ResultSet, Position,
             preparedStatement.setInt(4, position.getSalary().getValue());
 
         } catch (SQLException e) {
+            LOGGER.error(ADD_POSITION_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -72,6 +81,8 @@ public class PositionMapper implements Mapper<ResultSet, Position,
             preparedStatement.setString(4, position.getPositionName());
 
         } catch (SQLException e) {
+            LOGGER.error(UPDATE_POSITION_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }

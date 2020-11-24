@@ -1,5 +1,7 @@
 package springcore.mappers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import springcore.employee.Employee;
 import springcore.position.Position;
@@ -7,6 +9,7 @@ import springcore.statuses.EmployeeStatus;
 
 import java.sql.*;
 
+import static springcore.constants.SQLExceptionMessages.*;
 import static springcore.constants.SQLQueries.*;
 
 /**
@@ -15,6 +18,8 @@ import static springcore.constants.SQLQueries.*;
 @Service
 public class EmployeeMapper implements Mapper<ResultSet, Employee,
         Employee, PreparedStatement> {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Map employees from database to list
@@ -36,6 +41,8 @@ public class EmployeeMapper implements Mapper<ResultSet, Employee,
 
             return employee;
         } catch (SQLException e) {
+            LOGGER.error(MAP_EMPLOYEE_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -56,6 +63,8 @@ public class EmployeeMapper implements Mapper<ResultSet, Employee,
             preparedStatement.setBigDecimal(4, employee.getPersonalBonuses());
 
         } catch (SQLException e) {
+            LOGGER.error(ADD_EMPLOYEE_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -79,6 +88,8 @@ public class EmployeeMapper implements Mapper<ResultSet, Employee,
             preparedStatement.setInt(7, employee.getId());
 
         } catch (SQLException e) {
+            LOGGER.error(UPDATE_EMPLOYEE_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }

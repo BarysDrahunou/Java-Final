@@ -1,5 +1,7 @@
 package springcore.dao;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import springcore.employee.Employee;
@@ -10,6 +12,7 @@ import springcore.services.connectionservices.ConnectTemporary;
 import java.sql.*;
 import java.util.*;
 
+import static springcore.constants.SQLExceptionMessages.*;
 import static springcore.constants.SQLQueries.*;
 
 /**
@@ -20,6 +23,7 @@ import static springcore.constants.SQLQueries.*;
 @Repository
 public class EmployeesImplDb implements EmployeesDao {
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ConnectTemporary connectTemporary;
     private final Mapper<ResultSet, Employee,
             Employee, PreparedStatement> mapper;
@@ -60,6 +64,8 @@ public class EmployeesImplDb implements EmployeesDao {
             preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
+            LOGGER.error(ADD_EMPLOYEES_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -89,6 +95,8 @@ public class EmployeesImplDb implements EmployeesDao {
 
             return employees;
         } catch (SQLException e) {
+            LOGGER.error(GET_EMPLOYEES_BY_STATUS_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }
@@ -114,6 +122,8 @@ public class EmployeesImplDb implements EmployeesDao {
             preparedStatement.executeBatch();
             connectTemporary.commit();
         } catch (SQLException e) {
+            LOGGER.error(UPDATE_EMPLOYEES_EXCEPTION_MESSAGE, e);
+
             throw new RuntimeException(e);
         }
     }

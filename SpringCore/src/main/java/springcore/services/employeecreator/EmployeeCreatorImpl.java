@@ -45,6 +45,21 @@ public class EmployeeCreatorImpl implements EmployeeCreator {
         this.surnames = getField(surnamesPath, DEFAULT_SURNAMES, Collections.singletonList(DEFAULT_SURNAME));
     }
 
+    /**
+     * Creates an employee with random names and surnames
+     *
+     * @return the employee
+     */
+    @Override
+    public Employee createEmployeeAndGet() {
+        Random random = new Random();
+
+        String randomName = names.get(random.nextInt(names.size()));
+        String randomSurname = surnames.get(random.nextInt(surnames.size()));
+
+        return new Employee(randomName, randomSurname);
+    }
+
     private List<String> getField(String path, String defaultNameInMap, List<String> defaultList) {
         if (hashNamesSurnamesMap.containsKey(path)) {
             return hashNamesSurnamesMap.get(path);
@@ -60,19 +75,5 @@ public class EmployeeCreatorImpl implements EmployeeCreator {
                 return hashNamesSurnamesMap.get(defaultNameInMap);
             }
         }
-    }
-
-    /**
-     * Creates an employee with random names and surnames
-     *
-     * @return the employee
-     */
-    public Employee createEmployeeAndGet() {
-        Random random = new Random();
-
-        String randomName = names.get(random.nextInt(names.size()));
-        String randomSurname = surnames.get(random.nextInt(surnames.size()));
-
-        return new Employee(randomName, randomSurname);
     }
 }
