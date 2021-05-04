@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    environment {
+        // Using returnStdout
+        CC = """${bat(
+                returnStdout: true,
+                script: 'echo "clang"'
+            )}"""
+        // Using returnStatus
+        EXIT_STATUS = """${bat(
+                returnStatus: true,
+                script: 'exit 1'
+            )}"""
+    }
+    stages {
+        stage('Example') {
+            environment {
+                DEBUG_FLAGS = '-g'
+            }
+            steps {
+                sh 'printenv'
+            }
+        }
+    }
+}
