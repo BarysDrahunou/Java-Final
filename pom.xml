@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util</artifactId>
-            <version>RELEASE111</version>
+            <version>RELEASE124</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/annotations -->
