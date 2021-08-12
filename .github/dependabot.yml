@@ -1,8 +1,10 @@
 version: 2
 updates:
-  - package-ecosystem: "maven"
-    # Files stored in repository root
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "09:40"
+# Updates for Gradle dependencies used in the app      
+    - package-ecosystem: "maven"
+      directory: "/"
+      schedule:
+        interval: "daily"
+      open-pull-requests-limit: 2
+      reviewers:
+      - "BarysDrahunou"
